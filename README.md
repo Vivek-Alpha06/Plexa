@@ -13,6 +13,7 @@ verifiable ledger of every action.
 
 ---
 ## Demo video link : https://youtu.be/pvfV9YEylpg
+## live demo Link : plexa-eight.vercel.app
 ## Table of Contents
 
 - [Key Features](#key-features)
