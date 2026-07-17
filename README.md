@@ -127,39 +127,6 @@ Members join → lock collateral → auto-start when full & funded
 
 ---
 
-## Smart Contracts
-
-A 4-crate Rust workspace (`contracts/`), each compiled to a Soroban Wasm contract.
-
-### `plexa-factory` — deployment, discovery & reputation
-- `create_group(CreateParams)` — deploys a new Group instance (`deploy_v2` + constructor),
-  registers it, and lists it in the public discovery feed when `Public`.
-- `sync_reputation(group)` — permissionless, idempotent; pulls reputation from a completed
-  group into the cross-group registry.
-- Views: `rep_of`, `get_public_groups`, `get_all_groups`, `admin`.
-
-### `plexa-group` — one instance per ROSCA
-Holds all group state: config, members, collateral (per-asset buckets), contributions,
-period/phase timing, auction state, governance votes, and win history.
-
-| Function | Purpose |
-|---|---|
-| `__constructor(GroupParams)` | Locks immutable params (incl. `currency`) at deploy. |
-| `request_join` / `vote_on_join` | Majority-vote join approval. |
-| `lock_collateral(member, asset)` | Lock collateral to become a member. |
-| `top_up(member, asset, amount)` | Add collateral to restore a low health factor. |
-| `contribute(member)` | Pay a period's contribution (funds period 1 while Forming). |
-| `settle` | Verify contributions, liquidate misses, finalize pot, update health factors. |
-| `place_bid(member, discount)` | Open auction bid — the discount given up to win. |
-| `resolve_period` | Pick winner (top bid / random), split discount, advance period. |
-| `claim_payout(member)` | Claim payouts + redistributed discount to wallet. |
-| `withdraw_collateral(member)` | Withdraw remaining collateral after cycle + grace. |
-| **Views** | `get_config/state/members/phase/claimable/current_bid/join_request/pending_joins/history`, `has_won`, `is_completed`, `get_settled`, `get_pot`, `health_factor`, `required_collateral`, `collateral_unlock_at` |
-
-### `plexa-oracle` — XLM/USDC price feed
-Admin-set price (7-decimal fixed point), used only for XLM-collateral sizing and health
-factors. ⚠️ **Must be replaced with a real feed (e.g. Reflector) before mainnet** — an
-admin-set price controls collateral valuation.
 
 ### `plexa-swap` — Soroswap-compatible venue *(testnet fallback)*
 A mock XLM→USDC router matching the Soroswap router ABI, kept as an emergency fallback.
@@ -189,22 +156,6 @@ The live deployment liquidates through the **real Soroswap testnet router** inst
 - **No-bid fallback** — a ledger-seeded PRNG (`env.prng()`) picks the winner. It only
   chooses *order*, never *whether* someone wins (everyone wins exactly once).
 
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| **Smart contracts** | Rust · [Soroban SDK](https://soroban.stellar.org) `22.0.11` · `no_std` |
-| **Build targets** | `wasm32v1-none` (deploy) · `wasm32-unknown-unknown` (release) |
-| **Chain** | Stellar Testnet (Protocol 23) · Soroban RPC |
-| **Tooling** | `stellar-cli` 26+ · Cargo workspace (4 crates) |
-| **Frontend** | React 18 · TypeScript 5 · Vite 5 |
-| **Chain SDK** | `@stellar/stellar-sdk` 16 · `@stellar/freighter-api` |
-| **Wallet** | Freighter (browser extension) |
-| **UI / motion** | Custom dark design system · Framer Motion · Lucide icons · Lenis |
-| **Routing** | React Router 6 |
-| **DeFi integrations** | Soroswap Router (liquidation swaps) · price oracle |
 
 ---
 
@@ -222,11 +173,6 @@ Current live deployment (**v5** — real Soroswap liquidation), from `frontend/.
 
 - **Network:** `Test SDF Network ; September 2015` · RPC `https://soroban-testnet.stellar.org`
 - **Group Wasm hash:** `d58bb092c6ca36d38343983a07c17940c1bb7100b9d0524a9a58d54c8d17f3bb`
-- **Mainnet Soroswap router (for later, re-verify before use):**
-  `CAG5LRYQ5JVEUI5TEID72EYOVX44TTUJT5BQR2J6J77FH65PCCFAJDDH`
-
-> Amounts use `i128` at **7 decimals** (Stellar convention): `1 USDC = 10_000_000`.
-> Older factory/USDC deployments are retained (commented) in `frontend/.env`.
 
 ---
 
@@ -252,112 +198,6 @@ Plexa(v1)/
 
 ---
 
-## Getting Started
+*** CI/CD pipeline supported ***
 
-### Prerequisites
-- **Node.js 18+** and npm (frontend)
-- **Rust 1.96+** with `wasm32v1-none` / `wasm32-unknown-unknown` targets (contracts)
-- **[Freighter](https://freighter.app)** browser extension (for real testnet mode)
-- **[stellar-cli](https://developers.stellar.org/docs/tools/cli) 26+** (deploying)
 
-### Run the frontend
-
-```bash
-cd frontend
-npm install
-npm run dev            # → http://localhost:5173
-```
-
-Modes (set in `frontend/.env`):
-- `VITE_DEMO=true` — **offline demo**: connects instantly as a simulated account, uses an
-  in-memory + localStorage store. No wallet, no chain.
-- `VITE_DEMO=false` — **real testnet**: signs with Freighter and submits to the deployed
-  factory above. Fund your account and grab testnet USDC from Circle's faucet.
-
-Build / typecheck:
-
-```bash
-npm run build          # tsc + vite build
-npm run lint           # tsc --noEmit
-```
-
----
-
-## Building, Testing & Deploying Contracts
-
-Toolchain: `rustc`/`cargo` 1.96+, `stellar-cli` 26+.
-
-```bash
-cd contracts
-
-# Build deployable wasm (use the wasm32v1-none target — testnet rejects the
-# reference-types/multivalue output of wasm32-unknown-unknown).
-cargo build --target wasm32v1-none --release --offline
-
-# Run unit tests
-./scripts/test.sh      # or: cargo test   (see Windows note)
-```
-
-Deploy (see `scripts/deploy.sh`): upload the group wasm → deploy oracle, swap, and the
-factory (with `--admin`, group wasm hash, USDC/XLM SACs, oracle, router) → call
-`factory.create_group(...)`.
-
-### ⚠️ Windows (GNU toolchain) test note
-On `x86_64-pc-windows-gnu`, building the native `cdylib` for `cargo test` hits the PE
-"export ordinal too large" linker limit (unrelated to contract code; the wasm build is
-unaffected). Temporarily set `crate-type = ["rlib"]` in each crate's `Cargo.toml`, run
-tests, then restore `["cdylib", "rlib"]`. `scripts/test.sh` automates this swap.
-
----
-
-## Continuous Integration / Deployment
-
-GitHub Actions workflows live in [`.github/workflows/`](.github/workflows):
-
-| Workflow | Trigger | What it does |
-|---|---|---|
-| **`ci.yml`** | push / PR to `main` | **Contracts:** `cargo test` + Wasm build on Linux (fmt/clippy advisory). **Frontend:** `npm ci` → `npm run lint` (tsc) → `npm run build`. Uploads Wasm + `dist` artifacts. |
-| **`deploy-contracts.yml`** | manual (`workflow_dispatch`) | Builds the `wasm32v1-none` artifacts and runs `scripts/deploy.sh` to deploy oracle + swap + factory. |
-
-Notes:
-- CI runs on **Linux**, which sidesteps the Windows-GNU `cdylib` linker limit — no
-  crate-type swap needed, so `cargo test --workspace` runs directly.
-- The deploy workflow is **manual-only** and needs a repository secret
-  **`STELLAR_SECRET_KEY`** (the funded deployer's `S…` seed). It's gated behind a GitHub
-  **Environment** matching the chosen network for approval control.
-
-## Design Decisions
-
-Choices explicitly surfaced rather than silently defaulted:
-
-1. **Platform fee** — *removed for v1.* No fee is taken from any pot; re-introducing it is
-   an isolated change in `resolve_period`.
-2. **Collateral depletion** — *deduct + flag, group continues.* Uncovered defaults become
-   on-chain debt (netted from future claims); the defaulter is flagged and payouts reflect
-   what was actually collected.
-3. **No-bid randomness** — *`env.prng()` (ledger-seeded).* Cheap and dependency-free, but
-   not manipulation-proof against validators — acceptable for the low-value fallback
-   (order only). Swap in commit-reveal / VRF later if needed.
-4. **Reputation** — *count of cleanly-completed cycles*, held in the Factory registry,
-   read at join time. A group's `min_reputation` gates joining; `0` disables the gate.
-
-**Other flags:** the on-chain `history` Vec grows unbounded (fine for typical groups);
-`resolve_period` is permissionless (a keeper bot can advance periods).
-
----
-
-## Status & Roadmap
-
-- [x] Group, Factory, Oracle, Swap contracts — built + unit tested
-- [x] Per-group currency (USDC / XLM), multi-asset collateral, settlement window
-- [x] Real Soroswap liquidation integration, verified end-to-end on testnet
-- [x] Frontend (create wizard, dashboard, group view, governance, notifications) —
-      typechecks + production build pass
-- [x] Offline demo mode
-- [ ] **Mainnet blockers:** replace the admin-set oracle with a real feed (Reflector);
-      audit; paged/event-sourced history storage
-- [ ] End-to-end JS integration tests against deployed wasm
-
----
-### Successfully ci/cd run for frontend and contract
-<sub>Built on [Stellar](https://stellar.org) · [Soroban](https://soroban.stellar.org). Testnet only — not audited, not for real funds.</sub>
