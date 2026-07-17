@@ -358,5 +358,5 @@ Choices explicitly surfaced rather than silently defaulted:
 - [ ] End-to-end JS integration tests against deployed wasm
 
 ---
-
+### Successfully ci/cd run for frontend and contract
 <sub>Built on [Stellar](https://stellar.org) · [Soroban](https://soroban.stellar.org). Testnet only — not audited, not for real funds.</sub>
