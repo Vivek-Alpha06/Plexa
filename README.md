@@ -13,24 +13,9 @@ verifiable ledger of every action.
 
 ---
 ## Demo video link : https://youtu.be/pvfV9YEylpg
-## live demo Link : plexa-eight.vercel.app
-## Table of Contents
+## live demo Link : https://plexa-eight.vercel.app/
+## Feedback Form: [Google Form](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog)
 
-- [Key Features](#key-features)
-- [Screenshots](#screenshots)
-- [How a ROSCA Round Works](#how-a-rosca-round-works)
-- [Architecture](#architecture)
-- [Smart Contracts](#smart-contracts)
-- [Group Lifecycle & Period Mechanics](#group-lifecycle--period-mechanics)
-- [Tech Stack](#tech-stack)
-- [Deployed Contracts (Testnet)](#deployed-contracts-testnet)
-- [Repository Layout](#repository-layout)
-- [Getting Started](#getting-started)
-- [Building, Testing & Deploying Contracts](#building-testing--deploying-contracts)
-- [Design Decisions](#design-decisions)
-- [Status & Roadmap](#status--roadmap)
-
----
 
 ## Key Features
 
