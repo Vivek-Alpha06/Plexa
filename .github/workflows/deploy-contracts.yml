@@ -1,0 +1,76 @@
+name: Deploy Contracts
+
+# Manual-only (Continuous Deployment). This never runs on push, so it cannot
+# break the CI gate. Trigger it from the Actions tab when you want to deploy the
+# oracle + swap router + factory to a Stellar network.
+#
+# Requires a repository secret:
+#   STELLAR_SECRET_KEY  — the S... seed of a funded deployer identity.
+on:
+  workflow_dispatch:
+    inputs:
+      network:
+        description: Stellar network
+        type: choice
+        default: testnet
+        options: [testnet, mainnet]
+      usdc_contract:
+        description: USDC token contract id on the target network
+        type: string
+        default: CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA
+      xlm_price:
+        description: Initial XLM price in USDC (7dp, e.g. 1235100 = 0.12351)
+        type: string
+        default: "1235100"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.network }}
+    runs-on: ubuntu-latest
+    # Gate real deployments behind a GitHub Environment so approvals/secrets are
+    # scoped. Create an Environment of this name in repo Settings if desired.
+    environment: ${{ inputs.network }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Testnet rejects the wasm32-unknown-unknown output (reference-types),
+          # so deploy artifacts are built for wasm32v1-none (matches deploy.sh).
+          targets: wasm32v1-none
+
+      - name: Cache cargo build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: contracts
+
+      - name: Install stellar-cli
+        run: cargo install --locked stellar-cli
+
+      - name: Import deployer identity
+        env:
+          STELLAR_SECRET_KEY: ${{ secrets.STELLAR_SECRET_KEY }}
+        run: |
+          if [ -z "${STELLAR_SECRET_KEY:-}" ]; then
+            echo "::error::STELLAR_SECRET_KEY secret is not set."
+            exit 1
+          fi
+          stellar keys add ci --secret-key <<< "$STELLAR_SECRET_KEY"
+          echo "Deployer: $(stellar keys address ci)"
+
+      - name: Build deploy Wasm (wasm32v1-none)
+        working-directory: contracts
+        run: cargo build --workspace --target wasm32v1-none --release --locked
+
+      - name: Deploy
+        env:
+          STELLAR_ACCOUNT: ci
+          USDC_CONTRACT: ${{ inputs.usdc_contract }}
+          NETWORK: ${{ inputs.network }}
+          XLM_PRICE: ${{ inputs.xlm_price }}
+        run: ./scripts/deploy.sh
