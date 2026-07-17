@@ -60,9 +60,9 @@ verifiable ledger of every action.
 
 ## Screenshots
 
-| Landing page | Multi-account wallets | Group phase view |
+| Landing page | Multi-account wallets | Group phase view |  Transaction through wallet |
 |:---:|:---:|:---:|
-| ![Landing page](screeenshot/landing_pg.png) | ![Two wallets](screeenshot/two_wallet.png) | ![Phase view](screeenshot/ph_view.png) |
+| ![Landing page](screeenshot/landing_pg.png) | ![Two wallets](screeenshot/two_wallet.png) | ![Phone view](screeenshot/ph_view.png) | ![transaction complete](screeenshot/paument_frieghter.png) |
 
 > 📸 For more screenshots (group creation, collateral lock, auction round, Freighter/Albedo
 > connect, claiming payouts, …) see the [`screeenshot/`](screeenshot) folder.
