@@ -13,6 +13,7 @@ import {
   fmtHealthFactor,
 } from "../lib/format";
 import { Countdown } from "../components/Countdown";
+import { TxReceipts } from "../components/TxReceipts";
 import { usePeriodClock } from "../lib/usePeriodClock";
 import { notify } from "../lib/notify";
 import type {
@@ -58,9 +59,6 @@ export function GroupDetail() {
   const [lockAsset, setLockAsset] = useState<CollateralAsset>("Usdc");
   const [topUpAmount, setTopUpAmount] = useState("");
   const [topUpAsset, setTopUpAsset] = useState<CollateralAsset>("Usdc");
-  // Period numbers we've already auto-submitted settle/resolve for.
-  const autoResolved = useRef(0);
-  const autoSettled = useRef(0);
   // One-shot notification guards.
   const hfNotified = useRef(0);
   const collNotified = useRef(false);
@@ -163,61 +161,17 @@ export function GroupDetail() {
   const members = data?.members ?? [];
   const isMember = !!address && members.some((m) => m.addr === address);
 
-  // ---- Automatic settlement. When the settlement window opens and nobody has
-  // settled the period yet, the first member online signs settle() so the
-  // auction starts from a finalized pool. Races are harmless (idempotent).
-  useEffect(() => {
-    if (!data || !clock || !address || !isMember || busy) return;
-    if (data.state.status !== "Active" || !clock.settleDue || data.settled) return;
-    const period = data.state.current_period;
-    if (autoSettled.current >= period) return;
-    autoSettled.current = period;
-    void (async () => {
-      setBusy("settle");
-      try {
-        await g.settle(address);
-        notify("Settlement Complete", `Period ${period} pool finalized — auction can begin.`, "success");
-      } catch {
-        // Another member likely settled first — fine.
-      } finally {
-        setBusy(null);
-        await load();
-        await refreshBalance();
-      }
-    })();
-  }, [data, clock, address, isMember, busy, g, load, refreshBalance]);
-
-  // ---- Automatic period advancement. The chain can't schedule its own
-  // transactions, so the first member online after the auction window closes
-  // auto-submits resolve_period (they sign once). Races are fine.
-  useEffect(() => {
-    if (!data || !clock || !address || !isMember || busy) return;
-    if (data.state.status !== "Active" || !clock.resolveDue) return;
-    const period = data.state.current_period;
-    if (autoResolved.current >= period) return;
-    autoResolved.current = period;
-    notify("Auction Closed", `Resolving period ${period} — please sign to advance the group.`, "info");
-    void (async () => {
-      setBusy("resolve");
-      try {
-        await g.resolvePeriod(address);
-        notify("Period Completed", `Period ${period} resolved — winner selected.`, "success");
-      } catch (e) {
-        try {
-          const st = await g.getState();
-          if (st.status === "Active" && st.current_period === period) {
-            setError(e instanceof Error ? e.message : String(e));
-          }
-        } catch {
-          setError(e instanceof Error ? e.message : String(e));
-        }
-      } finally {
-        setBusy(null);
-        await load();
-        await refreshBalance();
-      }
-    })();
-  }, [data, clock, address, isMember, busy, g, load, refreshBalance]);
+  // ---- Settlement and period advancement are NOT done here.
+  //
+  // They used to be: whichever member had the page open signed settle() and
+  // resolve_period(). That made everyone's funds hostage to one person being
+  // online, and every open tab raced to submit the same transaction — only one
+  // could win, so the rest surfaced a confusing "transaction failed".
+  //
+  // Both calls are permissionless on the contract, so the keeper (see
+  // `keeper/keeper.mjs`) drives them on a schedule and pays the fee. Members
+  // only ever sign for their own money: contribute, bid, claim, withdraw.
+  // The clock below just reflects on-chain state; it never submits.
 
   // Health-factor warning for the connected XLM-collateral member (once per breach).
   useEffect(() => {
@@ -402,9 +356,8 @@ export function GroupDetail() {
 
                 {clock.resolveDue && (
                   <div className="banner info" style={{ marginBottom: 0, marginTop: 12 }}>
-                    {busy === "resolve"
-                      ? "⏳ Advancing period — selecting the winner on-chain…"
-                      : "Auction closed. Waiting for a member to sign the period resolution."}
+                    Auction closed. The keeper is selecting the winner on-chain — the payout
+                    lands on their dashboard automatically.
                   </div>
                 )}
               </>
@@ -600,6 +553,7 @@ export function GroupDetail() {
 
           {/* ----------------------------------------------- governance */}
           <GovernancePanel
+            groupId={id}
             pending={pending}
             history={history}
             currency={cur}
@@ -727,12 +681,7 @@ export function GroupDetail() {
                     </button>
                   ))}
 
-                {/* Settlement: permissionless, offered during the window. */}
-                {clock.settleDue && !data.settled && busy !== "settle" && (
-                  <button className="btn" onClick={() => run("settle", () => g.settle(address!))}>
-                    Run Settlement
-                  </button>
-                )}
+                {/* Settlement is run by the keeper — members never sign for it. */}
 
                 {/* Top-up collateral (any member, before completion). */}
                 {canAct && (
@@ -775,16 +724,11 @@ export function GroupDetail() {
                   </div>
                 )}
 
-                {clock.resolveDue && busy !== "resolve" && (
-                  <button
-                    className="btn"
-                    onClick={() => {
-                      autoResolved.current = period;
-                      void run("resolve", () => g.resolvePeriod(address!));
-                    }}
-                  >
-                    Resolve Now (fallback)
-                  </button>
+                {clock.resolveDue && (
+                  <p className="muted" style={{ fontSize: 13, margin: "4px 0" }}>
+                    Auction closed — the keeper is advancing this period. The winner is
+                    credited automatically; no signature needed.
+                  </p>
                 )}
 
                 {claimable > 0n && (
@@ -886,6 +830,7 @@ function FormingPanel({ config, members }: { config: GroupConfig; members: Membe
 }
 
 function GovernancePanel({
+  groupId,
   pending,
   history,
   currency,
@@ -894,6 +839,7 @@ function GovernancePanel({
   busy,
   onVote,
 }: {
+  groupId: string;
   pending: { addr: string; req: JoinRequest | null }[];
   history: HistoryEntry[];
   currency: CollateralAsset;
@@ -973,6 +919,13 @@ function GovernancePanel({
           </tbody>
         </table>
       )}
+
+      <div className="section-title">Verify on-chain</div>
+      <p className="muted" style={{ fontSize: 13, marginTop: 0 }}>
+        Every action below is a real Stellar transaction. Open any hash to confirm it
+        independently on a block explorer.
+      </p>
+      <TxReceipts contractId={groupId} />
     </div>
   );
 }
