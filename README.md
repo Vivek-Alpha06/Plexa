@@ -3,7 +3,7 @@
 Plexa is a decentralized **Rotating Savings and Credit Association (ROSCA)** protocol
 built on Stellar's Soroban smart-contract platform. A group of members each contribute a
 fixed amount per period into a shared pot; every period exactly one member receives the
-pot — chosen by an open **discount auction** with a random fallback. This repeats until
+pot — chosen by an open **discount auction** falling back to join-order rotation. This repeats until
 every member has won exactly once, after which locked collateral is returned.
 
 Think of it as a trustless, on-chain version of the informal savings circles
@@ -35,7 +35,7 @@ verifiable ledger of every action.
 
 - **Rotating payouts** — one member wins the pot each period until everyone has won once.
 - **Open discount auction** — members bid the discount they'll give up to win early; the
-  discount is redistributed equally among all members. A ledger-seeded PRNG breaks the
+  discount is redistributed equally among all members. Join-order rotation breaks the
   no-bid case.
 - **Per-group currency** — each group runs entirely in **USDC** *or* **XLM**
   (contributions, pot, payouts, and claims all flow in the chosen currency).
@@ -150,7 +150,7 @@ period/phase timing, auction state, governance votes, and win history.
 | `contribute(member)` | Pay a period's contribution (funds period 1 while Forming). |
 | `settle` | Verify contributions, liquidate misses, finalize pot, update health factors. |
 | `place_bid(member, discount)` | Open auction bid — the discount given up to win. |
-| `resolve_period` | Pick winner (top bid / random), split discount, advance period. |
+| `resolve_period` | Pick winner (top bid / rotation), split discount, advance period. |
 | `claim_payout(member)` | Claim payouts + redistributed discount to wallet. |
 | `withdraw_collateral(member)` | Withdraw remaining collateral after cycle + grace. |
 | **Views** | `get_config/state/members/phase/claimable/current_bid/join_request/pending_joins/history`, `has_won`, `is_completed`, `get_settled`, `get_pot`, `health_factor`, `required_collateral`, `collateral_unlock_at` |
@@ -173,13 +173,14 @@ Two operational pieces added in v6:
   sign to advance a period**. They sign only for their own money: contribute, bid,
   claim, withdraw. Needs a funded account in `KEEPER_SECRET` and `FACTORY_ID`.
 
-> **Why the keeper widens the footprint.** The no-bid winner is drawn with
-> `env.prng()`, which is seeded per-transaction, so preflight and execution can
-> pick different members. Simulation declares only `Claimable(winner_it_drew)`, and
-> execution writing a different key traps with `scecExceededLimit`. The v6 group
-> wasm pre-touches every eligible member's keys so this cannot happen; the keeper
-> *also* declares them client-side, which is what lets it drive groups still
-> running the older `d58bb092…` build.
+> **Why the keeper widens the footprint.** Older builds drew the no-bid winner with
+> `env.prng()`, which is seeded per-transaction, so preflight and execution could
+> pick different members. Simulation declared only `Claimable(winner_it_drew)`, and
+> execution writing a different key trapped with `scecExceededLimit` — wedging the
+> group permanently. The current wasm uses fixed rotation, so this cannot happen;
+> the keeper still declares every eligible member's key client-side, which is what
+> lets it drive groups from the superseded factory that remain on `d58bb092…` and
+> have no `upgrade` entrypoint to rescue them.
 
 ### `plexa-oracle` — XLM/USDC price feed
 Admin-set price (7-decimal fixed point), used only for XLM-collateral sizing and health
@@ -211,8 +212,15 @@ The live deployment liquidates through the **real Soroswap testnet router** inst
   collateral can't fully cover it, the shortfall is recorded as **debt** (netted from
   future claims/collateral) and the group keeps running — payouts reflect what was actually
   collected (`pot_collected`).
-- **No-bid fallback** — a ledger-seeded PRNG (`env.prng()`) picks the winner. It only
-  chooses *order*, never *whether* someone wins (everyone wins exactly once).
+- **No-bid fallback** — plain rotation: the eligible member who joined earliest wins.
+  It only chooses *order*, never *whether* someone wins (everyone wins exactly once),
+  so randomness bought nothing while creating two problems — a per-transaction PRNG
+  seed made preflight and execution disagree and trap the host, and simulation let
+  whoever submitted preview the draw and broadcast only when it favoured them.
+- **Keeper-independent** — `contribute`, `place_bid`, `claim_payout` and
+  `withdraw_collateral` close out any overdue periods first (bounded to 2 per call).
+  The keeper keeps periods punctual, but if it stops, the group still advances as
+  soon as any member acts, so funds are never frozen behind a stalled bot.
 
 ---
 
@@ -247,7 +255,11 @@ from `frontend/.env`:
 | **Soroswap Router** | `CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD` |
 
 - **Network:** `Test SDF Network ; September 2015` · RPC `https://soroban-testnet.stellar.org`
-- **Group Wasm hash:** `f598f06f1407eaddef082e42b55735258654d572b1254664b9ea17293a1f5606`
+- **Group Wasm hash:** `f2c180a42656876687318f9edfaca070ef21e9e8936d349b0a85a4333d60e67c`
+  (v7 — rotation winner + keeper-independent catch-up). Installed via
+  `Factory::set_group_wasm`, so the factory address is unchanged; the three
+  existing groups were moved across with `Group::upgrade`, verified to keep their
+  state and config intact.
 - **Factory admin:** `GBQLFIT7UWCURWEDBR5JPCQPFIFYJ23AKIX24P6MOAAZ3AIDTSNE24FY`
 - **Superseded:** factory `CD6OKM7JO3BFZ644VM6J7NP4BVXEDUQYDR4SFJJJNGDK2KWP3DFIVAMY`
   (group wasm `d58bb092…`). Its groups are **not upgradeable** — that build predates
@@ -366,7 +378,7 @@ Choices explicitly surfaced rather than silently defaulted:
 2. **Collateral depletion** — *deduct + flag, group continues.* Uncovered defaults become
    on-chain debt (netted from future claims); the defaulter is flagged and payouts reflect
    what was actually collected.
-3. **No-bid randomness** — *`env.prng()` (ledger-seeded).* Cheap and dependency-free, but
+3. **No-bid winner** — *fixed rotation (earliest eligible joiner).* Deterministic, so preflight and execution always agree and nobody can preview or reroll the outcome. Everyone wins exactly once regardless, so the fallback only decides order.
    not manipulation-proof against validators — acceptable for the low-value fallback
    (order only). Swap in commit-reveal / VRF later if needed.
 4. **Reputation** — *count of cleanly-completed cycles*, held in the Factory registry,
