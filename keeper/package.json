@@ -1,0 +1,15 @@
+{
+  "name": "plexa-keeper",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Permissionless keeper that advances Plexa ROSCA groups so members never sign to settle or resolve.",
+  "main": "keeper.mjs",
+  "scripts": {
+    "start": "node keeper.mjs",
+    "dry-run": "node keeper.mjs --dry-run"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^16.0.1"
+  }
+}
