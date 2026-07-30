@@ -277,6 +277,17 @@ const realFactory = {
   },
   getPublicGroups: () => read<string[]>(FACTORY_ID, "get_public_groups", []),
   getAllGroups: () => read<string[]>(FACTORY_ID, "get_all_groups", []),
+  /**
+   * Was this group deployed by the configured factory?
+   *
+   * Safety check, not a nicety. The group wasm is public and permissionlessly
+   * deployable, and a group's upgrade authority comes from the factory address
+   * baked into its own config — so anyone can deploy the byte-identical
+   * official build naming a factory they control, and hold upgrade rights over
+   * everyone who joins. Comparing wasm hashes does not catch that; only
+   * registry membership does.
+   */
+  isGroup: (a: string) => read<boolean>(FACTORY_ID, "is_group", [addr(a)]),
   repOf: (a: string) => read<number>(FACTORY_ID, "rep_of", [addr(a)]),
   syncReputation: (wallet: string, group: string) =>
     invoke(FACTORY_ID, "sync_reputation", [addr(group)], wallet),

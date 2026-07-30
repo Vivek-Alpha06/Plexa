@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useWallet } from "../context/WalletContext";
-import { group, xlmPrice } from "../lib/contracts";
+import { factory, group, xlmPrice } from "../lib/contracts";
 import {
   fmtUsdc,
   fmtXlm,
@@ -69,6 +69,28 @@ export function GroupDetail() {
   // One-shot notification guards.
   const hfNotified = useRef(0);
   const collNotified = useRef(false);
+
+  // Is this group registered in the configured factory?
+  //
+  // Anyone can deploy the official group wasm naming a factory they control,
+  // which makes them its upgrade authority — and the deployed code is
+  // byte-identical, so a wasm-hash check does not reveal it. Registry
+  // membership is the only signal that distinguishes a real group from a
+  // look-alike, and it must be checked before anyone is invited to fund one.
+  const [registered, setRegistered] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    void factory
+      .isGroup(id)
+      .then((ok) => !cancelled && setRegistered(ok))
+      // Unknown is not the same as unsafe: on an RPC failure stay silent
+      // rather than crying wolf at a legitimate group.
+      .catch(() => !cancelled && setRegistered(null));
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   // Pairs each on-chain history entry with the transaction that produced it,
   // so every row in the activity log is independently verifiable.
@@ -295,6 +317,15 @@ export function GroupDetail() {
   return (
     <div>
       {error && <div className="banner error">{error}</div>}
+
+      {registered === false && (
+        <div className="banner error" style={{ marginBottom: 14 }}>
+          <b>⚠ Unverified group — do not deposit funds.</b> This contract is not
+          registered with Plexa's factory. It may run identical code while handing
+          control of upgrades, and therefore of your collateral, to whoever deployed
+          it. Only fund groups you reached through Plexa itself.
+        </div>
+      )}
 
       <div className="row between wrap" style={{ marginBottom: 14 }}>
         <div>

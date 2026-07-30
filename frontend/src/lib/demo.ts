@@ -354,6 +354,10 @@ export const demoFactory = {
   async getAllGroups(): Promise<string[]> {
     return load().map((g) => g.id);
   },
+  /** Demo groups only exist in this store, so membership is simply existence. */
+  async isGroup(id: string): Promise<boolean> {
+    return load().some((g) => g.id === id);
+  },
   async getPublicGroups(): Promise<string[]> {
     return load().filter((g) => g.config.visibility === "Public").map((g) => g.id);
   },

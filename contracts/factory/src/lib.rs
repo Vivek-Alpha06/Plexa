@@ -305,6 +305,30 @@ impl FactoryContract {
         env.events().publish((symbol_short!("cancelled"),), ());
     }
 
+    /// Repoint the oracle/router that *future* groups are created with.
+    ///
+    /// Not timelocked: these only affect groups that do not exist yet, and each
+    /// group captures its dependencies immutably at construction, so this can
+    /// never change the venue or feed out from under existing members. Without
+    /// it, swapping a dependency would mean redeploying the factory and
+    /// stranding the registry — the trap that required a new factory before.
+    pub fn set_dependencies(env: Env, oracle: Address, router: Address) {
+        require_admin(&env);
+        let s = env.storage().instance();
+        s.set(&DataKey::Oracle, &oracle);
+        s.set(&DataKey::Router, &router);
+        env.events()
+            .publish((symbol_short!("deps_set"),), (oracle, router));
+    }
+
+    pub fn dependencies(env: Env) -> (Address, Address) {
+        let s = env.storage().instance();
+        (
+            s.get(&DataKey::Oracle).unwrap(),
+            s.get(&DataKey::Router).unwrap(),
+        )
+    }
+
     pub fn pending_group_wasm(env: Env) -> Option<(BytesN<32>, u64)> {
         env.storage().instance().get(&DataKey::PendingWasm)
     }

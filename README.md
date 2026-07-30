@@ -248,14 +248,14 @@ from `frontend/.env`:
 
 | Contract | Address |
 |---|---|
-| **Factory** | `CBXQ2IEZXPWRQAIUGGIW54ELNOJUNROUETVJHWJESUPJ7C5IWHH5ENFO` |
+| **Factory** | `CDOYIGNCIR4QTUTAUYEFSW7IJVS6ZMOFV6CW574VFGHQ5ZDCQCJZ4GDZ` |
 | **USDC** (Circle testnet SAC) | `CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA` |
 | **XLM** (native SAC) | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` |
-| **Oracle** (XLM/USDC, admin-set) | `CBIXRTMPUHTK5YHVLPKXOKTJVOT3DV2WWNKDMZMZZTOMSOOA654BS7PO` |
+| **Oracle** (Reflector adapter) | `CADEJYCKYSWL7V5HKMPV5ZYGLU7G6PCZ4WPASQT26FIGVSRIP3ZZ7DE5` |
 | **Soroswap Router** | `CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD` |
 
 - **Network:** `Test SDF Network ; September 2015` · RPC `https://soroban-testnet.stellar.org`
-- **Group Wasm hash:** `f2c180a42656876687318f9edfaca070ef21e9e8936d349b0a85a4333d60e67c`
+- **Group Wasm hash:** `0c17b4600b662d389e07a953ef7f1f4367d8bbdf28fa5887329b7b180b458939`
   (v7 — rotation winner + keeper-independent catch-up). Installed via
   `Factory::set_group_wasm`, so the factory address is unchanged; the three
   existing groups were moved across with `Group::upgrade`, verified to keep their
