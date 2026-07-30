@@ -328,14 +328,14 @@ fn winner_cannot_bid_again() {
 }
 
 #[test]
-fn no_bid_random_fallback_auto_settles() {
+fn no_bid_fallback_auto_settles() {
     let s = setup();
     onboard(&s, 0, 0);
     onboard(&s, 1, 0);
     onboard(&s, 2, 0);
 
     // Nobody calls settle() and nobody bids: resolve runs the settlement
-    // safety-net itself and picks a random winner of the full pot.
+    // safety-net itself and awards the full pot.
     at(&s, 720);
     s.client.resolve_period();
     assert!(s.client.get_settled(&1));
@@ -343,6 +343,94 @@ fn no_bid_random_fallback_auto_settles() {
     let total: i128 = (0..3).map(|i| s.client.get_claimable(&s.members[i])).sum();
     assert_eq!(total, 3 * CONTRIB);
     assert_eq!(s.client.get_state().members_won, 1);
+}
+
+/// The no-bid winner must be a fixed rotation, not a draw.
+///
+/// Randomness here was actively harmful: `env.prng()` is seeded per transaction,
+/// so preflight and execution could select different members and trap the host,
+/// and whoever submitted could preview the outcome and only broadcast a
+/// favourable one. Rotation removes both problems, so pin the exact order.
+#[test]
+fn no_bid_winner_follows_join_order() {
+    let s = setup();
+    onboard(&s, 0, 0);
+    onboard(&s, 1, 0);
+    onboard(&s, 2, 0);
+
+    // Period 1 → earliest joiner who has not won.
+    at(&s, 720);
+    s.client.resolve_period();
+    assert_eq!(s.client.get_claimable(&s.members[0]), 3 * CONTRIB);
+    assert!(s.client.has_won(&s.members[0]));
+    assert!(!s.client.has_won(&s.members[1]));
+
+    // Period 2 → the next one along, never a repeat.
+    at(&s, 1100);
+    for i in 0..3 {
+        s.client.contribute(&s.members[i]);
+    }
+    at(&s, 1720);
+    s.client.resolve_period();
+    assert!(s.client.has_won(&s.members[1]));
+    assert!(!s.client.has_won(&s.members[2]));
+}
+
+/// A stopped keeper must not freeze the group. Nobody calls resolve_period at
+/// all here — the member's own action has to carry the cycle forward.
+#[test]
+fn member_action_advances_group_without_keeper() {
+    let s = setup();
+    onboard(&s, 0, 0);
+    onboard(&s, 1, 0);
+    onboard(&s, 2, 0);
+
+    // Period 1's auction closes and nothing external runs.
+    at(&s, 720);
+    assert_eq!(s.client.get_state().current_period, 1);
+    assert_eq!(s.client.get_state().members_won, 0);
+
+    // A member simply pays their next contribution.
+    s.client.contribute(&s.members[1]);
+
+    // Period 1 resolved as a side effect; the group moved on by itself.
+    let st = s.client.get_state();
+    assert_eq!(st.members_won, 1);
+    assert_eq!(st.current_period, 2);
+    assert!(s.client.get_settled(&1));
+}
+
+/// The endgame is the dangerous case: on the last periods nobody needs to
+/// contribute, so if withdrawal did not advance the group a stopped keeper
+/// would lock every member's collateral permanently.
+#[test]
+fn withdraw_unlocks_collateral_after_keeper_stops() {
+    let s = setup();
+    onboard(&s, 0, 0);
+    onboard(&s, 1, 0);
+    onboard(&s, 2, 0);
+
+    // Resolve period 1 only, then let the keeper "die" for the rest.
+    at(&s, 720);
+    s.client.resolve_period();
+    assert_eq!(s.client.get_state().members_won, 1);
+
+    // Jump far past the end of the cycle. Two periods are still unresolved and
+    // nothing external is running.
+    at(&s, 720 + 900 * 3);
+    assert_eq!(s.client.get_state().status, GroupStatus::Active);
+
+    // MAX_CATCHUP_PER_CALL is 2, so one call clears the backlog and completes
+    // the cycle; the grace window then still has to elapse before funds move.
+    s.client.claim_payout(&s.members[0]);
+    assert_eq!(s.client.get_state().status, GroupStatus::Completed);
+
+    let unlock = s.client.collateral_unlock_at();
+    s.env.ledger().set_timestamp(unlock + 1);
+    s.client.withdraw_collateral(&s.members[2]);
+
+    let m = s.client.get_members();
+    assert_eq!(m.get(2).unwrap().collateral_usdc, 0);
 }
 
 #[test]

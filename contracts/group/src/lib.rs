@@ -4,7 +4,7 @@
 //! Implements the rotating savings mechanic described in the Plexa spec:
 //! deposit-triggered auto-start, FOUR-window periods (contribution /
 //! settlement / auction / payout), open descending-discount auctions with a
-//! random no-bid fallback, multi-collateral (USDC at 100% of pot or XLM at
+//! rotation no-bid fallback, multi-collateral (USDC at 100% of pot or XLM at
 //! 150%, priced by an oracle), health-factor monitoring with a one-cycle
 //! top-up grace, automatic liquidation of missed contributions through a
 //! Soroswap-compatible router, and post-cycle collateral withdrawal.
@@ -57,6 +57,10 @@ fn effective_grace(config: &GroupConfig) -> u64 {
 /// TTL bump (~30 days of ledgers) applied to long-lived persistent state.
 const BUMP_AMOUNT: u32 = 518_400;
 const BUMP_THRESHOLD: u32 = 60_480;
+/// How many overdue periods a single member action will advance before giving
+/// up. Keeps a long keeper outage from making every member action too large to
+/// fit in a transaction — the remainder is handled by the next call.
+const MAX_CATCHUP_PER_CALL: u32 = 2;
 
 #[contract]
 pub struct GroupContract;
@@ -428,6 +432,9 @@ impl GroupContract {
     pub fn contribute(env: Env, member: Address) {
         member.require_auth();
         require_member(&env, &member);
+        // Close out any overdue periods first, so this payment lands in the
+        // period that is genuinely open rather than one that already expired.
+        catch_up(&env);
         let config = get_config(&env);
         let state = get_state(&env);
         if get_member(&env, &member).removed {
@@ -509,6 +516,9 @@ impl GroupContract {
     pub fn place_bid(env: Env, member: Address, discount: i128) {
         member.require_auth();
         require_member(&env, &member);
+        // Overdue periods close before the bid is read, so a bid can never be
+        // applied to a period whose auction has already ended.
+        catch_up(&env);
         let config = get_config(&env);
         let state = get_state(&env);
         if state.status != GroupStatus::Active {
@@ -570,159 +580,14 @@ impl GroupContract {
     /// discount equally among ALL members (winner included), advance the clock.
     /// Permissionless — anyone (e.g. a keeper) may call it.
     pub fn resolve_period(env: Env) {
-        let config = get_config(&env);
-        let mut state = get_state(&env);
+        let state = get_state(&env);
         if state.status != GroupStatus::Active {
             panic_with(&env, Error::NotActive);
         }
-        let period = state.current_period;
-        let now = env.ledger().timestamp();
-        let period_start = config_period_start(&config, &state, period);
-        let auction_end = period_start
-            + config.contribution_window
-            + config.settlement_window
-            + config.auction_window;
-        if now < auction_end {
+        if !resolve_due(&env, &get_config(&env), &state) {
             panic_with(&env, Error::PeriodNotEnded);
         }
-
-        // Late-settlement safety net: if nobody ran settle() during the window,
-        // do it now so the pool is complete before a winner is paid.
-        if !is_settled(&env, period) {
-            run_settlement(&env, &config, period);
-        }
-        let pot_collected: i128 = env
-            .storage()
-            .persistent()
-            .get(&DataKey::Pot(period))
-            .unwrap_or(0);
-
-        let members = get_members(&env);
-        let mut active: Vec<Address> = Vec::new(&env); // not removed
-        let mut eligible: Vec<Address> = Vec::new(&env); // not removed, not yet won
-        for addr in members.iter() {
-            let m = get_member(&env, &addr);
-            if m.removed {
-                continue;
-            }
-            active.push_back(addr.clone());
-            if !m.has_won {
-                eligible.push_back(addr.clone());
-            }
-        }
-
-        // Degenerate edge: settlement removed the last not-yet-won member(s).
-        // Nobody can win this pot — split it equally among remaining members
-        // and complete the cycle.
-        if eligible.is_empty() {
-            let n = active.len() as i128;
-            if n > 0 {
-                let share = pot_collected / n;
-                for addr in active.iter() {
-                    credit(&env, &addr, share);
-                }
-            }
-            state.completed_periods += 1;
-            state.status = GroupStatus::Completed;
-            state.completed_at = now;
-            env.storage().instance().set(&DataKey::State, &state);
-            env.events()
-                .publish((symbol_short!("resolved"), period), pot_collected);
-            bump_instance(&env);
-            return;
-        }
-
-        // 1. Determine the winner.
-        let (winner, discount, method) = match env
-            .storage()
-            .persistent()
-            .get::<DataKey, Bid>(&DataKey::Bid(period))
-        {
-            Some(bid) => (bid.bidder, bid.discount, symbol_short!("auction")),
-            None => {
-                // No-bid fallback: random selection from the eligible pool using
-                // the ledger-seeded PRNG (see README for trust assumptions).
-                //
-                // The PRNG is seeded per-transaction, so preflight and execution
-                // can draw *different* winners. Simulation only puts the winner
-                // it drew into the storage footprint, so when execution picks
-                // someone else it writes an entry it never declared and the host
-                // traps — `resolve_period` then fails on submission having
-                // simulated cleanly. Touch every eligible member's Member and
-                // Claimable keys first so the footprint is identical whichever
-                // way the draw lands, and the winner is free to differ.
-                for a in eligible.iter() {
-                    let rec = get_member(&env, &a);
-                    env.storage()
-                        .persistent()
-                        .set(&DataKey::Member(a.clone()), &rec);
-                    let owed: i128 = env
-                        .storage()
-                        .persistent()
-                        .get(&DataKey::Claimable(a.clone()))
-                        .unwrap_or(0);
-                    env.storage()
-                        .persistent()
-                        .set(&DataKey::Claimable(a.clone()), &owed);
-                }
-                let idx: u64 = env.prng().gen_range(0..(eligible.len() as u64));
-                (
-                    eligible.get(idx as u32).unwrap(),
-                    0i128,
-                    symbol_short!("random"),
-                )
-            }
-        };
-
-        // 2. Pay the winner (claimable, not auto-transferred).
-        let payout = pot_collected - discount;
-        credit(&env, &winner, payout);
-        let mut wrec = get_member(&env, &winner);
-        wrec.has_won = true;
-        env.storage()
-            .persistent()
-            .set(&DataKey::Member(winner.clone()), &wrec);
-        state.members_won += 1;
-
-        // 3. Split the discount equally among ALL members, winner included
-        //    (Bug 2 fix). Dust from integer division goes to the winner.
-        if discount > 0 {
-            let n = active.len() as i128;
-            let share = discount / n;
-            if share > 0 {
-                for addr in active.iter() {
-                    credit(&env, &addr, share);
-                }
-            }
-            let dust = discount - share * n;
-            if dust > 0 {
-                credit(&env, &winner, dust);
-            }
-        }
-
-        // 4. Advance the clock / finish the cycle.
-        state.completed_periods += 1;
-        log_history(
-            &env,
-            symbol_short!("resolved"),
-            winner.clone(),
-            payout,
-            String::from_str(&env, "period resolved"),
-        );
-        env.events().publish(
-            (symbol_short!("resolved"), period),
-            (winner, payout, method),
-        );
-
-        // Complete once every remaining (non-removed) member has won.
-        if eligible.len() <= 1 {
-            state.status = GroupStatus::Completed;
-            state.completed_at = now;
-        } else {
-            state.current_period += 1;
-        }
-        env.storage().instance().set(&DataKey::State, &state);
-        bump_instance(&env);
+        resolve_one(&env);
     }
 
     // ------------------------------------------------------------- Withdrawals
@@ -731,6 +596,9 @@ impl GroupContract {
     pub fn claim_payout(env: Env, member: Address) {
         member.require_auth();
         require_member(&env, &member);
+        // Any member action advances the group, so a payout that only needs an
+        // overdue period closed becomes claimable in this same transaction.
+        catch_up(&env);
         let config = get_config(&env);
         let mut amount: i128 = env
             .storage()
@@ -759,6 +627,13 @@ impl GroupContract {
     pub fn withdraw_collateral(env: Env, member: Address) {
         member.require_auth();
         require_member(&env, &member);
+        // Critical for the endgame: on the final periods nobody needs to
+        // contribute any more, so without this there would be no member action
+        // left to advance the group. If the keeper stopped there, the cycle
+        // could never reach Completed and everyone's collateral would be locked
+        // permanently. Catching up here means members can always release their
+        // own funds unaided.
+        catch_up(&env);
         let config = get_config(&env);
         let state = get_state(&env);
         if state.status != GroupStatus::Completed {
@@ -1554,4 +1429,176 @@ fn ceil_div(a: i128, b: i128) -> i128 {
 
 fn panic_with(env: &Env, e: Error) -> ! {
     soroban_sdk::panic_with_error!(env, e)
+}
+
+/// Is the current period past its auction close, i.e. ready to resolve?
+fn resolve_due(env: &Env, config: &GroupConfig, state: &GroupState) -> bool {
+    let period_start = config_period_start(config, state, state.current_period);
+    let auction_end = period_start
+        + config.contribution_window
+        + config.settlement_window
+        + config.auction_window;
+    env.ledger().timestamp() >= auction_end
+}
+
+/// Advance any periods whose auction window has already closed.
+///
+/// This is what keeps the keeper an *optimisation* rather than a dependency.
+/// Period advancement is a state change, so somebody must submit a transaction
+/// for it; a keeper does that promptly, but if it stops, the group would
+/// otherwise freeze and members' funds with it. Folding catch-up into the
+/// ordinary member actions means the group always makes progress as soon as
+/// anyone touches it, keeper or not.
+///
+/// Bounded per call: after a long outage the backlog could otherwise exceed the
+/// transaction budget and every member action would fail — turning a stalled
+/// group into a permanently bricked one. Whatever is left over is picked up by
+/// the next caller or the keeper.
+fn catch_up(env: &Env) {
+    for _ in 0..MAX_CATCHUP_PER_CALL {
+        let state = get_state(env);
+        if state.status != GroupStatus::Active {
+            return;
+        }
+        if !resolve_due(env, &get_config(env), &state) {
+            return;
+        }
+        resolve_one(env);
+    }
+}
+
+/// Resolve the current period: settle if needed, pick the winner, pay out,
+/// split the discount and advance the clock.
+///
+/// Callers must confirm the group is Active and the auction window has closed
+/// (`resolve_due`) before invoking this — it performs no timing checks itself
+/// so `catch_up` can drive it in a loop.
+fn resolve_one(env: &Env) {
+    let config = get_config(env);
+    let mut state = get_state(env);
+    let period = state.current_period;
+    let now = env.ledger().timestamp();
+    if !is_settled(env, period) {
+        run_settlement(env, &config, period);
+    }
+        let pot_collected: i128 = env
+            .storage()
+            .persistent()
+            .get(&DataKey::Pot(period))
+            .unwrap_or(0);
+
+        let members = get_members(env);
+        let mut active: Vec<Address> = Vec::new(env); // not removed
+        let mut eligible: Vec<Address> = Vec::new(env); // not removed, not yet won
+        for addr in members.iter() {
+            let m = get_member(env, &addr);
+            if m.removed {
+                continue;
+            }
+            active.push_back(addr.clone());
+            if !m.has_won {
+                eligible.push_back(addr.clone());
+            }
+        }
+
+        // Degenerate edge: settlement removed the last not-yet-won member(s).
+        // Nobody can win this pot — split it equally among remaining members
+        // and complete the cycle.
+        if eligible.is_empty() {
+            let n = active.len() as i128;
+            if n > 0 {
+                let share = pot_collected / n;
+                for addr in active.iter() {
+                    credit(env, &addr, share);
+                }
+            }
+            state.completed_periods += 1;
+            state.status = GroupStatus::Completed;
+            state.completed_at = now;
+            env.storage().instance().set(&DataKey::State, &state);
+            env.events()
+                .publish((symbol_short!("resolved"), period), pot_collected);
+            bump_instance(env);
+            return;
+        }
+
+        // 1. Determine the winner.
+        let (winner, discount, method) = match env
+            .storage()
+            .persistent()
+            .get::<DataKey, Bid>(&DataKey::Bid(period))
+        {
+            Some(bid) => (bid.bidder, bid.discount, symbol_short!("auction")),
+            None => {
+                // No-bid fallback: plain rotation — the eligible member who has
+                // been waiting longest wins. `eligible` is built by iterating
+                // `get_members()`, which preserves join order, so element 0 is
+                // the earliest joiner who has not yet won.
+                //
+                // This used to draw with `env.prng()`, which was wrong twice
+                // over. The PRNG is seeded per-transaction, so preflight and
+                // execution could pick *different* members; simulation declared
+                // only the winner it drew, and execution writing a different
+                // key trapped the host — a group could wedge permanently. And
+                // because simulation reveals the winner before submission,
+                // whoever submits could preview the outcome and only broadcast
+                // when it favoured them.
+                //
+                // Randomness bought nothing here: every member wins exactly
+                // once regardless, so the fallback only decides *order*. A fixed
+                // rotation is fairer, fully predictable, cheaper, and leaves
+                // nothing to manipulate.
+                (eligible.get(0).unwrap(), 0i128, symbol_short!("rotate"))
+            }
+        };
+
+        // 2. Pay the winner (claimable, not auto-transferred).
+        let payout = pot_collected - discount;
+        credit(env, &winner, payout);
+        let mut wrec = get_member(env, &winner);
+        wrec.has_won = true;
+        env.storage()
+            .persistent()
+            .set(&DataKey::Member(winner.clone()), &wrec);
+        state.members_won += 1;
+
+        // 3. Split the discount equally among ALL members, winner included
+        //    (Bug 2 fix). Dust from integer division goes to the winner.
+        if discount > 0 {
+            let n = active.len() as i128;
+            let share = discount / n;
+            if share > 0 {
+                for addr in active.iter() {
+                    credit(env, &addr, share);
+                }
+            }
+            let dust = discount - share * n;
+            if dust > 0 {
+                credit(env, &winner, dust);
+            }
+        }
+
+        // 4. Advance the clock / finish the cycle.
+        state.completed_periods += 1;
+        log_history(
+            env,
+            symbol_short!("resolved"),
+            winner.clone(),
+            payout,
+            String::from_str(env, "period resolved"),
+        );
+        env.events().publish(
+            (symbol_short!("resolved"), period),
+            (winner, payout, method),
+        );
+
+        // Complete once every remaining (non-removed) member has won.
+        if eligible.len() <= 1 {
+            state.status = GroupStatus::Completed;
+            state.completed_at = now;
+        } else {
+            state.current_period += 1;
+        }
+        env.storage().instance().set(&DataKey::State, &state);
+        bump_instance(env);
 }
