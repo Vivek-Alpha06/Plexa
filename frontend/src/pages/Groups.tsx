@@ -4,6 +4,7 @@ import { useWallet } from "../context/WalletContext";
 import { useGroups } from "../lib/useGroups";
 import { CONFIGURED } from "../lib/config";
 import { GroupCard } from "../components/GroupCard";
+import { GetStarted } from "../components/GetStarted";
 import type { GroupView } from "../types";
 
 type Category = "all" | "forming" | "active" | "completed";
@@ -60,6 +61,7 @@ export function Groups() {
 
   return (
     <div>
+      <GetStarted />
       <div className="row between" style={{ marginBottom: 20 }}>
         <div>
           <h1 style={{ marginBottom: 4 }}>Groups</h1>

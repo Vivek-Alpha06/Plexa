@@ -4,6 +4,7 @@ import { useWallet } from "../context/WalletContext";
 import { useGroups } from "../lib/useGroups";
 import { group } from "../lib/contracts";
 import { fmtAmount, shortAddr } from "../lib/format";
+import { GetStarted } from "../components/GetStarted";
 import { Countdown } from "../components/Countdown";
 import { GroupCard } from "../components/GroupCard";
 import { PriceChart } from "../components/PriceChart";
@@ -246,6 +247,7 @@ export function Dashboard() {
 
   return (
     <div>
+      <GetStarted />
       <h1 style={{ marginBottom: 4 }}>Dashboard</h1>
       <p className="muted" style={{ marginTop: 0 }}>
         Your complete on-chain activity across every Plexa group.
