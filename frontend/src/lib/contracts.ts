@@ -22,6 +22,7 @@ import {
 import { demoFactory, demoGroup, demoOraclePrice } from "./demo";
 import { getDemoBalance } from "./demoWallet";
 import { signTx } from "./wallet";
+import { recordTx } from "./txlog";
 import type {
   GroupConfig,
   GroupState,
@@ -129,12 +130,17 @@ async function read<T>(contractId: string, method: string, args: xdr.ScVal[]): P
 }
 
 // --------------------------------------------------------------------- writes
+/**
+ * Build → sign → submit → confirm. Resolves with the on-chain transaction
+ * hash so callers can record it and link the user to a block explorer; every
+ * write in the app is verifiable by a third party this way.
+ */
 export async function invoke(
   contractId: string,
   method: string,
   args: xdr.ScVal[],
   walletAddress: string
-): Promise<void> {
+): Promise<string> {
   const account = await server.getAccount(walletAddress);
   const contract = new Contract(contractId);
   const built = new TransactionBuilder(account, {
@@ -154,6 +160,8 @@ export async function invoke(
     throw new Error(`submit failed: ${JSON.stringify(sent.errorResult)}`);
   }
   await pollTx(sent.hash);
+  recordTx({ hash: sent.hash, method, contractId, address: walletAddress });
+  return sent.hash;
 }
 
 /**
@@ -175,19 +183,51 @@ async function rpcCall<T>(method: string, params: unknown): Promise<T> {
   return json.result as T;
 }
 
+interface RawTx {
+  status: string;
+  resultXdr?: string;
+  diagnosticEventsXdr?: string[];
+}
+
 async function pollTx(hash: string): Promise<void> {
   for (let i = 0; i < 30; i++) {
-    const raw = await rpcCall<{ status: string; resultXdr?: string }>(
-      "getTransaction",
-      { hash }
-    );
+    const raw = await rpcCall<RawTx>("getTransaction", { hash });
     if (raw.status === "SUCCESS") return;
-    if (raw.status === "FAILED") {
-      throw new Error(`transaction failed: ${raw.resultXdr ?? JSON.stringify(raw)}`);
-    }
+    if (raw.status === "FAILED") throw new Error(describeFailure(raw, hash));
     await new Promise((r) => setTimeout(r, 1000));
   }
   throw new Error("transaction timed out waiting for confirmation");
+}
+
+/**
+ * Turn a failed transaction into something a human can act on. The raw
+ * `resultXdr` is base64 and tells the user nothing; the contract's own
+ * diagnostic events name the actual cause, so prefer those.
+ */
+function describeFailure(raw: RawTx, hash: string): string {
+  for (const d of raw.diagnosticEventsXdr ?? []) {
+    try {
+      const body = xdr.DiagnosticEvent.fromXDR(d, "base64").event().body().v0();
+      const topics = body.topics();
+      if (!topics.length || scValToNative(topics[0]) !== "error") continue;
+      const err = topics[1] ? scValToNative(topics[1]) : null;
+      const detail = scValToNative(body.data());
+      const parts = Array.isArray(detail) ? detail : [detail];
+      const kind = err && typeof err === "object" && "value" in err ? String(err.value) : "error";
+      return `transaction failed (${kind}): ${parts.filter(Boolean).join(" — ")} [${hash}]`;
+    } catch {
+      // Undecodable event — keep scanning for one that parses.
+    }
+  }
+  // No usable diagnostic: fall back to naming the operation result.
+  try {
+    const r = xdr.TransactionResult.fromXDR(raw.resultXdr ?? "", "base64").result();
+    const op = r.results()[0]?.tr();
+    const name = op?.invokeHostFunctionResult().switch().name ?? r.switch().name;
+    return `transaction failed (${name}) [${hash}]`;
+  } catch {
+    return `transaction failed [${hash}]`;
+  }
 }
 
 // =================================================================== Factory
