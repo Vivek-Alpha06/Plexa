@@ -1,0 +1,32 @@
+# Fly.io deployment for the Plexa keeper.
+#
+#   fly launch --no-deploy --copy-config
+#   fly secrets set KEEPER_SECRET=S...            # never commit this
+#   fly secrets set HEARTBEAT_URL=https://hc-ping.com/<uuid>
+#   fly deploy
+#
+# Set FACTORY_ID below to match frontend/.env before deploying.
+app = "plexa-keeper"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  FACTORY_ID = "CDOYIGNCIR4QTUTAUYEFSW7IJVS6ZMOFV6CW574VFGHQ5ZDCQCJZ4GDZ"
+  RPC_URL = "https://soroban-testnet.stellar.org"
+  NETWORK_PASSPHRASE = "Test SDF Network ; September 2015"
+  POLL_SECONDS = "60"
+
+[[vm]]
+  # The keeper is IO-bound on RPC calls; the smallest instance is ample.
+  size = "shared-cpu-1x"
+  memory = "256mb"
+
+# No [http_service] and no [[services]] on purpose: this is a worker with no
+# listening port. Declaring one would make Fly health-check a socket that never
+# opens and kill the machine as unhealthy.
+#
+# Keep it to a single machine (`fly scale count 1`). Two keepers racing is
+# harmless on-chain — one wins and the other finds nothing to do — but they
+# would share an account sequence number and burn fees losing races.

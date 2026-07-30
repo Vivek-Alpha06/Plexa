@@ -29,6 +29,8 @@ const DRY_RUN = process.argv.includes("--dry-run");
 /** Keep running and re-check on an interval, rather than exiting after one pass. */
 const WATCH = process.argv.includes("--watch");
 const POLL_SECONDS = Number(process.env.POLL_SECONDS || 60);
+/** Optional dead-man's-switch endpoint (e.g. a healthchecks.io ping URL). */
+const HEARTBEAT_URL = process.env.HEARTBEAT_URL;
 /** Safety valve: never chase more than this many periods per group per run. */
 const MAX_CATCHUP = Number(process.env.MAX_CATCHUP || 12);
 
@@ -197,6 +199,26 @@ async function advance(groupId) {
 }
 
 // ------------------------------------------------------------------- driver
+/**
+ * Dead-man's-switch ping.
+ *
+ * A keeper that dies loudly is fine — catch-up covers it and someone gets
+ * paged. A keeper that dies *silently* is the dangerous case: periods quietly
+ * stop closing on time and nobody notices until a member complains. Point
+ * HEARTBEAT_URL at a healthchecks.io-style monitor and it alerts when the
+ * pings stop.
+ *
+ * Never throws: monitoring must not be able to take down the thing it watches.
+ */
+async function heartbeat(path = "") {
+  if (!HEARTBEAT_URL) return;
+  try {
+    await fetch(HEARTBEAT_URL + path, { method: "POST" });
+  } catch {
+    // Monitor unreachable — keep working regardless.
+  }
+}
+
 async function runOnce() {
   const groups = await simulate(FACTORY_ID, "get_all_groups");
   log(`${groups.length} group(s) registered`);
@@ -210,6 +232,7 @@ async function runOnce() {
     }
   }
   log(`done — ${total} period(s) advanced`);
+  await heartbeat();
   return total;
 }
 
@@ -231,6 +254,7 @@ async function runOnce() {
       await runOnce();
     } catch (e) {
       log(`cycle failed — ${e.message}`);
+      await heartbeat("/fail");
     }
     await new Promise((r) => setTimeout(r, POLL_SECONDS * 1000));
   }
