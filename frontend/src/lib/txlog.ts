@@ -34,6 +34,18 @@ export function explorerContractUrl(id: string): string {
   return `https://stellar.expert/explorer/${net}/contract/${id}`;
 }
 
+/**
+ * Stellar Lab link for a contract id.
+ *
+ * Stellar Expert serves from its own index, which lags the ledger by a few
+ * minutes — a freshly deployed contract 404s there even though it exists on
+ * chain. Lab reads live from RPC, so it resolves immediately.
+ */
+export function labContractUrl(id: string): string {
+  const net = NETWORK === "public" || NETWORK === "mainnet" ? "public" : "testnet";
+  return `https://lab.stellar.org/r/${net}/contract/${id}`;
+}
+
 export function readTxLog(filter?: { contractId?: string; address?: string }): TxRecord[] {
   try {
     const all = JSON.parse(localStorage.getItem(KEY) ?? "[]") as TxRecord[];
@@ -89,30 +101,49 @@ export async function fetchOnChainTxs(contractId: string, limit = 100): Promise<
   const latest = Number((await call("getLatestLedger", {})).sequence);
   const filters = [{ type: "contract", contractIds: [contractId] }];
 
-  // Walk back until we land inside the node's retention window. RPC rejects a
-  // startLedger that has already been pruned, and the window size varies by
-  // provider, so probe rather than assume.
-  let events: RawEvent[] = [];
-  for (const back of [100_000, 40_000, 10_000, 2_000]) {
+  // Scan newest-first in fixed chunks.
+  //
+  // getEvents scans forward from startLedger for a bounded number of ledgers
+  // and then stops, so a single wide query starting at the retention edge just
+  // returns nothing — it exhausts its budget on empty ledgers before reaching
+  // any activity. Chunking backwards from the head puts the most relevant
+  // events first and lets us stop as soon as we have enough. Chunks wider than
+  // ~8k ledgers get their results truncated by the server, so keep them small.
+  const CHUNK = 8_000;
+  const MAX_CHUNKS = 8;
+
+  const events: RawEvent[] = [];
+  let end = latest;
+  let oldest = 1;
+
+  for (let i = 0; i < MAX_CHUNKS && events.length < limit; i++) {
+    const start = Math.max(1, end - CHUNK);
+    let res;
     try {
-      const res = await call("getEvents", {
-        startLedger: Math.max(1, latest - back),
+      res = await call("getEvents", {
+        startLedger: start,
+        endLedger: end,
         filters,
-        pagination: { limit },
+        pagination: { limit: 200 },
       });
-      events = res.events ?? [];
-      break;
     } catch {
-      // Pruned that far back — try a shorter window.
+      break; // Pruned or rejected — keep whatever we already have.
     }
+    oldest = Number(res.oldestLedger ?? 1);
+    events.push(...((res.events ?? []) as RawEvent[]));
+    if (start <= oldest) break; // Hit the retention edge.
+    end = start - 1;
   }
 
-  return events.map((e) => ({
-    hash: e.txHash,
-    kind: decodeTopic(e.topic?.[0]),
-    ledger: Number(e.ledger),
-    ts: Math.floor(new Date(e.ledgerClosedAt).getTime() / 1000),
-  }));
+  return events
+    .map((e) => ({
+      hash: e.txHash,
+      kind: decodeTopic(e.topic?.[0]),
+      ledger: Number(e.ledger),
+      ts: Math.floor(new Date(e.ledgerClosedAt).getTime() / 1000),
+    }))
+    .sort((a, b) => b.ledger - a.ledger)
+    .slice(0, limit);
 }
 
 interface RawEvent {
@@ -120,6 +151,53 @@ interface RawEvent {
   ledger: number;
   ledgerClosedAt: string;
   topic?: string[];
+}
+
+/** Ledger-timestamp slack when pairing a history entry with its event. */
+const TS_TOLERANCE = 2;
+
+export interface TxIndex {
+  /** Transaction hash that produced this history entry, or null if unknown. */
+  find(kind: string, ts: number): string | null;
+  size: number;
+}
+
+/**
+ * Pair on-chain history entries with the transactions that produced them.
+ *
+ * The contract cannot know its own transaction hash, so `history` has no hash
+ * field. But every `log_history` call is accompanied by an event carrying the
+ * same symbol, and both are stamped with the including ledger's close time —
+ * so (kind, timestamp) identifies the transaction.
+ *
+ * Returns null rather than a guess when nothing matches: a wrong hash is worse
+ * than no hash, since the whole point is independent verification.
+ */
+export function buildTxIndex(events: ChainTx[]): TxIndex {
+  const byKindTs = new Map<string, string>();
+  const byTs = new Map<number, Set<string>>();
+  for (const e of events) {
+    byKindTs.set(`${e.kind}:${e.ts}`, e.hash);
+    if (!byTs.has(e.ts)) byTs.set(e.ts, new Set());
+    byTs.get(e.ts)!.add(e.hash);
+  }
+
+  return {
+    size: events.length,
+    find(kind, ts) {
+      for (let d = 0; d <= TS_TOLERANCE; d++) {
+        for (const t of d === 0 ? [ts] : [ts - d, ts + d]) {
+          const hit = byKindTs.get(`${kind}:${t}`);
+          if (hit) return hit;
+        }
+      }
+      // Everything one transaction wrote shares its hash, so a single hash at
+      // this timestamp is still the right answer even if the symbol differs.
+      const sameLedger = byTs.get(ts);
+      if (sameLedger?.size === 1) return [...sameLedger][0];
+      return null;
+    },
+  };
 }
 
 /** First topic of a Plexa event is always a Symbol naming the action. */

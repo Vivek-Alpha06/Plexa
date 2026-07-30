@@ -13,7 +13,9 @@ import {
   fmtHealthFactor,
 } from "../lib/format";
 import { Countdown } from "../components/Countdown";
-import { TxReceipts } from "../components/TxReceipts";
+import { TxReceipts, TxHashLink } from "../components/TxReceipts";
+import { fetchOnChainTxs, buildTxIndex, type TxIndex } from "../lib/txlog";
+import { DEMO } from "../lib/config";
 import { usePeriodClock } from "../lib/usePeriodClock";
 import { notify } from "../lib/notify";
 import type {
@@ -62,6 +64,29 @@ export function GroupDetail() {
   // One-shot notification guards.
   const hfNotified = useRef(0);
   const collNotified = useRef(false);
+
+  // Pairs each on-chain history entry with the transaction that produced it,
+  // so every row in the activity log is independently verifiable.
+  const [txIndex, setTxIndex] = useState<TxIndex | null>(null);
+  useEffect(() => {
+    if (DEMO || !id) return;
+    let cancelled = false;
+    const refresh = () => {
+      void fetchOnChainTxs(id, 200)
+        .then((evs) => {
+          if (!cancelled) setTxIndex(buildTxIndex(evs));
+        })
+        .catch(() => {
+          // Rows fall back to "…"; never block the page on the indexer.
+        });
+    };
+    refresh();
+    window.addEventListener("plexa:tx", refresh);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("plexa:tx", refresh);
+    };
+  }, [id]);
 
   const load = useCallback(async () => {
     try {
@@ -554,6 +579,7 @@ export function GroupDetail() {
           {/* ----------------------------------------------- governance */}
           <GovernancePanel
             groupId={id}
+            txIndex={txIndex}
             pending={pending}
             history={history}
             currency={cur}
@@ -831,6 +857,7 @@ function FormingPanel({ config, members }: { config: GroupConfig; members: Membe
 
 function GovernancePanel({
   groupId,
+  txIndex,
   pending,
   history,
   currency,
@@ -840,6 +867,7 @@ function GovernancePanel({
   onVote,
 }: {
   groupId: string;
+  txIndex: TxIndex | null;
   pending: { addr: string; req: JoinRequest | null }[];
   history: HistoryEntry[];
   currency: CollateralAsset;
@@ -902,20 +930,40 @@ function GovernancePanel({
       ) : (
         <table className="list">
           <tbody>
-            {[...history].reverse().map((h, i) => (
-              <tr key={i}>
-                <td style={{ width: 90 }}>
-                  <span className="pill">{labelFor(h.kind)}</span>
-                </td>
-                <td>
-                  <div>{h.detail}</div>
-                  <div className="faint" style={{ fontSize: 12 }}>
-                    {shortAddr(h.actor)} · period {h.period}
-                    {h.amount > 0n ? ` · ${fmtAmount(h.amount, currency)}` : ""}
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {[...history].reverse().map((h, i) => {
+              const hash = txIndex?.find(h.kind, Number(h.timestamp)) ?? null;
+              return (
+                <tr key={i}>
+                  <td style={{ width: 90 }}>
+                    <span className="pill">{labelFor(h.kind)}</span>
+                  </td>
+                  <td>
+                    <div>{h.detail}</div>
+                    <div className="faint" style={{ fontSize: 12 }}>
+                      {shortAddr(h.actor)} · period {h.period}
+                      {h.amount > 0n ? ` · ${fmtAmount(h.amount, currency)}` : ""}
+                    </div>
+                  </td>
+                  <td style={{ width: 190, textAlign: "right" }}>
+                    {hash ? (
+                      <TxHashLink hash={hash} />
+                    ) : (
+                      <span
+                        className="faint"
+                        style={{ fontSize: 11 }}
+                        title={
+                          txIndex
+                            ? "Outside the RPC event retention window (about a week). The entry is still on-chain."
+                            : "Loading on-chain transactions…"
+                        }
+                      >
+                        {txIndex ? "— archived" : "…"}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

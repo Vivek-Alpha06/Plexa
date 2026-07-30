@@ -5,7 +5,13 @@
 // that produced it, linked to a block explorer. Anyone can check the chain
 // themselves rather than taking the UI's word for it.
 import { useCallback, useEffect, useState } from "react";
-import { fetchOnChainTxs, explorerContractUrl, explorerTxUrl, type ChainTx } from "../lib/txlog";
+import {
+  fetchOnChainTxs,
+  explorerContractUrl,
+  labContractUrl,
+  explorerTxUrl,
+  type ChainTx,
+} from "../lib/txlog";
 import { DEMO } from "../lib/config";
 
 /** Contract event topic → human label. */
@@ -22,6 +28,40 @@ const LABEL: Record<string, string> = {
   hf_warn: "Health factor warning",
   withdraw: "Collateral withdrawn",
 };
+
+/**
+ * A transaction hash rendered for verification: click to open a block
+ * explorer, or copy the raw hash to check it anywhere else.
+ */
+export function TxHashLink({ hash }: { hash: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <span className="row" style={{ gap: 6, alignItems: "center" }}>
+      <a
+        href={explorerTxUrl(hash)}
+        target="_blank"
+        rel="noreferrer"
+        title={hash}
+        style={{ fontFamily: "monospace", fontSize: 12 }}
+      >
+        {hash.slice(0, 8)}…{hash.slice(-6)} ↗
+      </a>
+      <button
+        className="btn sm"
+        style={{ padding: "1px 6px", fontSize: 11 }}
+        title="Copy full transaction hash"
+        onClick={() => {
+          void navigator.clipboard.writeText(hash).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1200);
+          });
+        }}
+      >
+        {copied ? "✓" : "copy"}
+      </button>
+    </span>
+  );
+}
 
 export function TxReceipts({ contractId }: { contractId: string }) {
   const [txs, setTxs] = useState<ChainTx[] | null>(null);
@@ -61,13 +101,22 @@ export function TxReceipts({ contractId }: { contractId: string }) {
   return (
     <div>
       <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
-        <a href={explorerContractUrl(contractId)} target="_blank" rel="noreferrer">
-          View contract on Stellar Expert ↗
-        </a>
+        <span className="row" style={{ gap: 12 }}>
+          <a href={explorerContractUrl(contractId)} target="_blank" rel="noreferrer">
+            Stellar Expert ↗
+          </a>
+          <a href={labContractUrl(contractId)} target="_blank" rel="noreferrer">
+            Stellar Lab ↗
+          </a>
+        </span>
         <button className="btn sm" onClick={() => void load()} disabled={busy}>
           {busy ? "Loading…" : "Refresh"}
         </button>
       </div>
+      <p className="faint" style={{ fontSize: 11, marginTop: 4 }}>
+        Newly created contracts can take a few minutes to appear on Stellar Expert.
+        Stellar Lab reads the ledger directly and always resolves.
+      </p>
 
       {error && <div className="banner error" style={{ marginTop: 8 }}>{error}</div>}
 
