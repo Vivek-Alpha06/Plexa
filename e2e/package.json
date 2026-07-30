@@ -1,0 +1,13 @@
+{
+  "name": "plexa-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "End-to-end integration tests against Plexa contracts deployed on testnet.",
+  "scripts": {
+    "test": "node e2e.mjs"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^16.0.1"
+  }
+}
