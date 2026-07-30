@@ -61,6 +61,14 @@ const BUMP_THRESHOLD: u32 = 60_480;
 /// up. Keeps a long keeper outage from making every member action too large to
 /// fit in a transaction — the remainder is handled by the next call.
 const MAX_CATCHUP_PER_CALL: u32 = 2;
+/// Delay between scheduling a code upgrade and being able to apply it. Members
+/// must have a window to see the proposal on-chain and exit before new logic
+/// takes custody of their funds.
+const UPGRADE_DELAY: u64 = 172_800; // 48h
+/// Cap on the on-chain history log. Events remain the complete, permanent
+/// record; this Vec is a convenience for the UI and previously grew without
+/// bound, so a long-running group would eventually be unable to write to it.
+const MAX_HISTORY: u32 = 200;
 
 #[contract]
 pub struct GroupContract;
@@ -725,26 +733,52 @@ impl GroupContract {
 
     // ---------------------------------------------------------------- Upgrade
 
-    /// Replace this group's code, keeping all state and its address.
+    /// Schedule a code replacement. Takes effect no earlier than
+    /// `UPGRADE_DELAY` later, via `apply_upgrade`.
     ///
-    /// Authorized by the **factory's admin**, not the group owner: a group
-    /// custodies its members' collateral and pot, so letting whoever created
-    /// it swap the code in would let them drain it. The factory admin is a
-    /// single protocol-level authority, read live from `config.factory` so
-    /// rotating it via `Factory::set_admin` takes effect here immediately.
-    ///
-    /// This is still a trusted role — it can replace the logic guarding member
-    /// funds. Before mainnet it should sit behind a multisig or timelock so an
-    /// upgrade is visible before it lands.
-    pub fn upgrade(env: Env, new_wasm_hash: BytesN<32>) {
-        let config = get_config(&env);
-        let admin: Address =
-            env.invoke_contract(&config.factory, &symbol_short!("admin"), vec![&env]);
-        admin.require_auth();
-        env.deployer()
-            .update_current_contract_wasm(new_wasm_hash.clone());
+    /// An upgrade can rewrite the logic guarding member collateral and the pot,
+    /// so it must never be instantaneous: members need a window in which they
+    /// can see the proposal on-chain and exit before it lands. The delay is the
+    /// difference between an upgrade mechanism and a rug.
+    pub fn propose_upgrade(env: Env, new_wasm_hash: BytesN<32>) {
+        require_factory_admin(&env);
+        let ready_at = env.ledger().timestamp() + UPGRADE_DELAY;
+        env.storage()
+            .instance()
+            .set(&DataKey::PendingUpgrade, &(new_wasm_hash.clone(), ready_at));
         env.events()
-            .publish((symbol_short!("upgraded"),), new_wasm_hash);
+            .publish((symbol_short!("up_prop"),), (new_wasm_hash, ready_at));
+    }
+
+    /// Abandon a scheduled upgrade.
+    pub fn cancel_upgrade(env: Env) {
+        require_factory_admin(&env);
+        env.storage().instance().remove(&DataKey::PendingUpgrade);
+        env.events().publish((symbol_short!("up_cancel"),), ());
+    }
+
+    /// The scheduled upgrade and the earliest timestamp it may be applied.
+    pub fn pending_upgrade(env: Env) -> Option<(BytesN<32>, u64)> {
+        env.storage().instance().get(&DataKey::PendingUpgrade)
+    }
+
+    /// Apply a previously scheduled upgrade once its timelock has elapsed.
+    pub fn apply_upgrade(env: Env) {
+        require_factory_admin(&env);
+        let (hash, ready_at): (BytesN<32>, u64) = match env
+            .storage()
+            .instance()
+            .get(&DataKey::PendingUpgrade)
+        {
+            Some(p) => p,
+            None => panic_with(&env, Error::NoPendingUpgrade),
+        };
+        if env.ledger().timestamp() < ready_at {
+            panic_with(&env, Error::TimelockActive);
+        }
+        env.storage().instance().remove(&DataKey::PendingUpgrade);
+        env.deployer().update_current_contract_wasm(hash.clone());
+        env.events().publish((symbol_short!("upgraded"),), hash);
     }
 
     // ------------------------------------------------------------------- Views
@@ -1022,6 +1056,23 @@ fn oracle_price(env: &Env, config: &GroupConfig) -> i128 {
     price
 }
 
+/// Oracle read that tolerates the feed being down.
+///
+/// The oracle deliberately panics on stale or missing data instead of guessing.
+/// Anything sizing collateral should propagate that (see `oracle_price`), but
+/// settlement must keep closing periods and paying members through a feed
+/// outage, so it uses this and skips the advisory risk pass instead.
+fn try_oracle_price(env: &Env, config: &GroupConfig) -> Option<i128> {
+    match env.try_invoke_contract::<i128, soroban_sdk::Error>(
+        &config.oracle,
+        &symbol_short!("price"),
+        Vec::new(env),
+    ) {
+        Ok(Ok(p)) if p > 0 => Some(p),
+        _ => None,
+    }
+}
+
 /// USDC value the XLM option must cover: 150% of pot.
 fn xlm_required_value(config: &GroupConfig) -> i128 {
     config.pot_size * XLM_RATIO_NUM / XLM_RATIO_DEN
@@ -1191,10 +1242,17 @@ fn swap_exact_xlm_for_usdc(env: &Env, config: &GroupConfig, xlm_in: i128) -> Opt
 fn run_settlement(env: &Env, config: &GroupConfig, period: u32) {
     // XLM groups never touch the oracle or the router: collateral is the same
     // asset as the pot, so defaults are covered by a plain bucket transfer.
+    //
+    // Read fallibly. The Reflector-backed oracle refuses stale or missing data
+    // rather than returning a guess, which is right for collateral sizing but
+    // must not be fatal here: settlement moves real funds and closes the
+    // period, and the price is only used for the advisory health-factor pass
+    // below. A feed outage must delay risk checks, never block members from
+    // being paid — the same reasoning as degrading a dry swap venue to debt.
     let price = if config.currency == CollateralAsset::Usdc {
-        oracle_price(env, config)
+        try_oracle_price(env, config)
     } else {
-        0
+        None
     };
     let mut pot: i128 = 0;
 
@@ -1297,11 +1355,15 @@ fn run_settlement(env: &Env, config: &GroupConfig, period: u32) {
         // Health-factor pass for cross-asset (XLM in a USDC group) collateral
         // members still in the group. Same-asset collateral carries no market
         // risk, so XLM groups skip this entirely.
+        // Skipped entirely when the feed is unavailable: with no trustworthy
+        // price there is no basis to declare anyone unhealthy, and guessing
+        // would liquidate members on bad data.
         if config.currency == CollateralAsset::Usdc
             && !m.removed
             && m.collateral_asset == CollateralAsset::Xlm
+            && price.is_some()
         {
-            let hf = hf_of(config, &m, price);
+            let hf = hf_of(config, &m, price.unwrap());
             if hf < HF_SCALE {
                 if m.hf_breach_period == 0 {
                     // First breach: warn. One full contribution cycle to top up.
@@ -1408,6 +1470,13 @@ fn log_history(env: &Env, kind: Symbol, actor: Address, amount: i128, detail: St
         amount,
         detail,
     });
+    // Drop the oldest entries past the cap. Unbounded growth would eventually
+    // make every state-changing call too large to fit in a transaction, which
+    // would brick the group; the emitted events are the durable record and are
+    // unaffected.
+    while history.len() > MAX_HISTORY {
+        history.remove(0);
+    }
     env.storage().instance().set(&DataKey::History, &history);
 }
 
@@ -1601,4 +1670,19 @@ fn resolve_one(env: &Env) {
         }
         env.storage().instance().set(&DataKey::State, &state);
         bump_instance(env);
+}
+
+/// Authorize against the factory's admin, read live so `Factory::set_admin`
+/// rotation takes effect immediately.
+///
+/// Deliberately not the group owner: a group custodies its members' collateral
+/// and pot, so letting whoever created it change the code would let them drain
+/// it. Note this trusts `config.factory` — consumers must confirm a group is
+/// registered in the official factory (`Factory::is_group`) before treating it
+/// as trustworthy, since anyone can deploy this wasm pointing at a factory they
+/// control.
+fn require_factory_admin(env: &Env) {
+    let config = get_config(env);
+    let admin: Address = env.invoke_contract(&config.factory, &symbol_short!("admin"), vec![env]);
+    admin.require_auth();
 }

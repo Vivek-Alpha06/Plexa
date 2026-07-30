@@ -208,7 +208,8 @@ pub enum DataKey {
     Pot(u32),                  // i128 finalized contribution pool for period N
     JoinReq(Address),          // JoinRequest
     JoinReqList,               // Vec<Address> pending applicants
-    History,                   // Vec<HistoryEntry>
+    History,                   // Vec<HistoryEntry> (capped, see MAX_HISTORY)
+    PendingUpgrade,            // (BytesN<32>, u64) proposed wasm + earliest apply ts
 }
 
 #[contracterror]
@@ -248,4 +249,6 @@ pub enum Error {
     InvalidAsset = 31,
     MemberRemoved = 32,
     InvalidAmount = 33,
+    NoPendingUpgrade = 34,
+    TimelockActive = 35,
 }

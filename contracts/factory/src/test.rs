@@ -1,6 +1,7 @@
 #![cfg(test)]
 use crate::{FactoryContract, FactoryContractClient};
 use soroban_sdk::{
+    testutils::Ledger as _,
     testutils::Address as _, Address, BytesN, Env,
 };
 
@@ -59,8 +60,66 @@ fn admin_can_repoint_group_wasm() {
     let client = FactoryContractClient::new(&env, &id);
 
     assert_eq!(client.group_wasm(), old);
-    client.set_group_wasm(&new);
+    client.propose_group_wasm(&new);
+
+    // The proposal is visible but must not take effect yet — that window is
+    // what lets members exit before new logic takes custody of their funds.
+    assert_eq!(client.group_wasm(), old);
+    let (pending, ready_at) = client.pending_group_wasm().unwrap();
+    assert_eq!(pending, new);
+
+    env.ledger().set_timestamp(ready_at);
+    client.apply_group_wasm();
     assert_eq!(client.group_wasm(), new);
+    assert!(client.pending_group_wasm().is_none());
+}
+
+/// The timelock is worthless if it can be skipped, so pin the refusal.
+#[test]
+#[should_panic(expected = "Error(Contract, #8)")] // TimelockActive
+fn group_wasm_cannot_be_applied_early() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let id = env.register(
+        FactoryContract,
+        (
+            Address::generate(&env),
+            BytesN::from_array(&env, &[0u8; 32]),
+            Address::generate(&env),
+            Address::generate(&env),
+            Address::generate(&env),
+            Address::generate(&env),
+        ),
+    );
+    let client = FactoryContractClient::new(&env, &id);
+
+    client.propose_group_wasm(&BytesN::from_array(&env, &[7u8; 32]));
+    client.apply_group_wasm(); // still inside the delay
+}
+
+/// A group deployed outside the factory must not be mistaken for a real one:
+/// it can name any factory as its upgrade authority, so registry membership is
+/// the only trustworthy signal.
+#[test]
+fn is_group_only_true_for_registered_groups() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let id = env.register(
+        FactoryContract,
+        (
+            Address::generate(&env),
+            BytesN::from_array(&env, &[0u8; 32]),
+            Address::generate(&env),
+            Address::generate(&env),
+            Address::generate(&env),
+            Address::generate(&env),
+        ),
+    );
+    let client = FactoryContractClient::new(&env, &id);
+
+    assert!(!client.is_group(&Address::generate(&env)));
 }
 
 /// Admin rotation must take effect, since Group::upgrade reads the admin live

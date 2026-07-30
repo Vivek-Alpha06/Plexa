@@ -66,6 +66,8 @@ pub enum Error {
     NotCompleted = 4,
     AlreadySynced = 5,
     InvalidParams = 6,
+    NoPendingUpgrade = 7,
+    TimelockActive = 8,
 }
 
 #[contracttype]
@@ -83,6 +85,8 @@ pub enum DataKey {
     IsGroup(Address),
     Reputation(Address),
     Synced(Address),
+    PendingWasm,     // (BytesN<32>, u64) proposed group wasm + earliest apply ts
+    PendingUpgrade,  // (BytesN<32>, u64) proposed factory wasm + earliest apply ts
 }
 
 #[contract]
@@ -238,23 +242,74 @@ impl FactoryContract {
 
     // ------------------------------------------------------------- upgrades
 
-    /// Point future `create_group` calls at a new Group wasm.
+    /// Is this address a group deployed by *this* factory?
     ///
-    /// Already-deployed groups are unaffected — a contract instance keeps the
-    /// wasm it was created with. Use `Group::upgrade` to move an existing one.
-    pub fn set_group_wasm(env: Env, new_wasm_hash: BytesN<32>) {
-        let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
-        admin.require_auth();
-        env.storage().instance().set(&DataKey::WasmHash, &new_wasm_hash);
-        env.events()
-            .publish((symbol_short!("wasm_set"),), new_wasm_hash);
+    /// Load-bearing for safety, not a convenience. The group wasm is public and
+    /// permissionlessly deployable, and a group's upgrade authority comes from
+    /// the `factory` address baked into its own config — so an attacker can
+    /// deploy the byte-identical official wasm pointing at a factory contract
+    /// they control, and hold upgrade rights over anyone who joins. Verifying
+    /// the wasm hash does *not* detect this; only registry membership does.
+    ///
+    /// Clients must call this against the official factory before presenting a
+    /// group as safe to fund.
+    pub fn is_group(env: Env, addr: Address) -> bool {
+        env.storage()
+            .instance()
+            .get(&DataKey::IsGroup(addr))
+            .unwrap_or(false)
     }
 
-    /// Replace this factory's own code.
-    pub fn upgrade(env: Env, new_wasm_hash: BytesN<32>) {
-        let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
-        admin.require_auth();
-        env.deployer().update_current_contract_wasm(new_wasm_hash);
+    /// Point future `create_group` calls at a new Group wasm, after the
+    /// timelock. Already-deployed groups are unaffected — a contract instance
+    /// keeps the wasm it was created with; move those with `Group::upgrade`.
+    pub fn propose_group_wasm(env: Env, new_wasm_hash: BytesN<32>) {
+        require_admin(&env);
+        let ready_at = env.ledger().timestamp() + UPGRADE_DELAY;
+        env.storage()
+            .instance()
+            .set(&DataKey::PendingWasm, &(new_wasm_hash.clone(), ready_at));
+        env.events()
+            .publish((symbol_short!("wasm_prop"),), (new_wasm_hash, ready_at));
+    }
+
+    pub fn apply_group_wasm(env: Env) {
+        require_admin(&env);
+        let hash = take_pending(&env, DataKey::PendingWasm);
+        env.storage().instance().set(&DataKey::WasmHash, &hash);
+        env.events().publish((symbol_short!("wasm_set"),), hash);
+    }
+
+    /// Schedule a replacement of this factory's own code.
+    pub fn propose_upgrade(env: Env, new_wasm_hash: BytesN<32>) {
+        require_admin(&env);
+        let ready_at = env.ledger().timestamp() + UPGRADE_DELAY;
+        env.storage()
+            .instance()
+            .set(&DataKey::PendingUpgrade, &(new_wasm_hash.clone(), ready_at));
+        env.events()
+            .publish((symbol_short!("up_prop"),), (new_wasm_hash, ready_at));
+    }
+
+    pub fn apply_upgrade(env: Env) {
+        require_admin(&env);
+        let hash = take_pending(&env, DataKey::PendingUpgrade);
+        env.deployer().update_current_contract_wasm(hash);
+    }
+
+    pub fn cancel_pending(env: Env) {
+        require_admin(&env);
+        let s = env.storage().instance();
+        s.remove(&DataKey::PendingWasm);
+        s.remove(&DataKey::PendingUpgrade);
+        env.events().publish((symbol_short!("cancelled"),), ());
+    }
+
+    pub fn pending_group_wasm(env: Env) -> Option<(BytesN<32>, u64)> {
+        env.storage().instance().get(&DataKey::PendingWasm)
+    }
+    pub fn pending_upgrade(env: Env) -> Option<(BytesN<32>, u64)> {
+        env.storage().instance().get(&DataKey::PendingUpgrade)
     }
 
     /// Hand the admin role to a new address.
@@ -268,4 +323,27 @@ impl FactoryContract {
 
 fn panic_with(env: &Env, e: Error) -> ! {
     soroban_sdk::panic_with_error!(env, e)
+}
+
+/// Delay between scheduling a code change and being able to apply it. An
+/// upgrade can rewrite the logic guarding member funds, so members need a
+/// window to see the proposal on-chain and exit before it lands.
+const UPGRADE_DELAY: u64 = 172_800; // 48h
+
+fn require_admin(env: &Env) {
+    let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
+    admin.require_auth();
+}
+
+/// Consume a scheduled change, refusing until its timelock has elapsed.
+fn take_pending(env: &Env, key: DataKey) -> BytesN<32> {
+    let (hash, ready_at): (BytesN<32>, u64) = match env.storage().instance().get(&key) {
+        Some(p) => p,
+        None => panic_with(env, Error::NoPendingUpgrade),
+    };
+    if env.ledger().timestamp() < ready_at {
+        panic_with(env, Error::TimelockActive);
+    }
+    env.storage().instance().remove(&key);
+    hash
 }
