@@ -230,6 +230,40 @@ impl FactoryContract {
     pub fn admin(env: Env) -> Address {
         env.storage().instance().get(&DataKey::Admin).unwrap()
     }
+
+    /// Installed Group wasm hash that `create_group` will deploy.
+    pub fn group_wasm(env: Env) -> BytesN<32> {
+        env.storage().instance().get(&DataKey::WasmHash).unwrap()
+    }
+
+    // ------------------------------------------------------------- upgrades
+
+    /// Point future `create_group` calls at a new Group wasm.
+    ///
+    /// Already-deployed groups are unaffected — a contract instance keeps the
+    /// wasm it was created with. Use `Group::upgrade` to move an existing one.
+    pub fn set_group_wasm(env: Env, new_wasm_hash: BytesN<32>) {
+        let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
+        admin.require_auth();
+        env.storage().instance().set(&DataKey::WasmHash, &new_wasm_hash);
+        env.events()
+            .publish((symbol_short!("wasm_set"),), new_wasm_hash);
+    }
+
+    /// Replace this factory's own code.
+    pub fn upgrade(env: Env, new_wasm_hash: BytesN<32>) {
+        let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
+        admin.require_auth();
+        env.deployer().update_current_contract_wasm(new_wasm_hash);
+    }
+
+    /// Hand the admin role to a new address.
+    pub fn set_admin(env: Env, new_admin: Address) {
+        let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
+        admin.require_auth();
+        env.storage().instance().set(&DataKey::Admin, &new_admin);
+        env.events().publish((symbol_short!("admin_set"),), new_admin);
+    }
 }
 
 fn panic_with(env: &Env, e: Error) -> ! {

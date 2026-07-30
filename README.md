@@ -155,6 +155,32 @@ period/phase timing, auction state, governance votes, and win history.
 | `withdraw_collateral(member)` | Withdraw remaining collateral after cycle + grace. |
 | **Views** | `get_config/state/members/phase/claimable/current_bid/join_request/pending_joins/history`, `has_won`, `is_completed`, `get_settled`, `get_pot`, `health_factor`, `required_collateral`, `collateral_unlock_at` |
 
+### Upgrades & the keeper
+
+Two operational pieces added in v6:
+
+- **`Group::upgrade(new_wasm_hash)`** — replaces a group's code in place, keeping
+  its state and address. Authorized by the **factory's admin**, not the group
+  owner: a group custodies member collateral, so letting its creator swap the code
+  in would let them drain it. The admin is read live from `config.factory`, so
+  `Factory::set_admin` rotation takes effect immediately. This is a trusted role —
+  put it behind a multisig or timelock before mainnet.
+- **`Factory::set_group_wasm(hash)`** — points future `create_group` calls at a new
+  build without deploying a new factory. Existing groups keep the wasm they were
+  created with; move those with `Group::upgrade`.
+- **Keeper** (`keeper/keeper.mjs`, scheduled by `.github/workflows/keeper.yml`) —
+  calls `settle` and `resolve_period`, which are permissionless, so **members never
+  sign to advance a period**. They sign only for their own money: contribute, bid,
+  claim, withdraw. Needs a funded account in `KEEPER_SECRET` and `FACTORY_ID`.
+
+> **Why the keeper widens the footprint.** The no-bid winner is drawn with
+> `env.prng()`, which is seeded per-transaction, so preflight and execution can
+> pick different members. Simulation declares only `Claimable(winner_it_drew)`, and
+> execution writing a different key traps with `scecExceededLimit`. The v6 group
+> wasm pre-touches every eligible member's keys so this cannot happen; the keeper
+> *also* declares them client-side, which is what lets it drive groups still
+> running the older `d58bb092…` build.
+
 ### `plexa-oracle` — XLM/USDC price feed
 Admin-set price (7-decimal fixed point), used only for XLM-collateral sizing and health
 factors. ⚠️ **Must be replaced with a real feed (e.g. Reflector) before mainnet** — an
@@ -209,18 +235,24 @@ The live deployment liquidates through the **real Soroswap testnet router** inst
 
 ## Deployed Contracts (Testnet)
 
-Current live deployment (**v5** — real Soroswap liquidation), from `frontend/.env`:
+Current live deployment (**v6** — upgradeable groups + deterministic resolve),
+from `frontend/.env`:
 
 | Contract | Address |
 |---|---|
-| **Factory** | `CD6OKM7JO3BFZ644VM6J7NP4BVXEDUQYDR4SFJJJNGDK2KWP3DFIVAMY` |
+| **Factory** | `CBXQ2IEZXPWRQAIUGGIW54ELNOJUNROUETVJHWJESUPJ7C5IWHH5ENFO` |
 | **USDC** (Circle testnet SAC) | `CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA` |
 | **XLM** (native SAC) | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` |
 | **Oracle** (XLM/USDC, admin-set) | `CBIXRTMPUHTK5YHVLPKXOKTJVOT3DV2WWNKDMZMZZTOMSOOA654BS7PO` |
 | **Soroswap Router** | `CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD` |
 
 - **Network:** `Test SDF Network ; September 2015` · RPC `https://soroban-testnet.stellar.org`
-- **Group Wasm hash:** `d58bb092c6ca36d38343983a07c17940c1bb7100b9d0524a9a58d54c8d17f3bb`
+- **Group Wasm hash:** `f598f06f1407eaddef082e42b55735258654d572b1254664b9ea17293a1f5606`
+- **Factory admin:** `GBQLFIT7UWCURWEDBR5JPCQPFIFYJ23AKIX24P6MOAAZ3AIDTSNE24FY`
+- **Superseded:** factory `CD6OKM7JO3BFZ644VM6J7NP4BVXEDUQYDR4SFJJJNGDK2KWP3DFIVAMY`
+  (group wasm `d58bb092…`). Its groups are **not upgradeable** — that build predates
+  the `upgrade` entrypoint — and its `resolve_period` can trap (see below). Those
+  groups still resolve via the keeper, which widens the footprint itself.
 - **Mainnet Soroswap router (for later, re-verify before use):**
   `CAG5LRYQ5JVEUI5TEID72EYOVX44TTUJT5BQR2J6J77FH65PCCFAJDDH`
 

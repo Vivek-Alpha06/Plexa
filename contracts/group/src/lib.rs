@@ -29,7 +29,7 @@ pub use types::*;
 
 use soroban_sdk::{
     auth::{ContractContext, InvokerContractAuthEntry, SubContractInvocation},
-    contract, contractimpl, symbol_short, token, vec, Address, Env, IntoVal, String, Symbol, Val,
+    contract, contractimpl, symbol_short, token, vec, Address, BytesN, Env, IntoVal, String, Symbol, Val,
     Vec,
 };
 
@@ -846,6 +846,30 @@ impl GroupContract {
         );
         env.events()
             .publish((symbol_short!("started"),), state.start_time);
+    }
+
+    // ---------------------------------------------------------------- Upgrade
+
+    /// Replace this group's code, keeping all state and its address.
+    ///
+    /// Authorized by the **factory's admin**, not the group owner: a group
+    /// custodies its members' collateral and pot, so letting whoever created
+    /// it swap the code in would let them drain it. The factory admin is a
+    /// single protocol-level authority, read live from `config.factory` so
+    /// rotating it via `Factory::set_admin` takes effect here immediately.
+    ///
+    /// This is still a trusted role — it can replace the logic guarding member
+    /// funds. Before mainnet it should sit behind a multisig or timelock so an
+    /// upgrade is visible before it lands.
+    pub fn upgrade(env: Env, new_wasm_hash: BytesN<32>) {
+        let config = get_config(&env);
+        let admin: Address =
+            env.invoke_contract(&config.factory, &symbol_short!("admin"), vec![&env]);
+        admin.require_auth();
+        env.deployer()
+            .update_current_contract_wasm(new_wasm_hash.clone());
+        env.events()
+            .publish((symbol_short!("upgraded"),), new_wasm_hash);
     }
 
     // ------------------------------------------------------------------- Views
