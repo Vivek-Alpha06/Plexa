@@ -26,6 +26,9 @@ const RPC_URL = process.env.RPC_URL || "https://soroban-testnet.stellar.org";
 const PASSPHRASE = process.env.NETWORK_PASSPHRASE || Networks.TESTNET;
 const FACTORY_ID = process.env.FACTORY_ID;
 const DRY_RUN = process.argv.includes("--dry-run");
+/** Keep running and re-check on an interval, rather than exiting after one pass. */
+const WATCH = process.argv.includes("--watch");
+const POLL_SECONDS = Number(process.env.POLL_SECONDS || 60);
 /** Safety valve: never chase more than this many periods per group per run. */
 const MAX_CATCHUP = Number(process.env.MAX_CATCHUP || 12);
 
@@ -194,10 +197,7 @@ async function advance(groupId) {
 }
 
 // ------------------------------------------------------------------- driver
-(async () => {
-  log(`keeper ${DRY_RUN ? "(dry run) " : ""}starting — factory ${FACTORY_ID}`);
-  if (!DRY_RUN) log(`keeper account ${SOURCE}`);
-
+async function runOnce() {
   const groups = await simulate(FACTORY_ID, "get_all_groups");
   log(`${groups.length} group(s) registered`);
 
@@ -210,6 +210,30 @@ async function advance(groupId) {
     }
   }
   log(`done — ${total} period(s) advanced`);
+  return total;
+}
+
+(async () => {
+  log(`keeper ${DRY_RUN ? "(dry run) " : ""}starting — factory ${FACTORY_ID}`);
+  if (!DRY_RUN) log(`keeper account ${SOURCE}`);
+
+  if (!WATCH) {
+    await runOnce();
+    return;
+  }
+
+  // Watch mode: for running on a host you control, instead of (or alongside)
+  // the scheduled workflow. A transient RPC failure must not kill the loop —
+  // an unattended keeper going quiet is how periods silently stop closing.
+  log(`watch mode — polling every ${POLL_SECONDS}s (ctrl-c to stop)`);
+  for (;;) {
+    try {
+      await runOnce();
+    } catch (e) {
+      log(`cycle failed — ${e.message}`);
+    }
+    await new Promise((r) => setTimeout(r, POLL_SECONDS * 1000));
+  }
 })().catch((e) => {
   console.error("keeper failed:", e);
   process.exit(1);

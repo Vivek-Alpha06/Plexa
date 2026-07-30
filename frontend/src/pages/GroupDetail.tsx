@@ -31,6 +31,11 @@ import type {
 
 /** Poll cadence while a group is live (leaderboard, paid flags, resolves). */
 const POLL_MS = 10_000;
+/**
+ * How long past the auction close before we stop saying "the keeper is on it"
+ * and admit it isn't. Generous enough to absorb a late cron tick.
+ */
+const KEEPER_OVERDUE = 10 * 60;
 
 interface Loaded {
   config: GroupConfig;
@@ -379,12 +384,23 @@ export function GroupDetail() {
                   </div>
                 )}
 
-                {clock.resolveDue && (
-                  <div className="banner info" style={{ marginBottom: 0, marginTop: 12 }}>
-                    Auction closed. The keeper is selecting the winner on-chain — the payout
-                    lands on their dashboard automatically.
-                  </div>
-                )}
+                {clock.resolveDue &&
+                  (clock.now - clock.auctionEnd > KEEPER_OVERDUE ? (
+                    // Don't claim the keeper is working when it plainly isn't —
+                    // a stuck group that says "in progress" is worse than one
+                    // that admits it's stuck.
+                    <div className="banner warn" style={{ marginBottom: 0, marginTop: 12 }}>
+                      <b>Period overdue.</b> The auction closed{" "}
+                      {Math.floor((clock.now - clock.auctionEnd) / 60)} min ago and the winner
+                      still hasn't been selected, so the keeper isn't running. Nobody's funds
+                      are at risk — the group resumes as soon as it comes back.
+                    </div>
+                  ) : (
+                    <div className="banner info" style={{ marginBottom: 0, marginTop: 12 }}>
+                      Auction closed. The keeper is selecting the winner on-chain — the payout
+                      lands on their dashboard automatically.
+                    </div>
+                  ))}
               </>
             )}
             {state.status === "Completed" && (
@@ -752,8 +768,9 @@ export function GroupDetail() {
 
                 {clock.resolveDue && (
                   <p className="muted" style={{ fontSize: 13, margin: "4px 0" }}>
-                    Auction closed — the keeper is advancing this period. The winner is
-                    credited automatically; no signature needed.
+                    {clock.now - clock.auctionEnd > KEEPER_OVERDUE
+                      ? "Waiting on the keeper — this period is overdue."
+                      : "Auction closed — the keeper is advancing this period. The winner is credited automatically; no signature needed."}
                   </p>
                 )}
 
