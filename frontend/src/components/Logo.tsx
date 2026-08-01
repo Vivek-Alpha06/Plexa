@@ -1,17 +1,9 @@
 import { useId } from "react";
 
-/* Plexa brand mark — a folded "P" monogram inside a 4-node orbital ring
-   (members orbiting the pooled protocol). Teal→cyan gradient, tuned to the
-   Plexa logo. Flat vector, crisp from 24px to 256px. Reused as navbar logo,
-   app header, wallet modal, loading states and favicon. */
-
-// Orbital nodes at the four cardinal points on the ring (viewBox 0 0 64 64).
-const NODES: [number, number][] = [
-  [32, 6],
-  [58, 32],
-  [32, 58],
-  [6, 32],
-];
+/* Plexa brand mark — a geometric "P" built from a solid stem and a half-ring
+   bowl (a torus segment, not a filled blob), set inside a faint single-node
+   orbital path. Teal→cyan gradient (#27E0D7 → #0BA7C2). Flat vector, no blur
+   or glow — reused as navbar logo, wallet modal, landing hero and favicon. */
 
 export function PlexaMark({
   size = 40,
@@ -23,8 +15,7 @@ export function PlexaMark({
   title?: string;
 }) {
   const uid = useId();
-  const gP = `plexa-p-${uid}`;
-  const gRing = `plexa-ring-${uid}`;
+  const grad = `plexa-grad-${uid}`;
 
   return (
     <svg
@@ -38,57 +29,26 @@ export function PlexaMark({
       className={`plexa-mark ${className ?? ""}`}
     >
       <defs>
-        <linearGradient id={gP} x1="18" y1="12" x2="42" y2="52" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#6ee7d6" />
-          <stop offset="0.55" stopColor="#22d3ee" />
-          <stop offset="1" stopColor="#0e9bb8" />
-        </linearGradient>
-        <linearGradient id={gRing} x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5eead4" />
-          <stop offset="1" stopColor="#38bdf8" />
+        <linearGradient id={grad} x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#27E0D7" />
+          <stop offset="100%" stopColor="#0BA7C2" />
         </linearGradient>
       </defs>
 
-      {/* orbital ring — segmented for a technical, in-motion feel */}
-      <circle
-        cx="32"
-        cy="32"
-        r="26"
-        stroke={`url(#${gRing})`}
-        strokeWidth="1.6"
-        strokeDasharray="30 12"
-        strokeLinecap="round"
-        opacity="0.75"
-      />
+      {/* faint orbital path — a single satellite node, not a busy ring of dots */}
+      <circle cx="32" cy="32" r="27" stroke={`url(#${grad})`} strokeWidth="1" opacity="0.3" />
+      <circle cx="54" cy="17" r="3.2" fill={`url(#${grad})`} />
 
-      {/* cardinal member nodes with a soft halo */}
-      {NODES.map(([x, y], i) => (
-        <g key={i}>
-          <circle cx={x} cy={y} r="5.5" fill={`url(#${gRing})`} opacity="0.18" />
-          <circle cx={x} cy={y} r="3" fill={`url(#${gRing})`} />
-        </g>
-      ))}
+      {/* bowl — a half-ring (torus segment), giving the letterform an
+          orbital cross-section instead of a plain filled counter */}
+      <circle cx="30" cy="24" r="10.5" fill="none" stroke={`url(#${grad})`} strokeWidth="9" />
 
-      {/* P monogram */}
-      <g
-        stroke={`url(#${gP})`}
-        strokeWidth="7.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      >
-        <path d="M22 16 V48" />
-        <path d="M22 16 H30 A10 10 0 0 1 30 36 H22" />
-      </g>
+      {/* stem — drawn last so it cleanly covers the ring's left half,
+          leaving only the bowl's outer arc visible */}
+      <rect x="19" y="9" width="11" height="43" rx="3" fill={`url(#${grad})`} />
 
-      {/* folded inner facet — the darker ribbon edge on the stem */}
-      <path
-        d="M20.4 19 V45"
-        stroke="#0b6b73"
-        strokeWidth="3"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
+      {/* subtle depth accent — a single fold line, no blur/glow */}
+      <line x1="21.6" y1="12.5" x2="21.6" y2="48.5" stroke="#0A7C8C" strokeWidth="1.3" strokeLinecap="round" opacity="0.35" />
     </svg>
   );
 }

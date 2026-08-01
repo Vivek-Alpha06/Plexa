@@ -13,7 +13,7 @@ export function Header() {
       <div className="row" style={{ gap: 22 }}>
         <Link to="/app/groups" className="brand">
           <PlexaMark size={24} />
-          Plexa<sup>™</sup>
+          PLEXA
         </Link>
         <nav className="nav-links">
           <NavLink to="/" end>

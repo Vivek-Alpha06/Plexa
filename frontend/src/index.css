@@ -90,9 +90,10 @@ a:hover {
 }
 .brand {
   font-family: "Space Grotesk", sans-serif;
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -110,8 +111,7 @@ a:hover {
   display: block;
   flex: none;
   transform-origin: center;
-  filter: drop-shadow(0 0 5px rgba(52, 211, 153, 0.22));
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Hover advances the highlighted pot to the next member — the savings circle rotates. */
@@ -119,7 +119,6 @@ a:hover {
 .brand:hover .plexa-mark,
 .plexa-logo:hover .plexa-mark {
   transform: rotate(60deg);
-  filter: drop-shadow(0 0 12px rgba(52, 211, 153, 0.55));
 }
 
 /* ----------------------------------------------------------- theme toggle */
