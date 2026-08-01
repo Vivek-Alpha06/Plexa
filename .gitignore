@@ -35,3 +35,6 @@ Thumbs.db
 *.swp
 *~
 scripts/node_modules/
+
+# ---- Generated activity export (regenerate with scripts/export-activity.mjs) ----
+docs/activity/
