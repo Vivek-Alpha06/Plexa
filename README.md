@@ -13,8 +13,8 @@ verifiable ledger of every action.
 
 ---
 
-## Demo video : https://youtu.be/pvfV9YEylpg
-## Live demo : https://plexa-eight.vercel.app/
+## Demo video link : https://youtu.be/pvfV9YEylpg
+## Live demo link : https://plexa-eight.vercel.app/
 ## Feedback Form: [Google Form](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog)
 ## Feedback sheet: [Google Sheet](https://docs.google.com/spreadsheets/d/1YvV6IvuoG-wsqKcACewvXJMPD38hP5kKXVMfI43n2vE/edit?usp=sharing)
 
@@ -67,9 +67,9 @@ verifiable ledger of every action.
 
 ## Screenshots
 
-| Landing page | Multi-account wallets | Group phase view | Transaction through wallet |
+| Landing page | Multi-account wallets | Phone view | Transaction through wallet |
 |:---:|:---:|:---:|:---:|
-| ![Landing page](screeenshot/landing_pg.png) | ![Two wallets](screeenshot/two_wallet.png) | ![Phase view](screeenshot/ph_view.png) | ![Transaction complete](screeenshot/paument_frieghter.png) |
+| ![Landing page](screeenshot/landing_pg.png) | ![Two wallets](screeenshot/two_wallet.png) | ![Phone view](screeenshot/ph_view.png) | ![Transaction complete](screeenshot/paument_frieghter.png) |
 
 > 📸 For more screenshots (group creation, collateral lock, auction round, Freighter/Albedo
 > connect, claiming payouts, …) see the [`screeenshot/`](screeenshot) folder.
@@ -191,9 +191,10 @@ Two operational pieces added in v6:
 > have no `upgrade` entrypoint to rescue them.
 
 ### `plexa-oracle` — XLM/USDC price feed
-Admin-set price (7-decimal fixed point), used only for XLM-collateral sizing and health
-factors. ⚠️ **Must be replaced with a real feed (e.g. Reflector) before mainnet** — an
-admin-set price controls collateral valuation.
+A **Reflector adapter** (7-decimal fixed point), used for XLM-collateral sizing and
+health factors. Reads real Reflector CEX/DEX feeds for XLM and USDC and derives a
+cross rate; refuses stale prices past `max_age`. No admin key can author a price —
+this replaced the earlier admin-set oracle.
 
 ### `plexa-swap` — Soroswap-compatible venue *(testnet fallback)*
 A mock XLM→USDC router matching the Soroswap router ABI, kept as an emergency fallback.
@@ -230,22 +231,6 @@ The live deployment liquidates through the **real Soroswap testnet router** inst
   The keeper keeps periods punctual, but if it stops, the group still advances as
   soon as any member acts, so funds are never frozen behind a stalled bot.
 
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| **Smart contracts** | Rust · [Soroban SDK](https://soroban.stellar.org) `22.0.11` · `no_std` |
-| **Build targets** | `wasm32v1-none` (deploy) · `wasm32-unknown-unknown` (release) |
-| **Chain** | Stellar Testnet (Protocol 23) · Soroban RPC |
-| **Tooling** | `stellar-cli` 26+ · Cargo workspace (4 crates) |
-| **Frontend** | React 18 · TypeScript 5 · Vite 5 |
-| **Chain SDK** | `@stellar/stellar-sdk` 16 · `@stellar/freighter-api` |
-| **Wallet** | Freighter (browser extension) |
-| **UI / motion** | Custom dark design system · Framer Motion · Lucide icons · Lenis |
-| **Routing** | React Router 6 |
-| **DeFi integrations** | Soroswap Router (liquidation swaps) · price oracle |
 
 ---
 
@@ -409,13 +394,8 @@ Plexa(v1)/
 
 ---
 
-## Getting Started
+*** CI/CD pipeline supported ***
 
-### Prerequisites
-- **Node.js 18+** and npm (frontend)
-- **Rust 1.96+** with `wasm32v1-none` / `wasm32-unknown-unknown` targets (contracts)
-- **[Freighter](https://freighter.app)** browser extension (for real testnet mode)
-- **[stellar-cli](https://developers.stellar.org/docs/tools/cli) 26+** (deploying)
 
 ### Run the frontend
 
