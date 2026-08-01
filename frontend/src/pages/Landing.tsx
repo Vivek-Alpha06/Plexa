@@ -34,8 +34,7 @@ import { FadeIn, SplitWords, TiltCard, Magnetic, Counter, useLenis, useParallax 
 import { useWallet } from "../context/WalletContext";
 import { useGroups } from "../lib/useGroups";
 import { Atmosphere } from "../components/Atmosphere";
-import { PlexaMark } from "../components/Logo";
-import { ThemeToggle } from "../components/ThemeToggle";
+import { IntroSplash } from "../components/IntroSplash";
 import "../landing.css";
 
 // Heavy R3F centerpiece — code-split so it never blocks first paint.
@@ -212,10 +211,8 @@ function Nav() {
     >
       <div className="pill">
         <Link to="/" className="lbrand">
-          <PlexaMark size={40} />
-          <span className="wordmark">
-            PLE<span className="wx">X</span>A
-          </span>
+          <img src="/plexa-p-mark.png" alt="" style={{ height: 40, width: "auto" }} />
+          <img src="/plexa-wordmark.png" alt="Plexa" style={{ height: 22, width: "auto" }} />
         </Link>
         <div className="links">
           <a className="navlink" href="#features">Features</a>
@@ -225,7 +222,6 @@ function Nav() {
           <a className="navlink" href="#faq">FAQ</a>
         </div>
         <div className="actions">
-          <ThemeToggle />
           <ConnectCTA size="sm" />
         </div>
       </div>
@@ -593,6 +589,8 @@ export function Landing() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
+      <IntroSplash />
+
       {/* Interactive, animated high-fidelity background atmosphere */}
       <Atmosphere />
       <motion.div className="scroll-progress" style={{ scaleX: bar }} aria-hidden />
@@ -731,10 +729,8 @@ export function Landing() {
         <div className="foot-grid">
           <div className="foot-brand">
             <div className="lbrand">
-              <PlexaMark size={34} />
-              <span className="wordmark">
-                PLE<span className="wx">X</span>A
-              </span>
+              <img src="/plexa-p-mark.png" alt="" style={{ height: 34, width: "auto" }} />
+              <img src="/plexa-wordmark.png" alt="Plexa" style={{ height: 19, width: "auto" }} />
             </div>
             <p>
               The protocol for circles that save. Pool, rotate and win the pot with
