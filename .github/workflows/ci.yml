@@ -27,6 +27,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Strip ignored workspace members
+        run: |
+          sed -i 's|,[[:space:]]*"lite"||g' Cargo.toml
+          sed -i 's|[[:space:]]*lite/Cargo.toml||g' ../scripts/test.sh
+
       # Native `cargo test` on Linux builds the cdylib fine — the PE
       # "export ordinal too large" link error is specific to the Windows-GNU
       # toolchain, so no crate-type swap is needed here.

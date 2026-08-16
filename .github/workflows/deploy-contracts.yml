@@ -41,6 +41,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Strip ignored workspace members
+        run: |
+          sed -i 's|,[[:space:]]*"lite"||g' contracts/Cargo.toml
+          sed -i 's|[[:space:]]*lite/Cargo.toml||g' scripts/test.sh
+
       # Pinned, not `stable`: the install hash of a contract is the sha256 of
       # its bytecode, and rustc codegen shifts between releases. A floating
       # toolchain means the hash a member reproduces from source need not match
