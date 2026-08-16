@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../contracts"
 
-CRATES="group/Cargo.toml factory/Cargo.toml oracle/Cargo.toml swap/Cargo.toml"
+CRATES="group/Cargo.toml factory/Cargo.toml oracle/Cargo.toml swap/Cargo.toml lite/Cargo.toml"
 
 restore() {
   sed -i 's/crate-type = \["rlib"\]/crate-type = ["cdylib", "rlib"]/' $CRATES

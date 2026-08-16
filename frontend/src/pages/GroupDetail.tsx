@@ -195,6 +195,18 @@ export function GroupDetail() {
 
   const run = useCallback(
     async (key: string, fn: () => Promise<unknown>) => {
+      // Every write funnels through here, so this is the one place the registry
+      // check can be enforced rather than merely displayed. An unregistered
+      // group may run byte-identical code while pointing `config.factory` at a
+      // contract the deployer controls — which hands them upgrade rights over,
+      // and therefore the ability to drain, everything members put in. Warning
+      // and still letting the transaction through is not a mitigation.
+      if (registered === false) {
+        setError(
+          "This group is not registered with Plexa's factory. Transactions are blocked because upgrade control over your funds may belong to whoever deployed it."
+        );
+        return;
+      }
       setBusy(key);
       setError(null);
       try {
@@ -207,7 +219,7 @@ export function GroupDetail() {
         setBusy(null);
       }
     },
-    [load, refreshBalance]
+    [load, refreshBalance, registered]
   );
 
   const members = data?.members ?? [];

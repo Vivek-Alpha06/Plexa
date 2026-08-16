@@ -25,6 +25,9 @@
 //! A price older than `max_age` is refused rather than returned. Reflector
 //! publishes on a fixed resolution (300s on current feeds), so `max_age` must
 //! sit comfortably above that or reads fail routinely between updates.
+#[cfg(test)]
+mod test;
+
 use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, symbol_short, vec, Address, Env, IntoVal,
     Symbol,

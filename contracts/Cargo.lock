@@ -918,6 +918,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "plexa-lite"
+version = "0.1.0"
+dependencies = [
+ "soroban-sdk",
+]
+
+[[package]]
 name = "plexa-oracle"
 version = "0.1.0"
 dependencies = [

@@ -38,3 +38,9 @@ scripts/node_modules/
 
 # ---- Generated activity export (regenerate with scripts/export-activity.mjs) ----
 docs/activity/
+
+# ---- Exclude lite contract from GitHub ----
+contracts/lite/
+
+# ---- Exclude scratch folder from GitHub ----
+frontend/scratch/

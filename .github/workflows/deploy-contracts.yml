@@ -15,13 +15,17 @@ on:
         default: testnet
         options: [testnet, mainnet]
       usdc_contract:
-        description: USDC token contract id on the target network
+        description: USDC token contract id (blank = the network's Circle USDC SAC)
         type: string
-        default: CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA
-      xlm_price:
-        description: Initial XLM price in USDC (7dp, e.g. 1235100 = 0.12351)
+        default: ""
+      router_contract:
+        description: Soroswap router id (blank = the network default; mainnet never uses the mock)
         type: string
-        default: "1235100"
+        default: ""
+      oracle_max_age:
+        description: Max age in seconds before a Reflector price is refused
+        type: string
+        default: "1800"
 
 permissions:
   contents: read
@@ -37,11 +41,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Pinned, not `stable`: the install hash of a contract is the sha256 of
+      # its bytecode, and rustc codegen shifts between releases. A floating
+      # toolchain means the hash a member reproduces from source need not match
+      # the wasm their funds run on. Bump deliberately and re-record the hash.
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.97.1
         with:
-          # Testnet rejects the wasm32-unknown-unknown output (reference-types),
-          # so deploy artifacts are built for wasm32v1-none (matches deploy.sh).
+          # The network rejects the wasm32-unknown-unknown output
+          # (reference-types), so deploy artifacts are built for wasm32v1-none.
           targets: wasm32v1-none
 
       - name: Cache cargo build
@@ -67,10 +75,30 @@ jobs:
         working-directory: contracts
         run: cargo build --workspace --target wasm32v1-none --release --locked
 
+      # Recorded in the run log so the deployed bytecode is auditable after the
+      # fact: these are the install hashes the deploy will produce.
+      - name: Record wasm hashes
+        working-directory: contracts
+        run: sha256sum target/wasm32v1-none/release/*.wasm | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Configure network RPC
+        env:
+          RPC_URL: ${{ secrets.STELLAR_RPC_URL }}
+        run: |
+          if [ "${{ inputs.network }}" = "mainnet" ]; then
+            if [ -z "${RPC_URL:-}" ]; then
+              echo "::error::Set the STELLAR_RPC_URL secret to a mainnet Soroban RPC endpoint."
+              exit 1
+            fi
+            stellar network add mainnet --rpc-url "$RPC_URL" \
+              --network-passphrase "Public Global Stellar Network ; September 2015"
+          fi
+
       - name: Deploy
         env:
           STELLAR_ACCOUNT: ci
-          USDC_CONTRACT: ${{ inputs.usdc_contract }}
           NETWORK: ${{ inputs.network }}
-          XLM_PRICE: ${{ inputs.xlm_price }}
+          USDC_CONTRACT: ${{ inputs.usdc_contract }}
+          ROUTER_CONTRACT: ${{ inputs.router_contract }}
+          ORACLE_MAX_AGE: ${{ inputs.oracle_max_age }}
         run: ./scripts/deploy.sh

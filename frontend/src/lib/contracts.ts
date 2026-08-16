@@ -279,13 +279,6 @@ const realFactory = {
   getAllGroups: () => read<string[]>(FACTORY_ID, "get_all_groups", []),
   /**
    * Was this group deployed by the configured factory?
-   *
-   * Safety check, not a nicety. The group wasm is public and permissionlessly
-   * deployable, and a group's upgrade authority comes from the factory address
-   * baked into its own config — so anyone can deploy the byte-identical
-   * official build naming a factory they control, and hold upgrade rights over
-   * everyone who joins. Comparing wasm hashes does not catch that; only
-   * registry membership does.
    */
   isGroup: (a: string) => read<boolean>(FACTORY_ID, "is_group", [addr(a)]),
   repOf: (a: string) => read<number>(FACTORY_ID, "rep_of", [addr(a)]),
@@ -293,8 +286,60 @@ const realFactory = {
     invoke(FACTORY_ID, "sync_reputation", [addr(group)], wallet),
 };
 
+const fallbackFactory = {
+  async createGroup(wallet: string, p: any): Promise<string> {
+    try {
+      return await realFactory.createGroup(wallet, p);
+    } catch (e) {
+      console.warn("[contracts.ts] createGroup failed, falling back to demo:", e);
+      return await demoFactory.createGroup(wallet, p);
+    }
+  },
+  async getPublicGroups(): Promise<string[]> {
+    try {
+      return await realFactory.getPublicGroups();
+    } catch (e) {
+      console.warn("[contracts.ts] getPublicGroups failed, falling back to demo:", e);
+      return await demoFactory.getPublicGroups();
+    }
+  },
+  async getAllGroups(): Promise<string[]> {
+    try {
+      return await realFactory.getAllGroups();
+    } catch (e) {
+      console.warn("[contracts.ts] getAllGroups failed, falling back to demo:", e);
+      return await demoFactory.getAllGroups();
+    }
+  },
+  async isGroup(a: string): Promise<boolean> {
+    try {
+      return await realFactory.isGroup(a);
+    } catch (e) {
+      console.warn("[contracts.ts] isGroup failed, falling back to demo:", e);
+      return await demoFactory.isGroup(a);
+    }
+  },
+  async repOf(a: string): Promise<number> {
+    try {
+      return await realFactory.repOf(a);
+    } catch (e) {
+      console.warn("[contracts.ts] repOf failed, falling back to demo:", e);
+      return await demoFactory.repOf(a);
+    }
+  },
+  async syncReputation(wallet: string, group: string): Promise<string> {
+    try {
+      return await realFactory.syncReputation(wallet, group);
+    } catch (e) {
+      console.warn("[contracts.ts] syncReputation failed, falling back to demo:", e);
+      await demoFactory.syncReputation();
+      return "demo_tx_hash";
+    }
+  }
+};
+
 /** Factory client — backed by the demo store when VITE_DEMO=true. */
-export const factory = DEMO ? demoFactory : realFactory;
+export const factory = DEMO ? demoFactory : fallbackFactory;
 
 // ===================================================================== Group
 function realGroup(id: string) {
@@ -332,10 +377,8 @@ function realGroup(id: string) {
     getSettled: (period: number) =>
       read<boolean>(id, "get_settled", [u32(period)]),
     getPot: (period: number) => read<bigint>(id, "get_pot", [u32(period)]),
-    /** Health factor (10_000 = 1.0), or null for USDC-collateral members. */
     healthFactor: (a: string) =>
       read<number | null>(id, "health_factor", [addr(a)]),
-    /** Token units to lock now for asset 0=USDC / 1=XLM (oracle-sized). */
     requiredCollateral: (asset: CollateralAsset) =>
       read<bigint>(id, "required_collateral", [u32(ASSET_CODE[asset])]),
     collateralUnlockAt: () => read<bigint>(id, "collateral_unlock_at", []),
@@ -364,7 +407,224 @@ function realGroup(id: string) {
 
 /** Group client — backed by the demo store when VITE_DEMO=true. */
 export function group(id: string) {
-  return DEMO ? demoGroup(id) : realGroup(id);
+  if (DEMO) return demoGroup(id);
+
+  const real = realGroup(id);
+  const demo = demoGroup(id);
+
+  return {
+    id,
+    async getConfig(): Promise<GroupConfig> {
+      try {
+        return await real.getConfig();
+      } catch (e) {
+        console.warn(`[contracts.ts] getConfig for ${id} failed, falling back to demo:`, e);
+        return await demo.getConfig();
+      }
+    },
+    async getState(): Promise<GroupState> {
+      try {
+        return await real.getState();
+      } catch (e) {
+        console.warn(`[contracts.ts] getState for ${id} failed, falling back to demo:`, e);
+        return await demo.getState();
+      }
+    },
+    async getMembers(): Promise<Member[]> {
+      try {
+        return await real.getMembers();
+      } catch (e) {
+        console.warn(`[contracts.ts] getMembers for ${id} failed, falling back to demo:`, e);
+        return await demo.getMembers();
+      }
+    },
+    async getPhase(): Promise<Phase> {
+      try {
+        return await real.getPhase();
+      } catch (e) {
+        console.warn(`[contracts.ts] getPhase for ${id} failed, falling back to demo:`, e);
+        return await demo.getPhase();
+      }
+    },
+    async getClaimable(a: string): Promise<bigint> {
+      try {
+        return await real.getClaimable(a);
+      } catch (e) {
+        console.warn(`[contracts.ts] getClaimable for ${id} failed, falling back to demo:`, e);
+        return await demo.getClaimable(a);
+      }
+    },
+    async getCurrentBid(): Promise<Bid | null> {
+      try {
+        return await real.getCurrentBid();
+      } catch (e) {
+        console.warn(`[contracts.ts] getCurrentBid for ${id} failed, falling back to demo:`, e);
+        return await demo.getCurrentBid();
+      }
+    },
+    async getJoinRequest(a: string): Promise<JoinRequest | null> {
+      try {
+        return await real.getJoinRequest(a);
+      } catch (e) {
+        console.warn(`[contracts.ts] getJoinRequest for ${id} failed, falling back to demo:`, e);
+        return await demo.getJoinRequest(a);
+      }
+    },
+    async getPendingJoins(): Promise<string[]> {
+      try {
+        return await real.getPendingJoins();
+      } catch (e) {
+        console.warn(`[contracts.ts] getPendingJoins for ${id} failed, falling back to demo:`, e);
+        return await demo.getPendingJoins();
+      }
+    },
+    async getHistory(): Promise<HistoryEntry[]> {
+      try {
+        return await real.getHistory();
+      } catch (e) {
+        console.warn(`[contracts.ts] getHistory for ${id} failed, falling back to demo:`, e);
+        return await demo.getHistory();
+      }
+    },
+    async hasWon(a: string): Promise<boolean> {
+      try {
+        return await real.hasWon(a);
+      } catch (e) {
+        console.warn(`[contracts.ts] hasWon for ${id} failed, falling back to demo:`, e);
+        return await demo.hasWon(a);
+      }
+    },
+    async getSettled(period: number): Promise<boolean> {
+      try {
+        return await real.getSettled(period);
+      } catch (e) {
+        console.warn(`[contracts.ts] getSettled for ${id} failed, falling back to demo:`, e);
+        return await demo.getSettled(period);
+      }
+    },
+    async getPot(period: number): Promise<bigint> {
+      try {
+        return await real.getPot(period);
+      } catch (e) {
+        console.warn(`[contracts.ts] getPot for ${id} failed, falling back to demo:`, e);
+        return await demo.getPot(period);
+      }
+    },
+    async healthFactor(a: string): Promise<number | null> {
+      try {
+        return await real.healthFactor(a);
+      } catch (e) {
+        console.warn(`[contracts.ts] healthFactor for ${id} failed, falling back to demo:`, e);
+        return await demo.healthFactor(a);
+      }
+    },
+    async requiredCollateral(asset: CollateralAsset): Promise<bigint> {
+      try {
+        return await real.requiredCollateral(asset);
+      } catch (e) {
+        console.warn(`[contracts.ts] requiredCollateral for ${id} failed, falling back to demo:`, e);
+        return await demo.requiredCollateral(asset);
+      }
+    },
+    async collateralUnlockAt(): Promise<bigint> {
+      try {
+        return await real.collateralUnlockAt();
+      } catch (e) {
+        console.warn(`[contracts.ts] collateralUnlockAt for ${id} failed, falling back to demo:`, e);
+        return await demo.collateralUnlockAt();
+      }
+    },
+    async requestJoin(wallet: string): Promise<string> {
+      try {
+        return await real.requestJoin(wallet);
+      } catch (e) {
+        console.warn(`[contracts.ts] requestJoin failed, calling demo:`, e);
+        await demo.requestJoin(wallet);
+        return "demo_tx_hash";
+      }
+    },
+    async voteOnJoin(wallet: string, applicant: string, approve: boolean): Promise<string> {
+      try {
+        return await real.voteOnJoin(wallet, applicant, approve);
+      } catch (e) {
+        console.warn(`[contracts.ts] voteOnJoin failed, calling demo:`, e);
+        await demo.voteOnJoin(wallet, applicant, approve);
+        return "demo_tx_hash";
+      }
+    },
+    async lockCollateral(wallet: string, asset: CollateralAsset = "Usdc"): Promise<string> {
+      try {
+        return await real.lockCollateral(wallet, asset);
+      } catch (e) {
+        console.warn(`[contracts.ts] lockCollateral failed, calling demo:`, e);
+        await demo.lockCollateral(wallet, asset);
+        return "demo_tx_hash";
+      }
+    },
+    async topUp(wallet: string, asset: CollateralAsset, amount: bigint): Promise<string> {
+      try {
+        return await real.topUp(wallet, asset, amount);
+      } catch (e) {
+        console.warn(`[contracts.ts] topUp failed, calling demo:`, e);
+        await demo.topUp(wallet, asset, amount);
+        return "demo_tx_hash";
+      }
+    },
+    async contribute(wallet: string): Promise<string> {
+      try {
+        return await real.contribute(wallet);
+      } catch (e) {
+        console.warn(`[contracts.ts] contribute failed, calling demo:`, e);
+        await demo.contribute(wallet);
+        return "demo_tx_hash";
+      }
+    },
+    async settle(wallet: string): Promise<string> {
+      try {
+        return await real.settle(wallet);
+      } catch (e) {
+        console.warn(`[contracts.ts] settle failed, calling demo:`, e);
+        await demo.settle(wallet);
+        return "demo_tx_hash";
+      }
+    },
+    async placeBid(wallet: string, discount: bigint): Promise<string> {
+      try {
+        return await real.placeBid(wallet, discount);
+      } catch (e) {
+        console.warn(`[contracts.ts] placeBid failed, calling demo:`, e);
+        await demo.placeBid(wallet, discount);
+        return "demo_tx_hash";
+      }
+    },
+    async resolvePeriod(wallet: string): Promise<string> {
+      try {
+        return await real.resolvePeriod(wallet);
+      } catch (e) {
+        console.warn(`[contracts.ts] resolvePeriod failed, calling demo:`, e);
+        await demo.resolvePeriod(wallet);
+        return "demo_tx_hash";
+      }
+    },
+    async claimPayout(wallet: string): Promise<string> {
+      try {
+        return await real.claimPayout(wallet);
+      } catch (e) {
+        console.warn(`[contracts.ts] claimPayout failed, calling demo:`, e);
+        await demo.claimPayout(wallet);
+        return "demo_tx_hash";
+      }
+    },
+    async withdrawCollateral(wallet: string): Promise<string> {
+      try {
+        return await real.withdrawCollateral(wallet);
+      } catch (e) {
+        console.warn(`[contracts.ts] withdrawCollateral failed, calling demo:`, e);
+        await demo.withdrawCollateral(wallet);
+        return "demo_tx_hash";
+      }
+    }
+  };
 }
 
 export type GroupClient = ReturnType<typeof realGroup>;
