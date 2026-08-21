@@ -40,3 +40,4 @@
 - docs(readme): enhance feature breakdown for rotating payouts and auctions
 - docs(security): document access control invariants on Factory admin role
 - docs(security): document non-custodial guarantee for member collateral
+- docs(pilot): add community growth channels and onboarding funnel analysis
