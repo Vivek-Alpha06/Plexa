@@ -29,3 +29,4 @@
 - feat(frontend): enhance mobile responsive layout for savings dashboard
 - style(frontend): adjust badge styling for Mainnet verified status
 - docs(submission): update commit milestone metrics to 100+ commits
+- docs(submission): verify StellarExpert transaction explorer links
