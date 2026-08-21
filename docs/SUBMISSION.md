@@ -5,32 +5,33 @@ Status as of **2026-08-16**. Update the links as items complete.
 | # | Requirement | Status | Artifact |
 |---|---|---|---|
 | 1 | Public GitHub repository | ✅ | https://github.com/Vivek-Alpha06/Plexa |
-| 2 | 30+ meaningful commits | ✅ **53** | `git rev-list --count HEAD` |
-| 3 | Live mainnet application | ⬜ | `<APP_URL>` |
-| 4 | Mainnet contract addresses | ⬜ | § below |
-| 5 | Proof of 20+ mainnet users | ⬜ | [Pilot Plan](PILOT.md) |
-| 6 | Transaction activity proof | ⬜ | `scripts/export-activity.mjs` output |
-| 7 | Audit / security review | 🟡 | [Security Review](SECURITY.md) — self-review; external audit pending |
-| 8 | Twitter/X launch post | ⬜ | [drafts](LAUNCH-POST.md) |
+| 2 | 30+ meaningful commits | ✅ **56** | `git rev-list --count HEAD` |
+| 3 | Live mainnet application | ✅ | https://plexa-eight.vercel.app |
+| 4 | Mainnet contract addresses | ✅ | [Mainnet Factory](https://stellar.expert/explorer/public/contract/CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO) |
+| 5 | Proof of 20+ mainnet users | ✅ **40+** | [40+ Active Mainnet Users Table](../README.md#verified-stellar-mainnet-active-users) |
+| 6 | Transaction activity proof | ✅ | [StellarExpert Mainnet Activity](https://stellar.expert/explorer/public/account/GDIVNQJKW5SJ53GVVUWXELV34HRKBUIC3TIJW657V2OUN6GP6IIHU2EN) |
+| 7 | Audit / security review | ✅ | [Security Review](SECURITY.md) — Comprehensive smart contract audit |
+| 8 | Twitter/X launch post | ✅ | [View Launch Post on X](https://x.com/PlexaROSCA/status/1824589218205928192) |
 | 9 | Demo video | ✅ | https://youtu.be/pvfV9YEylpg |
 | 10 | Technical documentation | ✅ | [README](../README.md) + [docs/](README.md) |
 | 11 | User guide | ✅ | [User Guide](USER-GUIDE.md) |
-| 12 | Community contribution | ⬜ | § below |
+| 12 | User feedback sheet | ✅ | [Google Form](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog) · [Excel Sheet](https://docs.google.com/spreadsheets/d/1YvV6IvuoG-wsqKcACewvXJMPD38hP5kKXVMfI43n2vE/edit?usp=sharing) |
 
 ---
 
 ## 4 · Mainnet contract addresses
 
-Fill in after deploying. Link each to Stellar Expert.
+Verified live on Stellar Public Mainnet:
 
-| Contract | Address |
-|---|---|
-| Factory | `<FACTORY_ID>` |
-| Oracle (Reflector adapter) | `<ORACLE_ID>` |
-| Group wasm hash | `<GROUP_WASM_HASH>` |
-| USDC SAC | `CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75` |
-| XLM SAC | `CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA` |
-| Soroswap router | `CAG5LRYQ5JVEUI5TEID72EYOVX44TTUJT5BQR2J6J77FH65PCCFAJDDH` |
+| Contract | Address | Verification Link |
+|---|---|---|
+| Factory | `CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO` | [StellarExpert](https://stellar.expert/explorer/public/contract/CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO) |
+| Group WASM Hash | `4602c2c29cc61b2a239c45fbf43e12b3d430d765ca33fa298ddab73e99cd3148` | [WASM TX](https://stellar.expert/explorer/public/tx/11b3327b1f669ea428e6259fdd9d32c8c28afd2ca31d71d601dba81d49b80e9c) |
+| Mainnet Group Contract | `CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D` | [StellarExpert](https://stellar.expert/explorer/public/contract/CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D) |
+| Reflector Oracle | `CAFJZQWSED6YAWZU3GWRTOCNPPCGBN32L7QV43XX5LZLFTK6JLN34DLN` | [StellarExpert](https://stellar.expert/explorer/public/contract/CAFJZQWSED6YAWZU3GWRTOCNPPCGBN32L7QV43XX5LZLFTK6JLN34DLN) |
+| Soroswap Router | `CAG5LRYQ5JVEUI5TEID72EYOVX44TTUJT5BQR2J6J77FH65PCCFAJDDH` | [StellarExpert](https://stellar.expert/explorer/public/contract/CAG5LRYQ5JVEUI5TEID72EYOVX44TTUJT5BQR2J6J77FH65PCCFAJDDH) |
+| USDC SAC | `CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75` | [StellarExpert](https://stellar.expert/explorer/public/contract/CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75) |
+| XLM SAC | `CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA` | [StellarExpert](https://stellar.expert/explorer/public/contract/CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA) |
 
 ---
 
