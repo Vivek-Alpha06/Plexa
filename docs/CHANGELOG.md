@@ -43,3 +43,4 @@
 - docs(pilot): add community growth channels and onboarding funnel analysis
 - docs(pilot): record feedback collection spreadsheet metadata
 - docs(pilot): document Twitter/X community engagement strategy
+- docs(pilot): document Instagram educational content strategy
