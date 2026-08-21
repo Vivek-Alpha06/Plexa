@@ -14,3 +14,4 @@
 - refactor(scripts): implement exponential backoff for transaction confirmation polling
 - feat(scripts): add automated keypair loader from local identity store
 - docs(architecture): update protocol contract relationship diagrams
+- refactor(frontend): improve contract call error handling and notification banners
