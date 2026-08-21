@@ -3,14 +3,9 @@
 set -euo pipefail
 cd "$(dirname "$0")/../contracts"
 
-cargo build --target wasm32-unknown-unknown --release
+stellar contract build --optimize
 
-OUT=target/wasm32-unknown-unknown/release
-echo "Built:"
-ls -la "$OUT"/plexa_group.wasm "$OUT"/plexa_factory.wasm
+OUT=target/wasm32v1-none/release
+echo "Built & Optimized:"
+ls -la "$OUT"/plexa_*.wasm
 
-# Optionally optimize if the stellar CLI is available.
-if command -v stellar >/dev/null 2>&1; then
-  stellar contract optimize --wasm "$OUT/plexa_group.wasm" || true
-  stellar contract optimize --wasm "$OUT/plexa_factory.wasm" || true
-fi
