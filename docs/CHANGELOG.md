@@ -24,3 +24,4 @@
 - docs(user-guide): document period rotation and pot distribution mechanics
 - docs(api): add contract interface reference for FactoryContract methods
 - docs(api): add contract interface reference for GroupContract methods
+- chore(ci): configure GitHub Actions workflow for contract compilation checks
