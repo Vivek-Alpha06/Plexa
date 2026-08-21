@@ -25,3 +25,4 @@
 - docs(api): add contract interface reference for FactoryContract methods
 - docs(api): add contract interface reference for GroupContract methods
 - chore(ci): configure GitHub Actions workflow for contract compilation checks
+- chore(config): verify Vite build configuration for production deployment
