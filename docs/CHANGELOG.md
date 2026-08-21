@@ -48,3 +48,4 @@
 - style(frontend): polish dark theme color palette and typography contrast
 - docs(submission): finalize deliverables table formatting for judges
 - docs(submission): confirm complete alignment with hackathon submission guidelines
+- chore(release): bump protocol version to v1.0.0-mainnet
