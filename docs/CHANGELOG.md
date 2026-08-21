@@ -35,3 +35,4 @@
 - refactor(scripts): add transaction hash logging for audit verification
 - feat(scripts): add balance check assertion before deployment execution
 - docs(readme): polish project badge alignment and typography
+- docs(readme): add technical stack overview for Soroban and Rust ecosystem
