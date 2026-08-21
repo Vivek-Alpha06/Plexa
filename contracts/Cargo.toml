@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["group", "factory", "oracle", "swap", "lite"]
+members = ["group", "factory", "oracle", "swap"]
 
 [workspace.dependencies]
 soroban-sdk = "22.0.11"
@@ -14,3 +14,4 @@ debug-assertions = false
 panic = "abort"
 codegen-units = 1
 lto = true
+
