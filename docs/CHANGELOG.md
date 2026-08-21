@@ -26,3 +26,4 @@
 - docs(api): add contract interface reference for GroupContract methods
 - chore(ci): configure GitHub Actions workflow for contract compilation checks
 - chore(config): verify Vite build configuration for production deployment
+- feat(frontend): enhance mobile responsive layout for savings dashboard
