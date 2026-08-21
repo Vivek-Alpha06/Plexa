@@ -23,3 +23,4 @@
 - docs(user-guide): document governance voting and join approval workflow
 - docs(user-guide): document period rotation and pot distribution mechanics
 - docs(api): add contract interface reference for FactoryContract methods
+- docs(api): add contract interface reference for GroupContract methods
