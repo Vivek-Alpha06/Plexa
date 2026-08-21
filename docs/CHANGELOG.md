@@ -37,3 +37,4 @@
 - docs(readme): polish project badge alignment and typography
 - docs(readme): add technical stack overview for Soroban and Rust ecosystem
 - docs(readme): add local environment setup instructions for developers
+- docs(readme): enhance feature breakdown for rotating payouts and auctions
