@@ -44,3 +44,4 @@
 - docs(pilot): record feedback collection spreadsheet metadata
 - docs(pilot): document Twitter/X community engagement strategy
 - docs(pilot): document Instagram educational content strategy
+- perf(frontend): optimize bundle splitting for static assets
