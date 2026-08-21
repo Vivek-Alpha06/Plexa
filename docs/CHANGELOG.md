@@ -31,3 +31,4 @@
 - docs(submission): update commit milestone metrics to 100+ commits
 - docs(submission): verify StellarExpert transaction explorer links
 - docs(submission): add testnet to mainnet migration retrospective
+- docs(faq): add frequently asked questions for ROSCA circle participants
