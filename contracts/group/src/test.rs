@@ -1,6 +1,6 @@
 ﻿#![cfg(test)]
 use crate::{
-    CollateralAsset, GroupContract, GroupContractClient, GroupParams, GroupStatus, Visibility,
+    GroupContract, GroupContractClient, GroupParams, GroupStatus,
 };
 use soroban_sdk::{
     testutils::Address as _,
