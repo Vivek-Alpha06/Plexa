@@ -42,3 +42,4 @@
 - docs(security): document non-custodial guarantee for member collateral
 - docs(pilot): add community growth channels and onboarding funnel analysis
 - docs(pilot): record feedback collection spreadsheet metadata
+- docs(pilot): document Twitter/X community engagement strategy
