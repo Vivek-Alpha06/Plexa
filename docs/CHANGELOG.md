@@ -17,3 +17,4 @@
 - refactor(frontend): improve contract call error handling and notification banners
 - perf(frontend): optimize tree shaking for @stellar/stellar-sdk imports
 - docs(security): document internal audit verification and invariant guarantees
+- docs(pilot): update Level 6 cohort recruitment metrics and milestones
