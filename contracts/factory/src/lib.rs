@@ -1,10 +1,10 @@
-﻿#![no_std]
+#![no_std]
 //! Plexa Factory — ultra-compact registry and group deployer.
 
 mod test;
 
 use soroban_sdk::{
-    contract, contractimpl, symbol_short, Address, BytesN, Env, IntoVal, String, Symbol, Val, Vec,
+    contract, contractimpl, symbol_short, Address, BytesN, Env, IntoVal, String, Val, Vec,
 };
 
 #[soroban_sdk::contracttype]
