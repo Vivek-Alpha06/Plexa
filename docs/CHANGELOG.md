@@ -21,3 +21,4 @@
 - docs(user-guide): add step-by-step wallet connection guide for Freighter
 - docs(user-guide): add group creation wizard documentation for Mainnet
 - docs(user-guide): document governance voting and join approval workflow
+- docs(user-guide): document period rotation and pot distribution mechanics
