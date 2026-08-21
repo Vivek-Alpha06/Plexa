@@ -10,3 +10,4 @@
 - feat(factory): enhance group registry query methods get_public_groups
 - docs(contracts): document Soroban SDK v2 spec shaking optimizations
 - test(contracts): add verification assertions for group deployment parameters
+- feat(scripts): add resource fee simulation before Mainnet broadcast
