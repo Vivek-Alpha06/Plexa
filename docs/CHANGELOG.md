@@ -11,3 +11,4 @@
 - docs(contracts): document Soroban SDK v2 spec shaking optimizations
 - test(contracts): add verification assertions for group deployment parameters
 - feat(scripts): add resource fee simulation before Mainnet broadcast
+- refactor(scripts): implement exponential backoff for transaction confirmation polling
