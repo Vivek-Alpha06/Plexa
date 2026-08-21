@@ -38,3 +38,4 @@
 - docs(readme): add technical stack overview for Soroban and Rust ecosystem
 - docs(readme): add local environment setup instructions for developers
 - docs(readme): enhance feature breakdown for rotating payouts and auctions
+- docs(security): document access control invariants on Factory admin role
