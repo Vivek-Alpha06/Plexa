@@ -63,7 +63,6 @@ export function GroupDetail() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [bidInput, setBidInput] = useState("");
-  const [lockAsset, setLockAsset] = useState<CollateralAsset>("Usdc");
   const [topUpAmount, setTopUpAmount] = useState("");
   const [topUpAsset, setTopUpAsset] = useState<CollateralAsset>("Usdc");
   // One-shot notification guards.
@@ -700,39 +699,15 @@ export function GroupDetail() {
                   </div>
                 )}
                 {!pendingVote && approvedToLock && (
-                  <>
-                    <div className="field" style={{ marginBottom: 4 }}>
-                      <span className="muted" style={{ fontSize: 13 }}>
-                        Collateral asset
-                      </span>
-                      {xlmGroup ? (
-                        <select value="Xlm" disabled>
-                          <option value="Xlm">XLM — 100% of pot ({fmtXlm(data.reqXlm)})</option>
-                        </select>
-                      ) : (
-                        <select
-                          value={lockAsset}
-                          onChange={(e) => setLockAsset(e.target.value as CollateralAsset)}
-                        >
-                          <option value="Usdc">USDC — 100% of pot ({fmtUsdc(data.reqUsdc)})</option>
-                          <option value="Xlm">XLM — 150% of pot (≈ {fmtXlm(data.reqXlm)})</option>
-                        </select>
-                      )}
-                    </div>
-                    <button
-                      className="btn primary"
-                      disabled={busy === "lock"}
-                      onClick={() =>
-                        run("lock", () => g.lockCollateral(address, xlmGroup ? "Xlm" : lockAsset))
-                      }
-                    >
-                      {busy === "lock"
-                        ? "Locking…"
-                        : !xlmGroup && lockAsset === "Usdc"
-                          ? `Lock ${fmtUsdc(data.reqUsdc)}`
-                          : `Lock ${fmtXlm(data.reqXlm)}`}
-                    </button>
-                  </>
+                  <button
+                    className="btn primary"
+                    disabled={busy === "lock"}
+                    onClick={() =>
+                      run("lock", () => g.lockCollateral(address, "Usdc"))
+                    }
+                  >
+                    {busy === "lock" ? "Confirming…" : "Complete Join"}
+                  </button>
                 )}
                 {!pendingVote && !approvedToLock && (
                   <button
@@ -810,11 +785,22 @@ export function GroupDetail() {
                 )}
 
                 {clock.resolveDue && (
-                  <p className="muted" style={{ fontSize: 13, margin: "4px 0" }}>
-                    {clock.now - clock.auctionEnd > KEEPER_OVERDUE
-                      ? "Waiting on the keeper — this period is overdue."
-                      : "Auction closed — the keeper is advancing this period. The winner is credited automatically; no signature needed."}
-                  </p>
+                  <div style={{ marginTop: 8 }}>
+                    <p className="muted" style={{ fontSize: 13, margin: "4px 0" }}>
+                      {clock.now - clock.auctionEnd > KEEPER_OVERDUE
+                        ? "Waiting on the keeper — this period is overdue."
+                        : "Auction closed. The winner is being processed on-chain."}
+                    </p>
+                    {address && (
+                      <button
+                        className="btn primary"
+                        disabled={busy === "resolve"}
+                        onClick={() => run("resolve", () => g.resolvePeriod(address!))}
+                      >
+                        {busy === "resolve" ? "Resolving on-chain…" : "⚡ Announce Winner & Settle"}
+                      </button>
+                    )}
+                  </div>
                 )}
 
                 {claimable > 0n && (
