@@ -9,3 +9,4 @@
 - refactor(factory): optimize salt generation for deterministic deployer
 - feat(factory): enhance group registry query methods get_public_groups
 - docs(contracts): document Soroban SDK v2 spec shaking optimizations
+- test(contracts): add verification assertions for group deployment parameters
