@@ -12,3 +12,4 @@
 - test(contracts): add verification assertions for group deployment parameters
 - feat(scripts): add resource fee simulation before Mainnet broadcast
 - refactor(scripts): implement exponential backoff for transaction confirmation polling
+- feat(scripts): add automated keypair loader from local identity store
