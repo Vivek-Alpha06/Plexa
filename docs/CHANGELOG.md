@@ -19,3 +19,4 @@
 - docs(security): document internal audit verification and invariant guarantees
 - docs(pilot): update Level 6 cohort recruitment metrics and milestones
 - docs(user-guide): add step-by-step wallet connection guide for Freighter
+- docs(user-guide): add group creation wizard documentation for Mainnet
