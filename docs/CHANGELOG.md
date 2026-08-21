@@ -33,3 +33,4 @@
 - docs(submission): add testnet to mainnet migration retrospective
 - docs(faq): add frequently asked questions for ROSCA circle participants
 - refactor(scripts): add transaction hash logging for audit verification
+- feat(scripts): add balance check assertion before deployment execution
