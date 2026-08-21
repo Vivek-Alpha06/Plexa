@@ -4,3 +4,4 @@
 
 - refactor(contracts): verify memory safety and zero-copy data structures
 - perf(group): minimize WASM export table footprint for lower rent cost
+- feat(group): ensure permissionless group settlement idempotency
