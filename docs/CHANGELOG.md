@@ -6,3 +6,4 @@
 - perf(group): minimize WASM export table footprint for lower rent cost
 - feat(group): ensure permissionless group settlement idempotency
 - feat(group): streamline member vote tally mathematical resolution
+- refactor(factory): optimize salt generation for deterministic deployer
