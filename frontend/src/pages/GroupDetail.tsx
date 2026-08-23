@@ -65,6 +65,7 @@ export function GroupDetail() {
   const [bidInput, setBidInput] = useState("");
   const [topUpAmount, setTopUpAmount] = useState("");
   const [topUpAsset, setTopUpAsset] = useState<CollateralAsset>("Usdc");
+  const [showRulebook, setShowRulebook] = useState(false);
   // One-shot notification guards.
   const hfNotified = useRef(0);
   const collNotified = useRef(false);
@@ -345,7 +346,7 @@ export function GroupDetail() {
             {config.description}
           </p>
         </div>
-        <div className="row">
+        <div className="row" style={{ gap: 8 }}>
           <span className="pill amber">{currencyLabel(cur)}</span>
           <span className="pill">{config.visibility}</span>
           <span
@@ -355,8 +356,41 @@ export function GroupDetail() {
           >
             {state.status}
           </span>
+          <button
+            className="btn sm secondary"
+            onClick={() => setShowRulebook(!showRulebook)}
+            style={{ fontSize: 12, padding: "4px 10px" }}
+          >
+            {showRulebook ? "✕ Close Rules" : "📖 ROSCA Rules"}
+          </button>
         </div>
       </div>
+
+      {showRulebook && (
+        <div className="card" style={{ marginBottom: 16, background: "var(--bg-elev-2)", border: "1px solid var(--accent)" }}>
+          <div className="section-title" style={{ marginTop: 0 }}>📖 How this ROSCA Circle Works</div>
+          <div className="grid cols-3" style={{ gap: 12, marginTop: 8 }}>
+            <div className="card" style={{ fontSize: 13, background: "var(--bg-elev-1)" }}>
+              <b>1. Pay Fixed Contribution</b>
+              <p className="muted" style={{ margin: "4px 0 0" }}>
+                Each period, every member contributes {inCur(config.contribution_amount)} to fund the shared pot ({inCur(config.pot_size)}).
+              </p>
+            </div>
+            <div className="card" style={{ fontSize: 13, background: "var(--bg-elev-1)" }}>
+              <b>2. Discount Auction Window</b>
+              <p className="muted" style={{ margin: "4px 0 0" }}>
+                Members bid a discount to receive the pot early. Higher discount wins the pot, and the discount is split equally among all members!
+              </p>
+            </div>
+            <div className="card" style={{ fontSize: 13, background: "var(--bg-elev-1)" }}>
+              <b>3. 100% Collateral Return</b>
+              <p className="muted" style={{ margin: "4px 0 0" }}>
+                Locked collateral protects against missed contributions. Once the full cycle finishes, 100% of your deposit unlocks for withdrawal.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Health-factor warning for the connected XLM-collateral member. */}
       {isMember && !myRemoved && hfBelow1 && (
@@ -540,29 +574,63 @@ export function GroupDetail() {
               )}
 
               {isMember && !myHasWon && !myRemoved && phase === "Auction" && (
-                <div className="row" style={{ marginTop: 14 }}>
-                  <input
-                    type="number"
-                    placeholder={
-                      bid
-                        ? `Beat ${inCur(bid.discount)} to lead`
-                        : `Discount in ${currencyLabel(cur)} (higher leads)`
-                    }
-                    value={bidInput}
-                    onChange={(e) => setBidInput(e.target.value)}
-                  />
-                  <button
-                    className="btn primary"
-                    disabled={busy === "bid" || !bidInput}
-                    onClick={() =>
-                      run("bid", () => g.placeBid(address!, usdcToUnits(bidInput))).then(() =>
-                        setBidInput("")
-                      )
-                    }
-                  >
-                    {busy === "bid" ? "Bidding…" : "Place Bid"}
-                  </button>
-                </div>
+                <>
+                  <div className="row" style={{ marginTop: 14 }}>
+                    <input
+                      type="number"
+                      placeholder={
+                        bid
+                          ? `Beat ${inCur(bid.discount)} to lead`
+                          : `Discount in ${currencyLabel(cur)} (higher leads)`
+                      }
+                      value={bidInput}
+                      onChange={(e) => setBidInput(e.target.value)}
+                    />
+                    <button
+                      className="btn primary"
+                      disabled={busy === "bid" || !bidInput}
+                      onClick={() =>
+                        run("bid", () => g.placeBid(address!, usdcToUnits(bidInput))).then(() =>
+                          setBidInput("")
+                        )
+                      }
+                    >
+                      {busy === "bid" ? "Bidding…" : "Place Bid"}
+                    </button>
+                  </div>
+                  {bidInput && Number(bidInput) > 0 && (
+                    <div
+                      className="card"
+                      style={{
+                        marginTop: 10,
+                        background: "var(--bg-elev-2)",
+                        padding: "10px 14px",
+                        border: "1px solid var(--border)",
+                      }}
+                    >
+                      <div className="row between" style={{ fontSize: 13 }}>
+                        <span className="muted">Offered Bid Discount:</span>
+                        <span style={{ fontWeight: 600 }}>
+                          {bidInput} {currencyLabel(cur)}
+                        </span>
+                      </div>
+                      <div className="row between" style={{ fontSize: 13, marginTop: 4 }}>
+                        <span className="muted">Estimated Net Pot Payout:</span>
+                        <span className="green-text" style={{ fontWeight: 700 }}>
+                          {inCur(
+                            config.pot_size > usdcToUnits(bidInput)
+                              ? config.pot_size - usdcToUnits(bidInput)
+                              : 0n
+                          )}
+                        </span>
+                      </div>
+                      <div className="faint" style={{ fontSize: 11, marginTop: 4 }}>
+                        💡 Your {bidInput} {currencyLabel(cur)} discount will be distributed
+                        equally among all {config.target_members} members as dividend savings.
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
               {isMember && !myHasWon && !myRemoved && phase !== "Auction" && (
                 <div className="muted" style={{ marginTop: 10 }}>
