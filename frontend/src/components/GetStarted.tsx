@@ -96,8 +96,12 @@ export function GetStarted({ onDone }: { onDone?: () => void }) {
         {busy ? "Setting up…" : "Get me set up"}
       </button>
 
+      <p className="faint" style={{ fontSize: 12, marginTop: 10, marginBottom: 0 }}>
+        ℹ️ <b>Network Reserve & Fee Note:</b> Stellar accounts require a small base reserve (~1–2 XLM) to exist on-chain. Soroban contract transaction fees are tiny fractions of a cent (~0.00001 XLM).
+      </p>
+
       {ready === true && steps && (
-        <p className="muted" style={{ fontSize: 13, marginBottom: 0 }}>
+        <p className="muted" style={{ fontSize: 13, marginBottom: 0, marginTop: 8 }}>
           You're ready — join a group to get started.
         </p>
       )}
