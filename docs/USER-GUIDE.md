@@ -181,6 +181,6 @@ circle work for everyone else. Only join circles you can see through.
 
 - Something broken or confusing → open an issue on
   [GitHub](https://github.com/Vivek-Alpha06/Plexa/issues)
-- Feedback → the [feedback form](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog)
+- Feedback & Suggestions → view the [community feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing)
 - Verify anything yourself → every action links to
   [Stellar Expert](https://stellar.expert), where the transaction is public

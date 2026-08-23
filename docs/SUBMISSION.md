@@ -15,7 +15,7 @@ Status as of **2026-08-16**. Update the links as items complete.
 | 9 | Demo video | ✅ | https://youtu.be/pvfV9YEylpg |
 | 10 | Technical documentation | ✅ | [README](../README.md) + [docs/](README.md) |
 | 11 | User guide | ✅ | [User Guide](USER-GUIDE.md) |
-| 12 | User feedback sheet | ✅ | [Google Form](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog) · [Excel Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
+| 12 | User feedback sheet | ✅ | [Excel Feedback Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
 
 ---
 
