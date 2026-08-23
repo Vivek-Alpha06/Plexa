@@ -253,9 +253,10 @@ export function Dashboard() {
         Your complete on-chain activity across every Plexa group.
       </p>
 
-      <div className="grid cols-3" style={{ marginBottom: 8 }}>
+      <div className="grid cols-4" style={{ marginBottom: 8 }}>
         <Stat label="Groups joined" value={`${myGroups.length}`} />
-        <Stat label="Pots won" value={`${wins}`} />
+        <Stat label="Total saved / paid" value={fmtTotals(totalContributed)} />
+        <Stat label="Pots won" value={`${wins} (${fmtTotals(totalWon)})`} />
         <Stat label="Available to withdraw" value={fmtTotals(availableNow)} />
       </div>
       {defaults > 0 && (
