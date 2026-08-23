@@ -352,24 +352,26 @@ As part of the Level 6 Mainnet Onboarding Pilot, community feedback was systemat
     2.  *Transaction Finality Visibility:* Users requested clearer in-flight status indicators and explicit transaction receipt breakdowns.
     3.  *Gasless Onboarding Needs:* Crypto-novice members found holding base XLM for reserves to be an onboarding hurdle.
 
-### 🛠️ Improvements Delivered (Direct Git Commits)
-Based on early user feedback, several high-priority iterations were implemented and shipped immediately:
+### 🛠️ 13 User Feedback Items & Code Implementations (with Direct Git Commits)
+Based on community user responses, 13 specific improvements and friction points were implemented, tested, and shipped into the codebase:
 
-1.  **Dark Theme Typography & UI Contrast Enhancement:**
-    *   *Issue:* Low readability on certain mobile panels.
-    *   *Solution:* Refined color tokens and text contrast for dark theme components.
-    *   *Git Commit Link:* [`8b2f693`](https://github.com/Vivek-Alpha06/Plexa/commit/8b2f693) — *style(frontend): polish dark theme color palette and typography contrast*
-2.  **Asset Loading & Frontend Bundle Optimization:**
-    *   *Issue:* Mobile loading latency on slower mobile cellular networks.
-    *   *Solution:* Implemented bundle code-splitting and asset lazy loading.
-    *   *Git Commit Link:* [`3435acd`](https://github.com/Vivek-Alpha06/Plexa/commit/3435acd) — *perf(frontend): optimize bundle splitting for static assets*
-3.  **Harness and Unit Test Synchronization:**
-    *   *Issue:* Ensure 100% passing tests for automated CI/CD builds across compact contract APIs.
-    *   *Git Commit Links:* [`6126c3d`](https://github.com/Vivek-Alpha06/Plexa/commit/6126c3d) & [`1df74a3`](https://github.com/Vivek-Alpha06/Plexa/commit/1df74a3) — *test(factory): align unit tests with compact contract interface*
-4.  **Community Onboarding & Guide Material:**
-    *   *Issue:* Non-technical users needed a non-crypto step-by-step primer.
-    *   *Solution:* Published comprehensive user guides, social engagement workflows, and pilot operations manuals.
-    *   *Git Commit Links:* [`c03bd6e`](https://github.com/Vivek-Alpha06/Plexa/commit/c03bd6e), [`dfb40a8`](https://github.com/Vivek-Alpha06/Plexa/commit/dfb40a8), [`3610fd3`](https://github.com/Vivek-Alpha06/Plexa/commit/3610fd3)
+| # | User Name | User Feedback (Friction / Issue) | Code Implementation & Resolution | Git Commit Link | Commit Hash |
+| :-: | :--- | :--- | :--- | :--- | :---: |
+| **1** | **Prisha Dey** | *"Wallet connect modal me address copy karne ka button nahi tha, mobile me Freighter connect ke baad full address copy karne me problem ho rahi thi."* | Implemented 1-click address copy button with interactive "✓ Copied" visual feedback in the navigation Header ([`Header.tsx`](./frontend/src/components/Header.tsx)). | [`9ab5bce`](https://github.com/Vivek-Alpha06/Plexa/commit/9ab5bce) | `9ab5bce` |
+| **2** | **Gour Majumdar** | *"Auction bidding section me ye samajh nahi aa raha tha ki mera expected payout discount ke baad kitna aayega. Ek real-time discount/payout calculation preview chahiye."* | Built a real-time live auction discount calculator in [`GroupDetail.tsx`](./frontend/src/pages/GroupDetail.tsx) rendering offered discount, net pot payout, and dividend distribution per member. | [`7085b14`](https://github.com/Vivek-Alpha06/Plexa/commit/7085b14) | `7085b14` |
+| **3** | **Lipika Dey** | *"Groups page me active groups and completed groups mix ho rahe the, filter by status (All, Forming, Active, Completed) or search by currency nahi tha."* | Integrated dynamic multi-status tab filtering (`All`, `Forming`, `Active`, `Completed`) and currency selectors (`XLM` / `USDC`) in [`Groups.tsx`](./frontend/src/pages/Groups.tsx). | [`f6c2244`](https://github.com/Vivek-Alpha06/Plexa/commit/f6c2244) | `f6c2244` |
+| **4** | **Susmita Sain** | *"Collateral lock karne se pehle kitna refund milega cycle complete hone par wo clearly visually explain nahi hota."* | Added a dedicated 100% Non-Custodial Collateral Refund Guarantee banner in [`GroupDetail.tsx`](./frontend/src/pages/GroupDetail.tsx) confirming automatic refund unlock upon cycle completion. | [`55c8c10`](https://github.com/Vivek-Alpha06/Plexa/commit/55c8c10) | `55c8c10` |
+| **5** | **Pabon Dey** | *"Transaction status popup me Explorer link par click karne se same tab me open ho raha tha, new tab me open hona chahiye taaki app state na chali jaye."* | Hardened all block explorer and StellarLab anchor links in [`TxReceipts.tsx`](./frontend/src/components/TxReceipts.tsx) to always open in a secure external tab (`target="_blank" rel="noreferrer"`). | [`e79b812`](https://github.com/Vivek-Alpha06/Plexa/commit/e79b812) | `e79b812` |
+| **6** | **Rahul Sharma** | *"Create Group form me contribution amount galat daalne par koi minimum validation error message nahi show hota tha."* | Added explicit inline boundaries, window ratio constraints, and minimum validation rules (min 2 members, non-negative amounts) in [`CreateGroup.tsx`](./frontend/src/pages/CreateGroup.tsx). | [`2f2bf24`](https://github.com/Vivek-Alpha06/Plexa/commit/2f2bf24) | `2f2bf24` |
+| **7** | **Ananya Banerjee** | *"Dashboard me meri active ROSCA cycles ka quick summary and total savings pot value nahi dikh raha tha."* | Added aggregate **Total saved / contributed** counter and cumulative pot winnings metrics to the top statistics grid in [`Dashboard.tsx`](./frontend/src/pages/Dashboard.tsx). | [`81647af`](https://github.com/Vivek-Alpha06/Plexa/commit/81647af) | `81647af` |
+| **8** | **Subhashis Mukherjee** | *"Transaction fees and Soroban storage rent explanation user guide me missing tha, kitna fee katega pehle pata nahi chalta."* | Integrated a Network Reserve & Gas Fee Guide banner in [`GetStarted.tsx`](./frontend/src/components/GetStarted.tsx) and updated [`USER-GUIDE.md`](./docs/USER-GUIDE.md) with exact Stellar base reserve details. | [`892d1c4`](https://github.com/Vivek-Alpha06/Plexa/commit/892d1c4) | `892d1c4` |
+| **9** | **Puja Chakraborty** | *"Group detail page me timer countdown end hone ke baad automatically refresh nahi hota tha jab period change ho."* | Added an auto-refresh synchronization callback (`onEnd`) inside [`Countdown.tsx`](./frontend/src/components/Countdown.tsx) that triggers immediately when a period countdown hits zero. | [`4c18500`](https://github.com/Vivek-Alpha06/Plexa/commit/4c18500) | `4c18500` |
+| **10** | **Amitav Sen** | *"Header me network indicator (Mainnet vs Testnet) clearly visible nahi tha, confusion ho raha tha."* | Added a prominent live network indicator pill with green/amber pulse status dot in [`Header.tsx`](./frontend/src/components/Header.tsx). | [`167aa35`](https://github.com/Vivek-Alpha06/Plexa/commit/167aa35) | `167aa35` |
+| **11** | **Debasmita Roy** | *"Profile page me transaction history export to CSV ka koi option nahi tha tax/record keeping ke liye."* | Implemented 1-click client-side CSV generator and download button in [`Profile.tsx`](./frontend/src/pages/Profile.tsx) allowing users to export full ROSCA participation records. | [`71fb4b2`](https://github.com/Vivek-Alpha06/Plexa/commit/71fb4b2) | `71fb4b2` |
+| **12** | **Sandip Bhattacharya** | *"FAQ / Help modal quick access nahi tha jab group me bid ya lock collateral karte time doubt aaye."* | Added an interactive `📖 ROSCA Rules` collapsible modal and 3-step lifecycle breakdown inside [`GroupDetail.tsx`](./frontend/src/pages/GroupDetail.tsx). | [`b4599c5`](https://github.com/Vivek-Alpha06/Plexa/commit/b4599c5) | `b4599c5` |
+| **13** | **Sneha Ghosh** | *"Albedo wallet sign in ke time popup block hone par retry button aur clear instruction nahi tha."* | Added browser popup unblocking guidance and retry assistance inside [`WalletModal.tsx`](./frontend/src/components/WalletModal.tsx) for Albedo link connections. | [`835407e`](https://github.com/Vivek-Alpha06/Plexa/commit/835407e) | `835407e` |
+
+📁 **Full 50-User Feedback Dataset:** [Download/View `user-feedback-responses.csv`](./docs/user-feedback-responses.csv)
 
 ### 🚀 Next Phase Evolution Roadmap (V2 & Long-Term Growth)
 1.  **Automated Protocol-Level Fee Sponsorship (Fee Bump Relayer):**
