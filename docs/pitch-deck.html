@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plexa — Pitch Deck (Stellar & Soroban)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #34d399;
+      --accent-glow: rgba(52, 211, 153, 0.25);
+      --accent-purple: #a78bfa;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 20% 15%, rgba(52, 211, 153, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 85%, rgba(167, 139, 250, 0.08) 0%, transparent 40%);
+    }
+    .deck-container {
+      width: 100%;
+      max-width: 960px;
+      padding: 24px;
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .slide-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(20px);
+      min-height: 480px;
+      display: none;
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .slide-card.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    h1 { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 12px; }
+    h2 { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 20px; color: var(--text); }
+    p.subtitle { font-size: 18px; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
+    .item-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .item-box h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+    .item-box p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+    .stat-num { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+    .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding: 0 8px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    .btn-prev { background: rgba(255, 255, 255, 0.05); color: var(--text); border: 1px solid var(--border); }
+    .btn-prev:hover { background: rgba(255, 255, 255, 0.1); }
+    .btn-next { background: var(--accent); color: #000; font-weight: 700; box-shadow: 0 0 20px var(--accent-glow); }
+    .btn-next:hover { opacity: 0.9; transform: translateY(-1px); }
+    .slide-indicator { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--text-faint); }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- Slide 1: Cover -->
+    <div class="slide-card active" id="slide-1">
+      <div class="badge">🌐 Stellar Mainnet Live · Soroban Protocol</div>
+      <h1>Plexa Protocol</h1>
+      <p class="subtitle">Bringing the world's <b>$500 Billion</b> informal community savings circles on-chain with trustless collateral, open discount auctions, and automated default protection.</p>
+      
+      <div class="grid-3" style="margin-top: 40px;">
+        <div class="item-box">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Non-Custodial Collateral</div>
+        </div>
+        <div class="item-box">
+          <div class="stat-num">0.00001</div>
+          <div class="stat-label">Stellar Tx Cost ($)</div>
+        </div>
+        <div class="item-box">
+          <div class="stat-num">50+</div>
+          <div class="stat-label">Verified Mainnet Users</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: Problem -->
+    <div class="slide-card" id="slide-2">
+      <div class="badge" style="background: rgba(248, 113, 113, 0.1); border-color: rgba(248, 113, 113, 0.3); color: #f87171;">⚠️ The Problem</div>
+      <h2>$500B+ In Informal Savings Plagued by Fraud & Default</h2>
+      <p class="subtitle">1.4 Billion unbanked adults rely on informal peer circles (Chit Funds, Tandas, Susu), facing massive systemic risks:</p>
+      
+      <div class="grid-2">
+        <div class="item-box">
+          <h3>🚨 Organizer Embezzlement</h3>
+          <p>Centralized treasurers frequently abscond or misappropriate pooled community funds with zero recourse.</p>
+        </div>
+        <div class="item-box">
+          <h3>💸 Free-Rider Defaulters</h3>
+          <p>Early winners take the pooled lump-sum and stop contributing to subsequent rounds, victimizing later members.</p>
+        </div>
+        <div class="item-box">
+          <h3>📉 Zero Credit History</h3>
+          <p>Decades of disciplined participation generate zero verifiable credit scoring for formal financial inclusion.</p>
+        </div>
+        <div class="item-box">
+          <h3>📓 Opaque Paper Bookkeeping</h3>
+          <p>Physical ledgers lead to accounting errors, delayed disbursements, and unverifiable dispute settlements.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Solution -->
+    <div class="slide-card" id="slide-3">
+      <div class="badge">💡 The Solution</div>
+      <h2>Trustless, Mathematical ROSCA on Soroban</h2>
+      <p class="subtitle">Plexa replaces untrusted middlemen with immutable, audited Soroban smart contracts on Stellar.</p>
+      
+      <div class="grid-2">
+        <div class="item-box">
+          <h3>🛡️ 100% Collateral Escrow</h3>
+          <p>Members deposit non-custodial collateral prior to joining. Defaulters are covered automatically from escrow.</p>
+        </div>
+        <div class="item-box">
+          <h3>⚡ Open Discount Auction</h3>
+          <p>Members bid a discount to receive funds early. Highest discount wins; the discount splits as dividends among members!</p>
+        </div>
+        <div class="item-box">
+          <h3>🤖 Autonomous DEX Liquidation</h3>
+          <p>Cross-asset collateral (XLM for USDC pots) is auto-liquidated via Soroswap DEX Router and Reflector Oracles.</p>
+        </div>
+        <div class="item-box">
+          <h3>📜 On-Chain Reputation</h3>
+          <p>Every cleanly-completed cycle builds portable, verifiable on-chain credit scores without centralized KYC.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Market Opportunity -->
+    <div class="slide-card" id="slide-4">
+      <div class="badge">🌍 Global Market</div>
+      <h2>Massive Untapped Global Demand</h2>
+      <p class="subtitle">Informal savings circles exist across 90+ emerging markets under trusted regional traditions:</p>
+      
+      <div class="grid-4">
+        <div class="item-box">
+          <h3>🇮🇳 India (Chit Funds / Kuri)</h3>
+          <p>$40B+ legal registered industry + massive $100B+ informal neighborhood committee market.</p>
+        </div>
+        <div class="item-box">
+          <h3>🇲🇽 Latin America (Tandas / Cundinas)</h3>
+          <p>Over 40% of adult population actively participates in informal community Tandas.</p>
+        </div>
+        <div class="item-box">
+          <h3>🇰🇪 Africa (Chamas / Susu)</h3>
+          <p>Drives over 60% of rural household savings and micro-business capital formation.</p>
+        </div>
+        <div class="item-box">
+          <h3>🌐 Why Stellar Wins</h3>
+          <p>Sub-second finality, micro-penny transaction fees, and global MoneyGram cash cash-in/out ramps.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Traction & Mainnet Proof -->
+    <div class="slide-card" id="slide-5">
+      <div class="badge">📈 Traction & Milestones</div>
+      <h2>Level 6 Stellar Mainnet Black Belt</h2>
+      <p class="subtitle">Plexa is not just an idea — it is fully deployed, verified, and operational on Stellar Public Mainnet.</p>
+      
+      <div class="grid-3">
+        <div class="item-box">
+          <div class="stat-num">#64061228</div>
+          <div class="stat-label">Mainnet Ledger Deployed</div>
+        </div>
+        <div class="item-box">
+          <div class="stat-num">51+</div>
+          <div class="stat-label">Verified Mainnet Users</div>
+        </div>
+        <div class="item-box">
+          <div class="stat-num">200+</div>
+          <div class="stat-label">Instagram Likes & Community</div>
+        </div>
+      </div>
+
+      <div class="item-box" style="margin-top: 20px;">
+        <h3>🔗 Mainnet Contract Factory</h3>
+        <p style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); word-break: break-all;">
+          CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO
+        </p>
+      </div>
+    </div>
+
+    <!-- Slide 6: Roadmap & Summary -->
+    <div class="slide-card" id="slide-6">
+      <div class="badge">🚀 Future Roadmap</div>
+      <h2>From Protocol to Global Movement</h2>
+      <p class="subtitle">Scaling financial inclusion with gasless onboarding and seamless fiat rails.</p>
+      
+      <div class="grid-3">
+        <div class="item-box">
+          <h3>⚡ Phase 1 (Live)</h3>
+          <p>Mainnet Factory, Discount Auctions, Multi-Asset Collateral, Security Self-Audit.</p>
+        </div>
+        <div class="item-box">
+          <h3>💳 Phase 2 (Q3-Q4 2026)</h3>
+          <p>Fee Bump Gasless Onboarding, SEP-24 MoneyGram cash in/out, Telegram alerts.</p>
+        </div>
+        <div class="item-box">
+          <h3>🌾 Phase 3 (2027)</h3>
+          <p>Blend Protocol Yield-Bearing Collateral & Native Mobile App (iOS / Android).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn btn-prev" onclick="prevSlide()">← Previous</button>
+      <div class="slide-indicator" id="indicator">Slide 1 / 6</div>
+      <button class="btn btn-next" onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <script>
+    let current = 1;
+    const total = 6;
+    function updateSlide() {
+      document.querySelectorAll('.slide-card').forEach((el, idx) => {
+        el.classList.toggle('active', idx + 1 === current);
+      });
+      document.getElementById('indicator').innerText = `Slide ${current} / ${total}`;
+    }
+    function nextSlide() {
+      if (current < total) { current++; updateSlide(); }
+    }
+    function prevSlide() {
+      if (current > 1) { current--; updateSlide(); }
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+  </script>
+</body>
+</html>

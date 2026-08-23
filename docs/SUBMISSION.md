@@ -16,6 +16,7 @@ Status as of **2026-08-16**. Update the links as items complete.
 | 10 | Technical documentation | ✅ | [README](../README.md) + [docs/](README.md) |
 | 11 | User guide | ✅ | [User Guide](USER-GUIDE.md) |
 | 12 | User feedback sheet | ✅ | [Excel Feedback Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
+| 13 | Official Pitch Deck | ✅ | [Pitch Deck (Markdown)](PITCH-DECK.md) · [Interactive Presentation](pitch-deck.html) |
 
 ---
 
