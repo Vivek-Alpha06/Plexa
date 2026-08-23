@@ -15,7 +15,7 @@ Think of it as a trustless, on-chain version of the informal savings circles (kn
 | 🧪 **Testnet Contract Explorer** | [StellarExpert Testnet Contract](https://stellar.expert/explorer/testnet/contract/CDOYIGNCIR4QTUTAUYEFSW7IJVS6ZMOFV6CW574VFGHQ5ZDCQCJZ4GDZ) | Verifiable Soroban WASM Contract ID on Stellar Testnet |
 | 📜 **Proof of Deployment** | [SUBMISSION.md](./docs/SUBMISSION.md) | Official Mainnet & Testnet Soroban WASM verification report |
 | 🐦 **Twitter/X Official Handle** | [@Plexa_v1 on X](https://x.com/Plexa_v1) | Official Twitter/X announcements & community updates |
-| 📸 **Instagram Official Account** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) | Official Instagram community handle & updates |
+| 📸 **Instagram Official Account** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) | **200+ Likes on Instagram** · Official community showcase & updates |
 | 🐤 **Twitter/X Showcase Post** | [View Launch Post on X](https://x.com/PlexaROSCA/status/1824589218205928192) | Official launch post thread & feature walkthrough |
 | 📺 **YouTube Walkthrough Demo** | [Watch Demo Video](https://youtu.be/pvfV9YEylpg) | Full video walkthrough of Plexa protocol features |
 | 📝 **User Onboarding Feedback Form**| [Give Product Feedback](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog) | Official Google Form feedback collector |
@@ -393,6 +393,7 @@ Based on early user feedback, several high-priority iterations were implemented 
 *   [x] **Transaction activity proof:** Direct ledger links on StellarExpert.
 *   [x] **Audit/security review proof:** Internal review available in [SECURITY.md](./docs/SECURITY.md).
 *   [x] **Twitter/X launch post link:** [View Launch Post on X](https://x.com/PlexaROSCA/status/1824589218205928192)
+*   [x] **Instagram community showcase:** [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) (**200+ Likes on Instagram**)
 *   [x] **Demo video link:** [Watch Demo Video](https://youtu.be/pvfV9YEylpg)
 *   [x] **Technical documentation:** Detailed specs in README and `docs/`.
 *   [x] **User guide/documentation:** Provided in [USER-GUIDE.md](./docs/USER-GUIDE.md).
