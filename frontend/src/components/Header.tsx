@@ -1,13 +1,27 @@
+import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useWallet } from "../context/WalletContext";
 import { fmtUsdc, shortAddr } from "../lib/format";
-import { DEMO } from "../lib/config";
+import { DEMO, NETWORK } from "../lib/config";
 import { demoNameFor } from "../lib/demo";
 import { NotificationBell } from "./NotificationBell";
 import { PlexaMark } from "./Logo";
 
 export function Header() {
   const { address, balance, provider, openPicker, disconnect } = useWallet();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (address) {
+      navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const isMainnet = NETWORK === "public" || NETWORK === "mainnet";
+
   return (
     <header className="header">
       <div className="row" style={{ gap: 22 }}>
@@ -24,25 +38,46 @@ export function Header() {
           <NavLink to="/app/profile">Profile</NavLink>
         </nav>
       </div>
-      <div className="row">
+      <div className="row" style={{ gap: 8 }}>
+        <span
+          className={`pill ${isMainnet ? "green" : "amber"}`}
+          title={`Active Stellar Network: ${isMainnet ? "Public Mainnet" : "Testnet"}`}
+          style={{ display: "inline-flex", alignItems: "center", gap: 5 }}
+        >
+          <span
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: "50%",
+              backgroundColor: isMainnet ? "#10b981" : "#f59e0b",
+              display: "inline-block",
+            }}
+          />
+          {DEMO ? "Demo" : isMainnet ? "Mainnet" : "Testnet"}
+        </span>
         {address ? (
           <>
-            {DEMO && (
-              <span className="pill" title="Demo mode — simulated funds, no real network">
-                Demo
-              </span>
-            )}
             <NotificationBell address={address} />
             <span className="pill green" title="Your USDC balance">
               {fmtUsdc(balance)}
             </span>
-            <button
-              className="btn sm"
-              onClick={disconnect}
-              title={`${address} · ${provider ?? ""} — click to disconnect / switch account`}
-            >
-              {(DEMO && demoNameFor(address)) || shortAddr(address)}
-            </button>
+            <div className="row" style={{ gap: 4 }}>
+              <button
+                className="btn sm"
+                onClick={disconnect}
+                title={`${address} · ${provider ?? ""} — click to switch account`}
+              >
+                {(DEMO && demoNameFor(address)) || shortAddr(address)}
+              </button>
+              <button
+                className="btn sm secondary"
+                onClick={handleCopy}
+                title="Copy wallet address"
+                style={{ padding: "4px 8px", fontSize: 12 }}
+              >
+                {copied ? "✓ Copied" : "📋 Copy"}
+              </button>
+            </div>
           </>
         ) : (
           <button className="btn primary" onClick={openPicker}>
