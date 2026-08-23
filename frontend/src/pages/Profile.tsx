@@ -35,9 +35,52 @@ export function Profile() {
     v.members.find((m) => m.addr === address)?.has_won
   ).length;
 
+  const exportCsv = () => {
+    if (!mine.length) return;
+    const headers = [
+      "Group Name",
+      "Group ID",
+      "Status",
+      "Currency",
+      "Your State",
+      "Has Won",
+      "Collateral Locked",
+    ];
+    const rowsData = mine.map((v) => {
+      const me = v.members.find((m) => m.addr === address);
+      return [
+        `"${v.config.name.replace(/"/g, '""')}"`,
+        v.id,
+        v.state.status,
+        v.config.currency,
+        me?.removed ? "Removed" : me?.in_default ? "Default" : "Active Member",
+        me?.has_won ? "Yes" : "No",
+        me?.collateral_asset === "Xlm"
+          ? `${fmtXlm(me.collateral_xlm)} XLM`
+          : `${fmtUsdc(me?.collateral_usdc ?? 0n)} USDC`,
+      ].join(",");
+    });
+    const csvContent = [headers.join(","), ...rowsData].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `plexa_rosca_history_${address?.slice(0, 8)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div>
-      <h1 style={{ marginBottom: 4 }}>Profile</h1>
+      <div className="row between" style={{ marginBottom: 4 }}>
+        <h1 style={{ margin: 0 }}>Profile</h1>
+        {mine.length > 0 && (
+          <button className="btn sm secondary" onClick={exportCsv} title="Download your ROSCA history as CSV">
+            📥 Export History (CSV)
+          </button>
+        )}
+      </div>
       <p className="muted" style={{ marginTop: 0 }}>
         Your Plexa identity, reputation and memberships.
       </p>
