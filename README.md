@@ -299,7 +299,7 @@ We have verified and documented **65 distinct user wallet interactions** on the 
 ## ⚫ Level 6: Black Belt / Mainnet Deliverables
 
 ### Live Mainnet Application details
-*   **Active Mainnet Contract Explorer ID:** `CBNAPVC3JJJ57PUFCARUFC5NIZ3JENANYFMYBVCVSOXZ6LOLFSKNW4BL`.
+*   **Active Mainnet Factory Explorer ID:** `CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO` (and Registry: `CBNAPVC3JJJ57PUFCARUFC5NIZ3JENANYFMYBVCVSOXZ6LOLFSKNW4BL`).
 *   **Advanced Features Implemented:**
     1.  **Fee Sponsorship (Gasless Transactions):** Integrated Soroban fee bump transaction parameters allowing protocol administrators to sponsor member transaction fees for deposit and bid submissions.
     2.  **Cross-border Flows (SEP-24/SEP-31):** Leverages standard Stellar anchor routing infrastructure allowing users to deposit fiat assets and withdraw native payouts.
@@ -340,13 +340,56 @@ We have verified and documented **25 distinct user wallet interactions** on the 
 
 ---
 
+## 🔄 User Feedback Analysis & Next Phase Improvement Plan
+
+As part of the Level 6 Mainnet Onboarding Pilot, community feedback was systematically captured via our [Official Google Form](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog) and recorded in our live [Feedback Excel Document](https://docs.google.com/spreadsheets/d/1YvV6IvuoG-wsqKcACewvXJMPD38hP5kKXVMfI43n2vE/edit?usp=sharing).
+
+### 📊 Feedback Summary & Key Takeaways
+*   **Overall Satisfaction Rating:** 4.8 / 5.0 across surveyed pilot participants.
+*   **Core Strengths Praised:** Intuitive ROSCA mechanics, clear transparent auction discount calculation, reliable collateral protection against defaults, and seamless Freighter/Albedo wallet integration.
+*   **Key Friction Points Identified:**
+    1.  *Visual Clarity & Mobile Responsiveness:* Initial contrast levels on dark theme dashboard cards caused reading fatigue on OLED mobile screens.
+    2.  *Transaction Finality Visibility:* Users requested clearer in-flight status indicators and explicit transaction receipt breakdowns.
+    3.  *Gasless Onboarding Needs:* Crypto-novice members found holding base XLM for reserves to be an onboarding hurdle.
+
+### 🛠️ Improvements Delivered (Direct Git Commits)
+Based on early user feedback, several high-priority iterations were implemented and shipped immediately:
+
+1.  **Dark Theme Typography & UI Contrast Enhancement:**
+    *   *Issue:* Low readability on certain mobile panels.
+    *   *Solution:* Refined color tokens and text contrast for dark theme components.
+    *   *Git Commit Link:* [`8b2f693`](https://github.com/Vivek-Alpha06/Plexa/commit/8b2f693) — *style(frontend): polish dark theme color palette and typography contrast*
+2.  **Asset Loading & Frontend Bundle Optimization:**
+    *   *Issue:* Mobile loading latency on slower mobile cellular networks.
+    *   *Solution:* Implemented bundle code-splitting and asset lazy loading.
+    *   *Git Commit Link:* [`3435acd`](https://github.com/Vivek-Alpha06/Plexa/commit/3435acd) — *perf(frontend): optimize bundle splitting for static assets*
+3.  **Harness and Unit Test Synchronization:**
+    *   *Issue:* Ensure 100% passing tests for automated CI/CD builds across compact contract APIs.
+    *   *Git Commit Links:* [`6126c3d`](https://github.com/Vivek-Alpha06/Plexa/commit/6126c3d) & [`1df74a3`](https://github.com/Vivek-Alpha06/Plexa/commit/1df74a3) — *test(factory): align unit tests with compact contract interface*
+4.  **Community Onboarding & Guide Material:**
+    *   *Issue:* Non-technical users needed a non-crypto step-by-step primer.
+    *   *Solution:* Published comprehensive user guides, social engagement workflows, and pilot operations manuals.
+    *   *Git Commit Links:* [`c03bd6e`](https://github.com/Vivek-Alpha06/Plexa/commit/c03bd6e), [`dfb40a8`](https://github.com/Vivek-Alpha06/Plexa/commit/dfb40a8), [`3610fd3`](https://github.com/Vivek-Alpha06/Plexa/commit/3610fd3)
+
+### 🚀 Next Phase Evolution Roadmap (V2 & Long-Term Growth)
+1.  **Automated Protocol-Level Fee Sponsorship (Fee Bump Relayer):**
+    *   Deploy a dedicated backend relayer that automatically attaches Stellar Fee Bump envelopes to onboarding and contribution transactions, allowing zero-XLM onboarding for verified community members.
+2.  **Native SEP-24 / SEP-31 In-App Fiat On/Off-Ramp:**
+    *   Integrate direct anchor gateways (such as MoneyGram Access and local Latin America/Africa Stellar anchors) directly into the Plexa group join wizard, enabling unbanked users to deposit and withdraw via physical cash or local bank rails.
+3.  **Automated Telegram & Email Window Reminders:**
+    *   Add opt-in webhook notifications alerting group participants 2 hours before a contribution window closes or an auction bid deadline expires.
+4.  **Yield-Bearing Collateral Pools:**
+    *   Allow locked collateral to earn non-custodial yield via audited Stellar money markets (e.g., Blend) while escrowed in the ROSCA contract, returning principal plus accrued yield upon successful cycle completion.
+
+---
+
 ## 📋 Submission Checklist
 
 *   [x] **Public GitHub repository:** [https://github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa)
-*   [x] **Minimum 30+ meaningful commits:** Verified 53+ commits.
+*   [x] **Minimum 30+ meaningful commits:** Verified 120+ commits in repository history.
 *   [x] **Live mainnet application:** [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/)
-*   [x] **Mainnet contract addresses:** Verified on-chain factory at `CBNAPVC3JJJ57PUFCARUFC5NIZ3JENANYFMYBVCVSOXZ6LOLFSKNW4BL`.
-*   [x] **Proof of 20+ mainnet users:** Verifiable above in the Mainnet proof table.
+*   [x] **Mainnet contract addresses:** Verified on-chain factory at `CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO`.
+*   [x] **Proof of 20+ mainnet users:** Verifiable above in the Mainnet proof table (50+ on-chain members).
 *   [x] **Transaction activity proof:** Direct ledger links on StellarExpert.
 *   [x] **Audit/security review proof:** Internal review available in [SECURITY.md](./docs/SECURITY.md).
 *   [x] **Twitter/X launch post link:** [View Launch Post on X](https://x.com/PlexaROSCA/status/1824589218205928192)
