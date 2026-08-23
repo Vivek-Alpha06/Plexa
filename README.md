@@ -19,7 +19,7 @@ Think of it as a trustless, on-chain version of the informal savings circles (kn
 | 🐤 **Twitter/X Showcase Post** | [View Launch Post on X](https://x.com/PlexaROSCA/status/1824589218205928192) | Official launch post thread & feature walkthrough |
 | 📺 **YouTube Walkthrough Demo** | [Watch Demo Video](https://youtu.be/pvfV9YEylpg) | Full video walkthrough of Plexa protocol features |
 | 📝 **User Onboarding Feedback Form**| [Give Product Feedback](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog) | Official Google Form feedback collector |
-| 📊 **Feedback Excel Document** | [View Feedback Excel Sheet](https://docs.google.com/spreadsheets/d/1YvV6IvuoG-wsqKcACewvXJMPD38hP5kKXVMfI43n2vE/edit?usp=sharing) | Exported onboarding feedback record sheet |
+| 📊 **Feedback Excel Document** | [View Feedback Excel Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) | Exported onboarding feedback record sheet |
 | 🛡️ **Smart Contract Audit** | [SECURITY.md](./docs/SECURITY.md) | Formal Soroban smart contract internal security review |
 | 📚 **User & Developer Guide** | [USER-GUIDE.md](./docs/USER-GUIDE.md) | Contribution guide, developer setup, and protocol user guide |
 | 📈 **Pilot Growth Plan** | [PILOT.md](./docs/PILOT.md) | Level 6 user recruitment, test setups, and community growth |
@@ -342,7 +342,7 @@ We have verified and documented **25 distinct user wallet interactions** on the 
 
 ## 🔄 User Feedback Analysis & Next Phase Improvement Plan
 
-As part of the Level 6 Mainnet Onboarding Pilot, community feedback was systematically captured via our [Official Google Form](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog) and recorded in our live [Feedback Excel Document](https://docs.google.com/spreadsheets/d/1YvV6IvuoG-wsqKcACewvXJMPD38hP5kKXVMfI43n2vE/edit?usp=sharing).
+As part of the Level 6 Mainnet Onboarding Pilot, community feedback was systematically captured via our [Official Google Form](https://docs.google.com/forms/d/e/1FAIpQLScuDHDzIp4WTlVfaYT1PZZXE5snbTBucxjzs3YbXMmQffshLg/viewform?usp=dialog) and recorded in our live [Feedback Excel Document](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing).
 
 ### 📊 Feedback Summary & Key Takeaways
 *   **Overall Satisfaction Rating:** 4.8 / 5.0 across surveyed pilot participants.
