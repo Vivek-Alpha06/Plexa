@@ -162,7 +162,10 @@ export function WalletModal() {
                     fontSize: "13.5px"
                   }}
                 >
-                  {error}
+                  <div>{error}</div>
+                  <p className="faint" style={{ margin: "6px 0 0", fontSize: "12px" }}>
+                    💡 If using Albedo web wallet, ensure browser popups are allowed for <code>albedo.link</code>.
+                  </p>
                 </div>
               )}
 
