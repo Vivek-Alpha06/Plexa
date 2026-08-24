@@ -274,9 +274,12 @@ export function Docs() {
           >
             {mobileNavOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
-          <Link to="/" className="docs-brand">
-            <PlexaMark size={24} />
-            PLEXA <span style={{ color: "var(--text-faint)", fontWeight: 400 }}>DOCS</span>
+          <Link to="/" className="docs-brand" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <img src="/plexa-p-mark.png" alt="Plexa Logo" style={{ height: 32, width: "auto" }} />
+            <img src="/plexa-wordmark.png" alt="Plexa" style={{ height: 18, width: "auto" }} />
+            <span style={{ color: "var(--text-faint)", fontWeight: 500, fontSize: 13, marginLeft: 2, paddingLeft: 8, borderLeft: "1px solid var(--border)" }}>
+              DOCS
+            </span>
           </Link>
           <span className="docs-badge">Mainnet v1.0</span>
         </div>
