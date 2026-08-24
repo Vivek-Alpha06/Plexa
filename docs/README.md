@@ -2,7 +2,7 @@
 
 Welcome to the comprehensive documentation index for Plexa — the decentralized Rotating Savings and Credit Association (ROSCA) protocol built on Stellar and Soroban.
 
-🌐 **Dedicated Live Documentation Website:** [https://plexa-eight.vercel.app/docs](https://plexa-eight.vercel.app/docs)
+🌐 **Dedicated Live Documentation Website:** **[https://plexa-document.vercel.app](https://plexa-document.vercel.app)**
 
 ---
 
@@ -10,7 +10,7 @@ Welcome to the comprehensive documentation index for Plexa — the decentralized
 
 | Document | Description / Focus Area |
 | :--- | :--- |
-| 🌐 **[Dedicated Web Docs](https://plexa-eight.vercel.app/docs)** | Interactive public documentation website with live auction simulator, API specs, and setup guides |
+| 🌐 **[Dedicated Web Docs](https://plexa-document.vercel.app)** | Interactive public documentation website with live auction simulator, API specs, and setup guides |
 | 📈 **[Monthly Growth Report](GROWTH-REPORT.md)** | **Level 7 Founder Belt** startup growth metrics, user retention, unit economics, and founder roadmap |
 | 🛡️ **[Security Review & Audit](SECURITY.md)** | Smart contract internal audit, trust model, threat matrix, invariant proofs, and 8 resolved bugs |
 | 👥 **[User Guide & Tutorials](USER-GUIDE.md)** | End-to-end participant guide: wallet connection (Freighter/Albedo), circle creation, bidding, claiming |

@@ -30,7 +30,6 @@ import {
   Globe,
   Sliders,
 } from "lucide-react";
-import { PlexaMark } from "../components/Logo";
 import "../docs.css";
 
 // ------------------------------------------------------------- Interactive Copy Component

@@ -11,11 +11,11 @@ Think of it as a trustless, on-chain version of the informal savings circles (kn
 | Deliverable Resource | Direct Verification Link | Description / Details |
 | :--- | :--- | :--- |
 | 🚀 **Live Web Application** | [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/) | Production-ready ROSCA dApp deployed on Vercel |
-| 🌐 **Dedicated Documentation Website** | [https://plexa-eight.vercel.app/docs](https://plexa-eight.vercel.app/docs) | Complete interactive documentation portal covering features, setup, APIs, and guides |
+| 🌐 **Dedicated Documentation Website** | **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)** | **Complete interactive documentation website covering features, usage, developer setup, smart contracts, and overall implementation** |
 | ⚡ **Mainnet Contract Explorer** | [StellarExpert Mainnet Contract](https://stellar.expert/explorer/public/contract/CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO) | Verifiable Soroban WASM Contract ID on Stellar Mainnet |
 | 🧪 **Testnet Contract Explorer** | [StellarExpert Testnet Contract](https://stellar.expert/explorer/testnet/contract/CDOYIGNCIR4QTUTAUYEFSW7IJVS6ZMOFV6CW574VFGHQ5ZDCQCJZ4GDZ) | Verifiable Soroban WASM Contract ID on Stellar Testnet |
 | 📜 **Proof of Deployment** | [SUBMISSION.md](./docs/SUBMISSION.md) | Official Mainnet & Testnet Soroban WASM verification report |
-| 📈 **Level 7 Monthly Growth Report** | [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) · [View on Docs Site](https://plexa-eight.vercel.app/docs/growth-report) | **Founder Belt** startup growth metrics, user retention, unit economics, and roadmap |
+| 📈 **Level 7 Monthly Growth Report** | [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) · [View on Web Docs](https://plexa-document.vercel.app) | **Founder Belt** startup growth metrics, user retention, unit economics, and roadmap |
 | 🎯 **Official Pitch Deck** | [View Pitch Deck](./docs/PITCH-DECK.md) · [Interactive Deck](./docs/pitch-deck.html) | 10-slide comprehensive investor & judge presentation |
 | 🐦 **Twitter/X Official Handle** | [@Plexa_v1 on X](https://x.com/Plexa_v1) | Official Twitter/X announcements & community updates |
 | 📸 **Instagram Official Account** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) | **200+ Likes on Instagram** · Official community showcase & updates |
@@ -392,14 +392,14 @@ Based on community user responses, 13 specific improvements and friction points 
 | Requirement | Benchmark | Plexa Fulfillment Status | Direct Verification Artifact |
 | :--- | :---: | :---: | :--- |
 | 🌐 **Public GitHub Repository** | Public Repo | 🟢 **Verified** | [https://github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa) |
-| 💻 **30+ Meaningful Commits** | 30+ Commits | 🟢 **144 Commits** | `git rev-list --count HEAD` (144 commits) |
+| 💻 **30+ Meaningful Commits** | 30+ Commits | 🟢 **145 Commits** | `git rev-list --count HEAD` (145 commits) |
 | 🚀 **Live Production Application** | Vercel / Cloud | 🟢 **Live** | [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/) |
-| 🌐 **Dedicated Documentation Website** | Public Docs Site | 🟢 **Live at `/docs`** | [https://plexa-eight.vercel.app/docs](https://plexa-eight.vercel.app/docs) |
+| 🌐 **Dedicated Documentation Website** | Public Docs Site | 🟢 **Live** | **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)** |
 | 👥 **Proof of 50+ Mainnet Users** | 50+ Users | 🟢 **51 Verified Users** | [50+ Mainnet User Table](#-verified-stellar-mainnet-active-users-50-on-chain-members) |
 | ⚡ **Mainnet Transaction Proof** | Production Ledger | 🟢 **120+ Mainnet TXs** | [Mainnet Ledger Table](#proof-of-20-active-mainnet-users-onboarding-proof-table) |
 | 📊 **User Feedback Sheet** | Exported Spreadsheet | 🟢 **50 Responses** | [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel File](./Plexa_User_Feedback_50_Responses.xlsx) |
 | 🛠️ **Product Improvement Commits** | Linked Git Commits | 🟢 **13 Commits Shipped** | [13 Feedback Improvements Table](#-13-user-feedback-items--code-implementations-with-direct-git-commits) |
-| 📈 **Monthly Growth Report** | Founder Report | 🟢 **Published** | [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) · [View on Web Docs](https://plexa-eight.vercel.app/docs/growth-report) |
+| 📈 **Monthly Growth Report** | Founder Report | 🟢 **Published** | [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) · [View on Web Docs](https://plexa-document.vercel.app) |
 | 📸 **Social Media Growth Proof** | 50+ Followers / Traction | 🟢 **200+ Likes / Followers** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) · [@Plexa_v1 on X](https://x.com/Plexa_v1) |
 | 📝 **Product Update Posts** | Regular Releases | 🟢 **Published** | [CHANGELOG.md](./docs/CHANGELOG.md) · [Launch Thread](https://x.com/PlexaROSCA/status/1824589218205928192) |
 | 🤝 **Community Contribution** | Technical Lessons / PR | 🟢 **Published** | Soroban PRNG & router lessons in [SECURITY.md](./docs/SECURITY.md) |
@@ -410,9 +410,9 @@ Based on community user responses, 13 specific improvements and friction points 
 
 ### ⚫ Level 6: Black Belt Checklist
 *   [x] **Public GitHub repository:** [https://github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa)
-*   [x] **Minimum 30+ meaningful commits:** Verified 144 commits in repository history.
+*   [x] **Minimum 30+ meaningful commits:** Verified 145 commits in repository history.
 *   [x] **Live mainnet application:** [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/)
-*   [x] **Dedicated documentation website:** [https://plexa-eight.vercel.app/docs](https://plexa-eight.vercel.app/docs)
+*   [x] **Dedicated documentation website:** **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)**
 *   [x] **Mainnet contract addresses:** Verified on-chain factory at `CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO`.
 *   [x] **Proof of 20+ mainnet users:** Verifiable in Mainnet proof table (51 on-chain members).
 *   [x] **Transaction activity proof:** Direct ledger links on StellarExpert.
@@ -420,7 +420,7 @@ Based on community user responses, 13 specific improvements and friction points 
 *   [x] **Twitter/X launch post link:** [View Launch Post on X](https://x.com/PlexaROSCA/status/1824589218205928192)
 *   [x] **Instagram community showcase:** [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) (**200+ Likes on Instagram**)
 *   [x] **Demo video link:** [Watch Demo Video](https://youtu.be/pvfV9YEylpg)
-*   [x] **Technical documentation:** Detailed specs in README, [docs/](./docs/), and [Live Docs Portal](https://plexa-eight.vercel.app/docs).
+*   [x] **Technical documentation:** Detailed specs in README, [docs/](./docs/), and **[Dedicated Documentation Website](https://plexa-document.vercel.app)**.
 *   [x] **User guide/documentation:** Provided in [USER-GUIDE.md](./docs/USER-GUIDE.md) and on web docs.
 *   [x] **Community contribution link:** Documented Soroban Gotchas & Architecture in [SECURITY.md](./docs/SECURITY.md).
 *   [x] **User Onboarding Form & Sheet:** [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) & [Excel Spreadsheet](./Plexa_User_Feedback_50_Responses.xlsx).
@@ -429,18 +429,18 @@ Based on community user responses, 13 specific improvements and friction points 
 
 ### 🏆 Level 7: Founder Belt Checklist
 *   [x] **Public GitHub repository:** [https://github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa)
-*   [x] **Minimum 30+ meaningful commits:** 144 commits in repository history.
+*   [x] **Minimum 30+ meaningful commits:** 145 commits in repository history.
 *   [x] **Live production application:** [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/)
-*   [x] **Dedicated public documentation website:** [https://plexa-eight.vercel.app/docs](https://plexa-eight.vercel.app/docs)
+*   [x] **Dedicated public documentation website:** **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)**
 *   [x] **Proof of 50+ new mainnet users:** 51 verified mainnet users with public keys and explorer links.
 *   [x] **Mainnet transaction proof:** 120+ total transactions recorded on Stellar Mainnet.
 *   [x] **User feedback sheet:** 50 structured responses in [Excel](./Plexa_User_Feedback_50_Responses.xlsx) and [CSV](./docs/user-feedback-responses.csv).
 *   [x] **Product improvement commit links:** 13 feedback-driven improvements with direct commit links.
-*   [x] **Monthly growth report:** Published in [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) and [Web Docs](https://plexa-eight.vercel.app/docs/growth-report).
+*   [x] **Monthly growth report:** Published in [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) and **[Web Docs](https://plexa-document.vercel.app)**.
 *   [x] **Social media growth proof (50+ followers):** 200+ Likes and active engagement on Instagram & Twitter/X.
 *   [x] **Product update posts:** Documented in [CHANGELOG.md](./docs/CHANGELOG.md) and social updates.
 *   [x] **Community contribution proof:** Open-source ROSCA protocol, technical security writeups, and tutorials.
-*   [x] **Updated documentation:** Interactive documentation website live at `/docs`.
+*   [x] **Updated documentation:** Standalone documentation website live at **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)**.
 
 ---
 
