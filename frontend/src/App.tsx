@@ -10,6 +10,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Profile } from "./pages/Profile";
 import { CreateGroup } from "./pages/CreateGroup";
 import { GroupDetail } from "./pages/GroupDetail";
+import { Docs } from "./pages/Docs";
 
 function AppShell() {
   return (
@@ -29,6 +30,8 @@ export default function App() {
         <DemoWalletModal />
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/docs" element={<Docs />} />
+          <Route path="/docs/:section" element={<Docs />} />
           <Route path="/app" element={<AppShell />}>
             <Route index element={<Navigate to="/app/groups" replace />} />
             <Route path="groups" element={<Groups />} />

@@ -36,6 +36,7 @@ export function Header() {
           <NavLink to="/app/groups">Groups</NavLink>
           <NavLink to="/app/dashboard">Dashboard</NavLink>
           <NavLink to="/app/profile">Profile</NavLink>
+          <NavLink to="/docs">Docs</NavLink>
         </nav>
       </div>
       <div className="row" style={{ gap: 8 }}>

@@ -20,7 +20,6 @@ import {
   Landmark,
   Layers,
   Lock,
-  MessageCircle,
   RefreshCw,
   ShieldCheck,
   Sparkles,
@@ -219,6 +218,7 @@ function Nav() {
           <a className="navlink" href="#how">How it works</a>
           <a className="navlink" href="#protocol">Protocol</a>
           <a className="navlink" href="#security">Security</a>
+          <Link className="navlink" to="/docs">Docs</Link>
           <a className="navlink" href="#faq">FAQ</a>
         </div>
         <div className="actions">
@@ -741,28 +741,34 @@ export function Landing() {
             <div className="head">Product</div>
             <a href="#features">Features</a>
             <a href="#how">How it works</a>
-            <a href="#security">Security</a>
-            <a href="#faq">FAQ</a>
+            <Link to="/docs/security">Security Audit</Link>
+            <Link to="/docs/faq">FAQ & Registry</Link>
           </div>
           <div className="foot-col">
             <div className="head">Resources</div>
-            <a href="https://github.com" target="_blank" rel="noreferrer">
-              <GithubIcon size={13} /> GitHub
+            <a href="https://github.com/Vivek-Alpha06/Plexa" target="_blank" rel="noreferrer">
+              <GithubIcon size={13} /> GitHub Repo
             </a>
-            <a href="https://soroban.stellar.org" target="_blank" rel="noreferrer">
+            <Link to="/docs">
               <FileText size={13} /> Documentation
-            </a>
-            <a href="#how">
-              <Layers size={13} /> Whitepaper
-            </a>
+            </Link>
+            <Link to="/docs/architecture">
+              <Layers size={13} /> Architecture
+            </Link>
+            <Link to="/docs/growth-report">
+              <Sparkles size={13} /> Growth Report
+            </Link>
           </div>
           <div className="foot-col">
             <div className="head">Community</div>
-            <a href="https://discord.com" target="_blank" rel="noreferrer">
-              <MessageCircle size={13} /> Discord
+            <a href="https://x.com/Plexa_v1" target="_blank" rel="noreferrer">
+              <TwitterIcon size={13} /> X (@Plexa_v1)
             </a>
-            <a href="https://x.com" target="_blank" rel="noreferrer">
-              <TwitterIcon size={13} /> X
+            <a href="https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==" target="_blank" rel="noreferrer">
+              <Sparkles size={13} /> Instagram (200+ Likes)
+            </a>
+            <a href="https://youtu.be/pvfV9YEylpg" target="_blank" rel="noreferrer">
+              <FileText size={13} /> YouTube Demo
             </a>
           </div>
           <div className="foot-col">
