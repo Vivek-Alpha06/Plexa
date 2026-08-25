@@ -3,7 +3,7 @@
 Plexa is a decentralized **Rotating Savings and Credit Association (ROSCA)** protocol built on Stellar's Soroban smart-contract platform. A group of members each contribute a fixed amount per period into a shared pot; every period exactly one member receives the pot — chosen by an open **discount auction** falling back to join-order rotation. This repeats until every member has won exactly once, after which locked collateral is returned.
 
 Think of it as a trustless, on-chain version of the informal savings circles (known as *susu*, *tanda*, *chit fund*, *hui*, *chama*) used by billions of people — but with programmable collateral, automatic default coverage, and a transparent, publicly verifiable ledger of every action.
-
+#### | 🌐 **Dedicated Documentation Website** | **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)** | **Complete interactive documentation website covering features, usage, developer setup, smart contracts, and overall implementation** | 
 ---
 
 ## 🌐 Project Deliverables & Key Links
