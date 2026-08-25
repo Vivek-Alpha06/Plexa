@@ -5,7 +5,8 @@ Plexa is a decentralized **Rotating Savings and Credit Association (ROSCA)** pro
 Think of it as a trustless, on-chain version of the informal savings circles (known as *susu*, *tanda*, *chit fund*, *hui*, *chama*) used by billions of people — but with programmable collateral, automatic default coverage, and a transparent, publicly verifiable ledger of every action.
 
 ---
-####  🌐 **Dedicated Documentation Website** :: **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)** ) **Complete interactive documentation website covering features, usage, developer setup, smart contracts, and overall implementation** )
+
+###  🌐 Dedicated Documentation Website : [https://plexa-document.vercel.app](https://plexa-document.vercel.app/)  
  
 ## 🌐 Project Deliverables & Key Links
 
