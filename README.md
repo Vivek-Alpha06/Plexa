@@ -8,6 +8,51 @@ Think of it as a trustless, on-chain version of the informal savings circles (kn
 
 ###  🌐 Dedicated Documentation Website : [https://plexa-document.vercel.app](https://plexa-document.vercel.app/)  
  
+
+## ⚫ Level 6 (Black Belt) — Requirement Compliance
+
+Every Level 6 requirement, with a direct link to the proof. Anything marked
+**verifiable** can be re-checked independently without asking us for anything.
+
+| # | Requirement | Status | Proof |
+| :-: | :---------- | :----: | :---- |
+| **1** | **Smart contracts deployed on Stellar mainnet** | ✅ | Factory [`CAOW3VCO…JTFO`](https://stellar.expert/explorer/public/contract/CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO) · Group [`CDYQ3NVL…UM4D`](https://stellar.expert/explorer/public/contract/CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D) — deployed 2026-08-21 |
+| **2** | **Public production-ready application live** | ✅ | [plexa-eight.vercel.app](https://plexa-eight.vercel.app/) — mainnet config in [`.env.production`](./frontend/.env.production) |
+| **3** | **Minimum 20+ verified mainnet users** | ✅ **46** | [Per-wallet table](#-verified-stellar-mainnet-users) · [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md) — *sponsored pilot cohort, [disclosed](#how-these-wallets-were-onboarded)* |
+| **4** | **Real on-chain transaction activity** | ✅ **93** | Verified contract invocations. Reproduce: `node scripts/verify-mainnet-users.mjs` |
+| **5** | **Security audit *or* mentor-approved review** | 🟡 | [`docs/SECURITY.md`](./docs/SECURITY.md) — internal review incl. scope limits & a disclosed key incident. **Submitted for mentor approval; not a third-party audit.** |
+| **6** | **Twitter/X launch post** | ✅ | [Launch post on X](https://x.com/Plexa_v1/status/2091657047347765527) · [@Plexa_v1](https://x.com/Plexa_v1) |
+| **7** | **Demo / showcase content** | ✅ | [Demo video](https://youtu.be/pvfV9YEylpg) · [Instagram showcase post](https://www.instagram.com/p/DcULQd_yZBS/?igsi=ejgzbHgybWZxY3Bs) |
+| **8** | **Ecosystem contribution** (blog / workshop / tutorial / OSS) | ✅ | Technical blog: [**Five Soroban bugs that only show up on mainnet**](./docs/BLOG-SOROBAN-LESSONS.md) — plus this open-source protocol |
+| **9** | **Minimum 30+ meaningful commits** | ✅ **148** | `git rev-list --count HEAD` |
+| **10** | **Full documentation & production setup** | ✅ | [Docs site](https://plexa-document.vercel.app/) · [`docs/`](./docs/) · [User guide](./docs/USER-GUIDE.md) |
+| **11** | **Google Form → Excel export, linked in README** | ✅ | [Feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [method & schema](./docs/FEEDBACK.md) |
+| **12** | **Improvement plan w/ git commit links** | ✅ **13** | [Improvements shipped in response](#improvements-shipped-in-response) — each row links its commit |
+| **13** | **Advanced feature — at least one** | ✅ | **Fee Sponsorship (gasless via fee bump)** — [`keeper/relayer.mjs`](./keeper/relayer.mjs) · [`sponsor.ts`](./frontend/src/lib/sponsor.ts) · [8 passing tests vs live mainnet factory](./keeper/relayer.test.mjs) |
+
+### How to verify the adoption numbers yourself
+
+No trust required — this reads public RPC and Horizon only, and needs no keys:
+
+```bash
+node scripts/verify-mainnet-users.mjs
+# → 46 distinct wallets · 93 verified contract invocations
+```
+
+### Two things we state up front rather than let you find
+
+1. **The user cohort is sponsored.** Plexa funded each participant wallet so
+   people could try a mainnet savings circle without first acquiring XLM. The
+   wallets and their on-chain activity are genuine and individually linked, but
+   they are not independently-sourced retail users and are not presented as
+   traction. Funding transactions are public and unobscured.
+2. **The deployed mainnet contract is a size-reduced build.** Its upgrade
+   entrypoints are inert and several view functions return fixed values, so the
+   48-hour timelock described in the security review applies to the full build
+   (on testnet), **not** to the mainnet deployment. Full detail:
+   [`SECURITY.md` §0](./docs/SECURITY.md).
+
+---
 ## 🌐 Project Deliverables & Key Links
 
 | Deliverable Resource | Direct Verification Link | Description / Details |
@@ -21,7 +66,8 @@ Think of it as a trustless, on-chain version of the informal savings circles (kn
 | 🎯 **Official Pitch Deck** | [View Pitch Deck](./docs/PITCH-DECK.md) · [Interactive Deck](./docs/pitch-deck.html) | 10-slide comprehensive investor & judge presentation |
 | 🐦 **Twitter/X Official Handle** | [@Plexa_v1 on X](https://x.com/Plexa_v1) | Official Twitter/X announcements & community updates |
 | 📸 **Instagram Official Account** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) | **200+ Likes on Instagram** · Official community showcase & updates |
-| 🐤 **Twitter/X Launch Post** | _⚠️ link pending — see note below_ | Launch thread & feature walkthrough |
+| 🐤 **Twitter/X Launch Post** | [View Launch Post on X](https://x.com/Plexa_v1/status/2091657047347765527) | Official launch post & feature walkthrough |
+| 📸 **Instagram Showcase Post** | [View Showcase Post](https://www.instagram.com/p/DcULQd_yZBS/?igsi=ejgzbHgybWZxY3Bs) | Product demo & showcase content |
 | 📺 **YouTube Walkthrough Demo** | [Watch Demo Video](https://youtu.be/pvfV9YEylpg) | Full video walkthrough of Plexa protocol features |
 | 📊 **Feedback Excel Document** | [View Feedback Excel Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) | Exported onboarding feedback record sheet |
 | 🛡️ **Security Review** | [SECURITY.md](./docs/SECURITY.md) | Internal security self-review (**not** a third-party audit) — submitted for mentor approval |
@@ -416,7 +462,7 @@ for analysis.
 
 | Artefact | Link |
 | :------- | :--- |
-| Feedback form | [Plexa Pilot Feedback Form](https://docs.google.com/forms/d/e/1FAIpQLSc-plexa-pilot-feedback/viewform) |
+| Feedback form | Google Form — responses exported to the sheet below ([schema](./docs/FEEDBACK.md)) |
 | Exported responses (Sheet) | [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
 | Exported responses (Excel) | [`Plexa_User_Feedback_50_Responses.xlsx`](./Plexa_User_Feedback_50_Responses.xlsx) |
 | Form schema & collection method | [`docs/FEEDBACK.md`](./docs/FEEDBACK.md) |
@@ -512,8 +558,8 @@ Each row links the shipped code and the commit that introduced it.
 | Minimum 20+ verified mainnet users | ✅ | **46 distinct wallets** — [per-wallet table](#-verified-stellar-mainnet-users), sponsored cohort (disclosed) |
 | Real on-chain transaction activity | ✅ | **93 verified invocations**, reproducible via `scripts/verify-mainnet-users.mjs` |
 | Security review | ⚠️ | [`docs/SECURITY.md`](./docs/SECURITY.md) — **internal self-review, submitted for mentor approval.** Not a third-party audit. |
-| Twitter/X launch post | ⚠️ | [@Plexa_v1](https://x.com/Plexa_v1) — *launch thread URL to be added* |
-| Demo / showcase content | ✅ | [Demo video](https://youtu.be/pvfV9YEylpg) · [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) |
+| Twitter/X launch post | ✅ | [Launch post](https://x.com/Plexa_v1/status/2091657047347765527) · [@Plexa_v1](https://x.com/Plexa_v1) |
+| Demo / showcase content | ✅ | [Demo video](https://youtu.be/pvfV9YEylpg) · [Instagram showcase post](https://www.instagram.com/p/DcULQd_yZBS/?igsi=ejgzbHgybWZxY3Bs) |
 | Ecosystem contribution | ✅ | Technical blog: [**Five Soroban bugs that only show up on mainnet**](./docs/BLOG-SOROBAN-LESSONS.md) |
 | Technical documentation | ✅ | This README, [`docs/`](./docs/), and the [docs site](https://plexa-document.vercel.app) |
 | User guide | ✅ | [`docs/USER-GUIDE.md`](./docs/USER-GUIDE.md) |
