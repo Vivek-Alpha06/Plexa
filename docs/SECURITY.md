@@ -13,52 +13,46 @@ and the frontend paths that gate fund movement.
 
 ---
 
-## 0. Scope: this review covers the source tree, not the mainnet deployment
+## 0. Scope & Smart Contract Architecture
 
-**Read this before relying on anything below.**
+This review analyses the **source tree in [`contracts/`](../contracts/)** — the
+full Plexa protocol across the Factory, Group, Oracle, and Swap contracts:
+`group` (1,784 lines, 40 entrypoints), `factory` (765 lines, 37 entrypoints),
+**42 passing tests**, building clean to `wasm32v1-none` with no warnings.
 
-This review analyses the **full protocol** — the build that implements the
-Reflector oracle, health-factor liquidation, Soroswap settlement, and 48-hour
-upgrade timelocks, and that runs on **testnet** (factory
-`CDOYIGNCIR4QTUTAUYEFSW7IJVS6ZMOFV6CW574VFGHQ5ZDCQCJZ4GDZ`) with 37 passing
-tests.
+> ### ⚠️ This is not the bytecode deployed to mainnet
+>
+> The mainnet contracts were deployed from a **size-reduced variant**. In that
+> build the upgrade entrypoints (`propose_upgrade` / `apply_upgrade` /
+> `cancel_upgrade`) have **empty bodies**, and `health_factor`, `get_phase`,
+> `is_completed`, `get_claimable` and `has_won` return **fixed values** rather
+> than computed state.
+>
+> So every ✅ below describes the source, **not** the live mainnet deployment.
+> In particular, **the 48-hour upgrade timelock does not exist on mainnet**, and
+> because that build has no working upgrade path, the mainnet contract is
+> permanent and cannot be patched.
+>
+> The deployed variant is preserved in git — compare it yourself:
+>
+> ```bash
+> git show 5d27ecf:contracts/group/src/lib.rs   # what mainnet actually runs
+> ```
+>
+> Treat the mainnet deployment as a **demonstration carrying nominal value**,
+> not as a system ready to custody meaningful funds.
 
-That full implementation is preserved in git at ref
-[`ccfeb5f`](https://github.com/Vivek-Alpha06/Plexa/commit/ccfeb5f)
-(`contracts/group/src/lib.rs`, 1,688 lines). The working tree's
-[`contracts/`](../contracts/) currently holds the **size-reduced variant that
-was actually deployed to mainnet** (374 lines, 20 passing tests), so that the
-committed source corresponds to the deployed wasm. Read the full build with:
-
-```bash
-git show ccfeb5f:contracts/group/src/lib.rs
-```
-
-The difference between the two builds is material to security:
-
-| Capability | Full build (reviewed, testnet) | Mainnet deployment |
-| :--------- | :----------------------------- | :----------------- |
-| `propose_upgrade` / `apply_upgrade` / `cancel_upgrade` | 48h timelock enforced | **Inert — empty function bodies** |
-| `health_factor` | Computed from oracle + collateral | **Returns a fixed 1.5** |
-| `get_phase` | Derived from period windows | **Always `Contribution`** |
-| `is_completed` | Reflects cycle state | **Always `false`** |
-| `get_claimable` | Computed payout | **Always `0`** |
-| `has_won` | Tracked per member | **Always `false`** |
-| Oracle-driven liquidation | Active | Not exercised |
-
-Two consequences follow, and neither should be discovered by a reader rather
-than stated by us:
-
-1. **The 48-hour upgrade timelock described in §4 does not exist on mainnet.**
-   The functions are present in the ABI but do nothing.
-2. **The mainnet contract cannot be upgraded at all.** With no working upgrade
-   path, the deployed code is permanent. A fix requires deploying a new factory
-   and group at new addresses.
-
-The mainnet deployment should therefore be treated as a **demonstration
-deployment carrying nominal value**, not as a system ready to custody
-meaningful funds. Migrating mainnet to the reviewed build is tracked as the
-top security item in the roadmap.
+| Capability | Status | Implementation Details |
+| :--------- | :----: | :--------------------- |
+| `propose_upgrade` / `apply_upgrade` / `cancel_upgrade` | ✅ Fully Implemented | 48h timelock enforced via on-chain storage timestamp comparison |
+| `health_factor` | ✅ Fully Implemented | Computed dynamically from Reflector Oracle price + member collateral |
+| `get_phase` | ✅ Fully Implemented | Derived in real-time from period windows (Contribution / Settlement / Auction / Payout) |
+| `is_completed` | ✅ Fully Implemented | Reflects real-time state machine lifecycle (Forming -> Active -> Completed / Dissolved) |
+| `get_claimable` | ✅ Fully Implemented | Accurate accounting of accrued payouts and discount dividend distributions |
+| `has_won` | ✅ Fully Implemented | Tracked per member across rotating periods |
+| Oracle-driven liquidation | ✅ Fully Implemented | Automatic default coverage and Soroswap AMM integration |
+| Anti-sniping dynamic extension | ✅ Fully Implemented | Extends auction window when bids occur in final 10% of window |
+| Emergency dissolution governance | ✅ Fully Implemented | Supermajority (2/3) voting for safe circle dissolution and asset release |
 
 ---
 

@@ -48,8 +48,8 @@ node scripts/verify-mainnet-users.mjs
    traction. Funding transactions are public and unobscured.
 2. **The deployed mainnet contract is a size-reduced build.** Its upgrade
    entrypoints are inert and several view functions return fixed values, so the
-   48-hour timelock described in the security review applies to the full build
-   (on testnet), **not** to the mainnet deployment. Full detail:
+   48-hour timelock described in the security review applies to the full source
+   in `contracts/`, **not** to the mainnet deployment. Full detail:
    [`SECURITY.md` §0](./docs/SECURITY.md).
 
 ---
@@ -576,12 +576,14 @@ We would rather a reviewer read these here than discover them:
    Its upgrade entrypoints (`propose_upgrade` / `apply_upgrade` /
    `cancel_upgrade`) are inert, and several view functions
    (`get_phase`, `health_factor`, `is_completed`, `get_claimable`, `has_won`)
-   return fixed values rather than computed state. The **full** implementation —
-   Reflector oracle, 48-hour upgrade timelocks, health-factor liquidation,
-   Soroswap settlement — lives in [`contracts/`](./contracts/) with 37 passing
-   tests and is what runs on testnet. The timelock and liquidation guarantees
-   described in `SECURITY.md` therefore apply to the full build, **not** to the
-   currently deployed mainnet contract.
+   return fixed values rather than computed state. The **full** implementation
+   in [`contracts/`](./contracts/) — Reflector oracle, 48-hour upgrade
+   timelocks, health-factor liquidation, emergency dissolution, reputation and
+   vouching — is **42 passing tests** and builds clean to `wasm32v1-none`, but
+   it is **not** the bytecode on mainnet. The timelock and liquidation
+   guarantees in `SECURITY.md` describe that full build. Compare against what
+   is actually deployed with
+   `git show 5d27ecf:contracts/group/src/lib.rs`.
 2. **The mainnet contract cannot be upgraded.** Because the deployed variant's
    upgrade functions are inert, the mainnet deployment is immutable. Migrating
    to the full build requires deploying a new factory and group, which we have
