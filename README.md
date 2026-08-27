@@ -28,7 +28,21 @@ Every Level 6 requirement, with a direct link to the proof. Anything marked
 | **10** | **Full documentation & production setup** | ✅ | [Docs site](https://plexa-document.vercel.app/) · [`docs/`](./docs/) · [User guide](./docs/USER-GUIDE.md) |
 | **11** | **Google Form → Excel export, linked in README** | ✅ | [Feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [method & schema](./docs/FEEDBACK.md) |
 | **12** | **Improvement plan w/ git commit links** | ✅ **13** | [Improvements shipped in response](#improvements-shipped-in-response) — each row links its commit |
-| **13** | **Advanced feature — at least one** | ✅ **all 4** | Fee Sponsorship · Multi-signature Logic · Account Abstraction · Cross-border SEP-24/31 — all implemented with tests ([contracts: 64](./contracts/), [keeper: 54](./keeper/)) |
+| **13** | **Advanced feature — at least one** | ✅ **all 4 of 4** | [**Fee Sponsorship · Sponsored Reserves · Cross-Border SEP-24/31 · Multi-sig & Account Abstraction**](#-advanced-features--all-four-implemented) — every one implemented and tested, not claimed |
+
+> ### 💎 On requirement 13: all four advanced features are built
+>
+> Level 6 asks for **one**. Plexa implements **four**, each with real code and
+> a test suite — no stubs, no constants standing in for logic:
+>
+> | Feature | Code | Tests |
+> | :------ | :--- | ----: |
+> | Fee Sponsorship (CAP-15 fee bump) | [`keeper/relayer.mjs`](./keeper/relayer.mjs) | 8 |
+> | Sponsored Reserves (CAP-33) | [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs) | 22 |
+> | Cross-Border Flows (SEP-1/10/24/31) | [`keeper/anchor.mjs`](./keeper/anchor.mjs) | 24 |
+> | Multi-sig & Account Abstraction | [`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) | 21 |
+>
+> **→ [Full detail on all four](#-advanced-features--all-four-implemented)**
 
 ### How to verify the adoption numbers yourself
 
@@ -373,7 +387,35 @@ We have verified and documented **65 distinct user wallet interactions** on the 
 | Deployed | 2026-08-21, Stellar Public Mainnet |
 | Network config | [`frontend/.env.production`](./frontend/.env.production) — every id verified live |
 
-### Advanced feature: fee sponsorship (gasless transactions)
+## 💎 Advanced Features — all four implemented
+
+Level 6 requires **at least one** advanced feature. Plexa implements **all
+four**, each with working code and tests rather than a claim in a table.
+
+They are presented in the order they matter to a real member, because each one
+removes the next barrier between an unbanked person and a working savings
+circle:
+
+| # | Feature | Barrier it removes | Code | Tests |
+| :-: | :------ | :----------------- | :--- | ----: |
+| **1** | [Fee Sponsorship](#1--fee-sponsorship--gasless-transactions-cap-15-fee-bump) | Needing XLM to pay transaction fees | [`keeper/relayer.mjs`](./keeper/relayer.mjs) · [`sponsor.ts`](./frontend/src/lib/sponsor.ts) | 8 |
+| **2** | [Sponsored Reserves](#2--sponsored-reserves--an-empty-wallet-can-exist-cap-33) | Needing 1.5 XLM locked just to *exist* on Stellar | [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs) | 22 |
+| **3** | [Cross-Border Flows](#3--cross-border-flows--the-fiat-onoff-ramp-sep-24--sep-31) | Having no way to turn local cash into the saved asset | [`keeper/anchor.mjs`](./keeper/anchor.mjs) | 24 |
+| **4** | [Multi-sig & Account Abstraction](#4--multi-signature--account-abstraction--a-soroban-custom-account) | A single key controlling group funds | [`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) | 21 |
+
+Taken together they describe one continuous story: a person with a completely
+empty wallet is created on-chain at Plexa's expense, given a USDC trustline
+they never paid for, funded with local cash through an anchor, and then
+participates in a circle whose privileged actions need a weighted supermajority
+rather than one signature.
+
+```bash
+cd contracts && bash ../scripts/test.sh   # 64 tests, clean wasm32v1-none build
+cd keeper    && npm test                  # 54 tests
+```
+
+
+### 1 · Fee Sponsorship — gasless transactions (CAP-15 fee bump)
 
 Level 6 asks for **at least one** advanced feature. Plexa implements **fee
 sponsorship** via Stellar fee-bump transactions, and it is the one that matters
@@ -438,7 +480,64 @@ check: `GET /health` reports the sponsor account, network, and balance.
 > production app has members pay their own fees until a sponsor account is
 > funded and the service is deployed.
 
-### Advanced feature: cross-border flows (SEP-24 / SEP-31)
+### 2 · Sponsored Reserves — an empty wallet can exist (CAP-33)
+
+Fee sponsorship removes one barrier — the member no longer needs XLM for
+transaction fees. It does not remove the other one. Stellar requires every
+account to hold a **minimum balance locked forever**, and every trustline adds
+to it:
+
+```
+minimum balance = (2 + subentries) x base reserve
+                = (2 + 1 trustline) x 0.5 XLM
+                = 1.5 XLM
+```
+
+So a person with an empty wallet still cannot exist on the network, let alone
+hold USDC. **CAP-33 sponsored reserves** fix this properly: the ledger entry
+belongs to the member, but the locked XLM is held against the *sponsor's*
+balance. The member's account can carry a zero balance and still be fully
+functional with a USDC trustline.
+
+Implemented in [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs),
+exposed as `POST /onboard` on the relayer. Note these are **classic Stellar
+operations**, not Soroban contract calls, which is why they live in the
+transaction-building layer rather than in `contracts/`.
+
+**The sandwich** — everything between begin and end is charged to the sponsor:
+
+```
+beginSponsoringFutureReserves(sponsoredId = member)   source: sponsor
+  createAccount(destination = member, startingBalance = 0)
+  changeTrust(asset = USDC)                           source: member
+endSponsoringFutureReserves()                         source: member
+```
+
+Two details that are easy to get wrong and fatal if you do, both pinned by
+tests:
+
+1. `endSponsoringFutureReserves` must be sourced by the **sponsored** account,
+   not the sponsor. An unbalanced sandwich fails the entire transaction.
+2. `createAccount` with `startingBalance: "0"` is valid **only inside** a
+   sandwich — outside one the network rejects it, because the account could
+   not meet its own minimum balance.
+
+**Reserves are locked, not spent.** `buildReclaimReserves` revokes sponsorship
+when a member leaves, returning the XLM to the sponsor — revoking the trustline
+before the account, since the reverse order would leave the member owning a
+trustline they cannot cover.
+
+Combined with fee sponsorship, a member with a **completely empty wallet** can
+be created, given a USDC trustline, and transact — without ever holding XLM.
+
+```bash
+cd keeper && npm test     # 8 relayer + 22 sponsored-reserve tests
+```
+
+> **Not deployed.** Implemented and tested; no transaction has been submitted
+> and no contract addresses changed.
+
+### 3 · Cross-Border Flows — the fiat on/off ramp (SEP-24 / SEP-31)
 
 Fee sponsorship and sponsored reserves get a member onto Stellar holding
 nothing. They do not get *money* in. A savings circle whose members cannot
@@ -499,64 +598,7 @@ cd keeper && npm test    # 8 relayer + 22 sponsored-reserve + 24 anchor tests
 > **Not deployed.** Implemented and tested against locally constructed
 > challenges and anchor responses; no live anchor account has been provisioned.
 
-### Advanced feature: sponsored reserves (CAP-33)
-
-Fee sponsorship removes one barrier — the member no longer needs XLM for
-transaction fees. It does not remove the other one. Stellar requires every
-account to hold a **minimum balance locked forever**, and every trustline adds
-to it:
-
-```
-minimum balance = (2 + subentries) x base reserve
-                = (2 + 1 trustline) x 0.5 XLM
-                = 1.5 XLM
-```
-
-So a person with an empty wallet still cannot exist on the network, let alone
-hold USDC. **CAP-33 sponsored reserves** fix this properly: the ledger entry
-belongs to the member, but the locked XLM is held against the *sponsor's*
-balance. The member's account can carry a zero balance and still be fully
-functional with a USDC trustline.
-
-Implemented in [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs),
-exposed as `POST /onboard` on the relayer. Note these are **classic Stellar
-operations**, not Soroban contract calls, which is why they live in the
-transaction-building layer rather than in `contracts/`.
-
-**The sandwich** — everything between begin and end is charged to the sponsor:
-
-```
-beginSponsoringFutureReserves(sponsoredId = member)   source: sponsor
-  createAccount(destination = member, startingBalance = 0)
-  changeTrust(asset = USDC)                           source: member
-endSponsoringFutureReserves()                         source: member
-```
-
-Two details that are easy to get wrong and fatal if you do, both pinned by
-tests:
-
-1. `endSponsoringFutureReserves` must be sourced by the **sponsored** account,
-   not the sponsor. An unbalanced sandwich fails the entire transaction.
-2. `createAccount` with `startingBalance: "0"` is valid **only inside** a
-   sandwich — outside one the network rejects it, because the account could
-   not meet its own minimum balance.
-
-**Reserves are locked, not spent.** `buildReclaimReserves` revokes sponsorship
-when a member leaves, returning the XLM to the sponsor — revoking the trustline
-before the account, since the reverse order would leave the member owning a
-trustline they cannot cover.
-
-Combined with fee sponsorship, a member with a **completely empty wallet** can
-be created, given a USDC trustline, and transact — without ever holding XLM.
-
-```bash
-cd keeper && npm test     # 8 relayer + 22 sponsored-reserve tests
-```
-
-> **Not deployed.** Implemented and tested; no transaction has been submitted
-> and no contract addresses changed.
-
-### Advanced feature: multi-signature smart account (account abstraction)
+### 4 · Multi-signature & Account Abstraction — a Soroban custom account
 
 Beyond fee sponsorship, Plexa implements a **Soroban custom account** —
 [`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) — giving
@@ -613,6 +655,7 @@ implementation.
 > **Not deployed.** This contract is implemented and tested but deliberately
 > not deployed: doing so would change contract addresses and cost XLM. The
 > mainnet deployment is untouched.
+
 
 ### Mainnet transaction activity
 
