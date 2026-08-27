@@ -28,7 +28,7 @@ Over the past month, the protocol achieved key founder milestones:
 | :--- | :---: | :---: | :---: | :---: |
 | **Verified Mainnet Users** | 20+ Users | 50+ Users | **51 On-Chain Users** | 🟢 **102% Goal Met** |
 | **On-Chain Transactions** | Real Activity | Production Volume | **120+ Mainnet TXs** | 🟢 **Exceeded** |
-| **Git Commits (Repository)** | 30+ Commits | 30+ Commits | **150 Commits** | 🟢 **500% of Minimum** |
+| **Git Commits (Repository)** | 30+ Commits | 30+ Commits | **150+ Commits** | 🟢 **500% of Minimum** |
 | **User Feedback Surveyed** | Yes | Yes (Structured Sheet) | **50 Pilot Participants** | 🟢 **100% Documented** |
 | **Shipped Improvements** | Outlined | Linked Commits | **13 Shipped Commits** | 🟢 **100% Shipped** |
 | **Social Media Community** | Launch Post | 50+ Followers/Growth | **200+ Likes / Active Community** | 🟢 **Exceeded** |
@@ -127,4 +127,4 @@ gantt
 
 ## 8. Conclusion
 
-Plexa has a live Stellar Mainnet deployment, **46 distinct wallets** with verified on-chain activity (a sponsored pilot cohort — see the disclosure in the README), **150** meaningful git commits, 13 shipped improvements traceable to pilot feedback, a fee-sponsorship relayer implementing the Level 6 advanced-feature requirement, and a dedicated public documentation portal. Level 6 requirements are met with the limitations recorded in the README's checklist; **Level 7's 50-user bar is not yet met**, and moving from a sponsored cohort to independently-sourced users is the first item on the roadmap.
+Plexa has a live Stellar Mainnet deployment, **46 distinct wallets** with verified on-chain activity (a sponsored pilot cohort — see the disclosure in the README), **150+** meaningful git commits, 13 shipped improvements traceable to pilot feedback, a fee-sponsorship relayer implementing the Level 6 advanced-feature requirement, and a dedicated public documentation portal. Level 6 requirements are met with the limitations recorded in the README's checklist; **Level 7's 50-user bar is not yet met**, and moving from a sponsored cohort to independently-sourced users is the first item on the roadmap.

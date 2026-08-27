@@ -24,7 +24,7 @@ Every Level 6 requirement, with a direct link to the proof. Anything marked
 | **6** | **Twitter/X launch post** | ✅ | [Launch post on X](https://x.com/Plexa_v1/status/2091657047347765527) · [@Plexa_v1](https://x.com/Plexa_v1) |
 | **7** | **Demo / showcase content** | ✅ | [Demo video](https://youtu.be/pvfV9YEylpg) · [Instagram showcase post](https://www.instagram.com/p/DcULQd_yZBS/?igsi=ejgzbHgybWZxY3Bs) |
 | **8** | **Ecosystem contribution** (blog / workshop / tutorial / OSS) | ✅ | Technical blog: [**Five Soroban bugs that only show up on mainnet**](./docs/BLOG-SOROBAN-LESSONS.md) — plus this open-source protocol |
-| **9** | **Minimum 30+ meaningful commits** | ✅ **150** | `git rev-list --count HEAD` |
+| **9** | **Minimum 30+ meaningful commits** | ✅ **150+** | `git rev-list --count HEAD` |
 | **10** | **Full documentation & production setup** | ✅ | [Docs site](https://plexa-document.vercel.app/) · [`docs/`](./docs/) · [User guide](./docs/USER-GUIDE.md) |
 | **11** | **Google Form → Excel export, linked in README** | ✅ | [Feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [method & schema](./docs/FEEDBACK.md) |
 | **12** | **Improvement plan w/ git commit links** | ✅ **13** | [Improvements shipped in response](#improvements-shipped-in-response) — each row links its commit |
@@ -530,7 +530,7 @@ Each row links the shipped code and the commit that introduced it.
 | Requirement | Benchmark | Plexa Fulfillment Status | Direct Verification Artifact |
 | :--- | :---: | :---: | :--- |
 | 🌐 **Public GitHub Repository** | Public Repo | 🟢 **Verified** | [https://github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa) |
-| 💻 **30+ Meaningful Commits** | 30+ Commits | 🟢 **150 Commits** | `git rev-list --count HEAD` |
+| 💻 **30+ Meaningful Commits** | 30+ Commits | 🟢 **150+ Commits** | `git rev-list --count HEAD` |
 | 🚀 **Live Production Application** | Vercel / Cloud | 🟢 **Live** | [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/) |
 | 🌐 **Dedicated Documentation Website** | Public Docs Site | 🟢 **Live** | **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)** |
 | 👥 **Verified Mainnet Users** | 50+ Users | 🟡 **46 distinct wallets** (sponsored cohort — disclosed) | [Per-wallet table](#-verified-stellar-mainnet-users) · [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md) |
@@ -551,7 +551,7 @@ Each row links the shipped code and the commit that introduced it.
 | Requirement | Status | Evidence |
 | :---------- | :----- | :------- |
 | Public GitHub repository | ✅ | [github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa) |
-| Minimum 30+ meaningful commits | ✅ | 150 commits in history |
+| Minimum 30+ meaningful commits | ✅ | 150+ commits in history |
 | Smart contracts deployed on mainnet | ✅ | Factory [`CAOW3VCO…JTFO`](https://stellar.expert/explorer/public/contract/CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO), group [`CDYQ3NVL…UM4D`](https://stellar.expert/explorer/public/contract/CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D) |
 | Public production-ready application live | ✅ | [plexa-eight.vercel.app](https://plexa-eight.vercel.app/) |
 | Dedicated documentation website | ✅ | [plexa-document.vercel.app](https://plexa-document.vercel.app/) |
@@ -596,7 +596,7 @@ We would rather a reviewer read these here than discover them:
 5. **No third-party audit.** `SECURITY.md` is an internal review.
 ### 🏆 Level 7: Founder Belt Checklist
 *   [x] **Public GitHub repository:** [https://github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa)
-*   [x] **Minimum 30+ meaningful commits:** 150 commits in repository history.
+*   [x] **Minimum 30+ meaningful commits:** 150+ commits in repository history.
 *   [x] **Live production application:** [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/)
 *   [x] **Dedicated public documentation website:** **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)**
 *   [~] **Proof of 50+ new mainnet users:** 46 distinct wallets verified on-chain (sponsored cohort, disclosed above) — short of 50, and not independently sourced.
