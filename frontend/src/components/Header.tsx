@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useWallet } from "../context/WalletContext";
 import { fmtUsdc, shortAddr } from "../lib/format";
 import { DEMO, NETWORK } from "../lib/config";
 import { demoNameFor } from "../lib/demo";
+import { sponsorHealth } from "../lib/sponsor";
 import { NotificationBell } from "./NotificationBell";
 import { PlexaMark } from "./Logo";
 
@@ -21,6 +22,20 @@ export function Header() {
   };
 
   const isMainnet = NETWORK === "public" || NETWORK === "mainnet";
+
+  // Only advertise gasless transactions when the relayer actually answers and
+  // is funded — a badge promising sponsorship that then fails is worse than no
+  // badge, since the member has no XLM to fall back on.
+  const [gasless, setGasless] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    sponsorHealth().then((h) => {
+      if (live && h?.status === "ok") setGasless(h.sponsor);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
 
   return (
     <header className="header">
@@ -56,6 +71,15 @@ export function Header() {
           />
           {DEMO ? "Demo" : isMainnet ? "Mainnet" : "Testnet"}
         </span>
+        {gasless && (
+          <span
+            className="pill green"
+            title={`Network fees are sponsored by ${gasless}. You do not need XLM to transact.`}
+            style={{ display: "inline-flex", alignItems: "center", gap: 5 }}
+          >
+            ⚡ Gasless
+          </span>
+        )}
         {address ? (
           <>
             <NotificationBell address={address} />

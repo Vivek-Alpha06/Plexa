@@ -21,10 +21,12 @@ Think of it as a trustless, on-chain version of the informal savings circles (kn
 | 🎯 **Official Pitch Deck** | [View Pitch Deck](./docs/PITCH-DECK.md) · [Interactive Deck](./docs/pitch-deck.html) | 10-slide comprehensive investor & judge presentation |
 | 🐦 **Twitter/X Official Handle** | [@Plexa_v1 on X](https://x.com/Plexa_v1) | Official Twitter/X announcements & community updates |
 | 📸 **Instagram Official Account** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) | **200+ Likes on Instagram** · Official community showcase & updates |
-| 🐤 **Twitter/X Showcase Post** | [View Launch Post on X](https://x.com/PlexaROSCA/status/1824589218205928192) | Official launch post thread & feature walkthrough |
+| 🐤 **Twitter/X Launch Post** | _⚠️ link pending — see note below_ | Launch thread & feature walkthrough |
 | 📺 **YouTube Walkthrough Demo** | [Watch Demo Video](https://youtu.be/pvfV9YEylpg) | Full video walkthrough of Plexa protocol features |
 | 📊 **Feedback Excel Document** | [View Feedback Excel Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) | Exported onboarding feedback record sheet |
-| 🛡️ **Smart Contract Audit** | [SECURITY.md](./docs/SECURITY.md) | Formal Soroban smart contract internal security review |
+| 🛡️ **Security Review** | [SECURITY.md](./docs/SECURITY.md) | Internal security self-review (**not** a third-party audit) — submitted for mentor approval |
+| ✍️ **Ecosystem Contribution** | [Five Soroban bugs that only show up on mainnet](./docs/BLOG-SOROBAN-LESSONS.md) | Technical blog for the Stellar developer community |
+| 🔎 **Mainnet User Verification** | [MAINNET-USERS.md](./docs/MAINNET-USERS.md) | Chain-generated proof of user activity — reproduce with `node scripts/verify-mainnet-users.mjs` |
 | 📚 **User & Developer Guide** | [USER-GUIDE.md](./docs/USER-GUIDE.md) | Contribution guide, developer setup, and protocol user guide |
 | 📈 **Pilot Growth Plan** | [PILOT.md](./docs/PILOT.md) | Level 6 user recruitment, test setups, and community growth |
 
@@ -51,67 +53,79 @@ Plexa smart contracts are officially deployed and verified on the **Stellar Publ
 
 ---
 
-## 👥 Verified Stellar Mainnet Active Users (50+ On-Chain Members)
+## 👥 Verified Stellar Mainnet Users
 
-The following 51 user wallets have actively interacted with the **Plexa Mainnet Group Contract** (CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D), executing on-chain join requests and governance approval votes verified on Stellar Mainnet:
+**46 distinct wallets** have transacted with the Plexa mainnet group contract, producing **93 verified contract invocations**. Level 6 requires 20+; this exceeds it by more than double.
 
-| # | Member Wallet Address | Explorer Verification |
-| :-: | :--- | :--- |
-| **1** | GAPK4DADM6CDYHPAMBPPGCDKO2S5VH7SKPQDGZIOSMXQ7TWECKXTVG3K | [View on StellarExpert](https://stellar.expert/explorer/public/account/GAPK4DADM6CDYHPAMBPPGCDKO2S5VH7SKPQDGZIOSMXQ7TWECKXTVG3K) |
-| **2** | GCO5TZZU2PGII2MSMGE54JWBMSTLHSAWKK7WEKHRMJDUT43B2M435OCD | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCO5TZZU2PGII2MSMGE54JWBMSTLHSAWKK7WEKHRMJDUT43B2M435OCD) |
-| **3** | GCORIA5Q63OMC4FKYUEL2IZGBDHKCTL4XUOOTKHVR3W5M3OQ5BZ6A5O7 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCORIA5Q63OMC4FKYUEL2IZGBDHKCTL4XUOOTKHVR3W5M3OQ5BZ6A5O7) |
-| **4** | GANTWEXCR2VTTEHI3V3M5XX7YOPFVVWGXA3VXLKHAWVI4JOABV2DAZEN | [View on StellarExpert](https://stellar.expert/explorer/public/account/GANTWEXCR2VTTEHI3V3M5XX7YOPFVVWGXA3VXLKHAWVI4JOABV2DAZEN) |
-| **5** | GDHEHZND7DDCXQN7GNCZT4HQIVOPKPQRZDC5OLA5DMEZV5QLTOU3MDRX | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDHEHZND7DDCXQN7GNCZT4HQIVOPKPQRZDC5OLA5DMEZV5QLTOU3MDRX) |
-| **6** | GCR5GIMI7CYQGJ27YPZGQZMPB3RPU5DIT2MDWNPLZ6JIFMGY23XFZHMT | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCR5GIMI7CYQGJ27YPZGQZMPB3RPU5DIT2MDWNPLZ6JIFMGY23XFZHMT) |
-| **7** | GD46SN4HPH2JV5DAASLUNJAZT7O7NAGYBXMLVGZN6NBURKMQWO5ZIVXA | [View on StellarExpert](https://stellar.expert/explorer/public/account/GD46SN4HPH2JV5DAASLUNJAZT7O7NAGYBXMLVGZN6NBURKMQWO5ZIVXA) |
-| **8** | GCH73CLBCFO63KN6ORQYZRN777OSS7GGW3T6IRYTATPCX33FJTGENCKK | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCH73CLBCFO63KN6ORQYZRN777OSS7GGW3T6IRYTATPCX33FJTGENCKK) |
-| **9** | GDOOGBOAQW45BUNNCKSGVTK37I65LWPCMJDXNWNQ5R5WWGNVYUFW44X4 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDOOGBOAQW45BUNNCKSGVTK37I65LWPCMJDXNWNQ5R5WWGNVYUFW44X4) |
-| **10** | GC4NXKCSYQ4FVNJWSQV3BH7H66ZFESVA5OI2JOT6TEN4MP5AGH33JFI2 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GC4NXKCSYQ4FVNJWSQV3BH7H66ZFESVA5OI2JOT6TEN4MP5AGH33JFI2) |
-| **11** | GAYEMWBUM5VD2DCY2TPHVIGIQK36IPKWGMF5QTSXCLUVRLRRJFK7I3SI | [View on StellarExpert](https://stellar.expert/explorer/public/account/GAYEMWBUM5VD2DCY2TPHVIGIQK36IPKWGMF5QTSXCLUVRLRRJFK7I3SI) |
-| **12** | GC2QRLJZHF5WSZVOEY4OHQHLDQMMZXD2AFWN6CY5H5IXLCBRWD5PCFYY | [View on StellarExpert](https://stellar.expert/explorer/public/account/GC2QRLJZHF5WSZVOEY4OHQHLDQMMZXD2AFWN6CY5H5IXLCBRWD5PCFYY) |
-| **13** | GC4FSSFPYBNF7LDVMMTMQY4XLA2W54WCFVB6L7E7T2WVA2DAOOVARQEP | [View on StellarExpert](https://stellar.expert/explorer/public/account/GC4FSSFPYBNF7LDVMMTMQY4XLA2W54WCFVB6L7E7T2WVA2DAOOVARQEP) |
-| **14** | GAUCIKN2WU7ON2FCJZBAEHPTDDCFCJN7PCSWZ37TJMGE7D4NAKKB4ROB | [View on StellarExpert](https://stellar.expert/explorer/public/account/GAUCIKN2WU7ON2FCJZBAEHPTDDCFCJN7PCSWZ37TJMGE7D4NAKKB4ROB) |
-| **15** | GCPVCI52FT6D24B2S5GOPDQGR4KLXPEVHFQZIK5JKSIFAARK7UWUZXCQ | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCPVCI52FT6D24B2S5GOPDQGR4KLXPEVHFQZIK5JKSIFAARK7UWUZXCQ) |
-| **16** | GBNEG25UFR7WFP5RFJNVYWXXY4XNICD5TWZLRIBMRA25GMWGR7N4KZML | [View on StellarExpert](https://stellar.expert/explorer/public/account/GBNEG25UFR7WFP5RFJNVYWXXY4XNICD5TWZLRIBMRA25GMWGR7N4KZML) |
-| **17** | GBFVHY7D53UH5DTAMHSEECGXNXMOFWOVBZNAKNAJI6HBLCNJZFGMMO4A | [View on StellarExpert](https://stellar.expert/explorer/public/account/GBFVHY7D53UH5DTAMHSEECGXNXMOFWOVBZNAKNAJI6HBLCNJZFGMMO4A) |
-| **18** | GCXYH7P7BDOKQEHG4GR6TRN6CFCIX4GVNHJVJZGBI2IGSBY5FESAY57M | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCXYH7P7BDOKQEHG4GR6TRN6CFCIX4GVNHJVJZGBI2IGSBY5FESAY57M) |
-| **19** | GCIRABXNAPUPVXDVMCBPWI7LHCZZASD2YGAVYJ6PCTPJRTHFFPWFFBEC | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCIRABXNAPUPVXDVMCBPWI7LHCZZASD2YGAVYJ6PCTPJRTHFFPWFFBEC) |
-| **20** | GCNZXGQHBLUCD5PHTH7KDCIZV52P2OGYES5ZF4J42VF52WJWNKHSTHI4 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCNZXGQHBLUCD5PHTH7KDCIZV52P2OGYES5ZF4J42VF52WJWNKHSTHI4) |
-| **21** | GDCTJZJO3OHJDZXET4WI5IBNH3G4JCWLP7IJVR46IX5S2DTF47O3YOGV | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDCTJZJO3OHJDZXET4WI5IBNH3G4JCWLP7IJVR46IX5S2DTF47O3YOGV) |
-| **22** | GB7YAAVFFFPSRUOOELFLOV6MLL5TLDIEYYUTZCVGCQD6RZWSGQLB6XDI | [View on StellarExpert](https://stellar.expert/explorer/public/account/GB7YAAVFFFPSRUOOELFLOV6MLL5TLDIEYYUTZCVGCQD6RZWSGQLB6XDI) |
-| **23** | GDDTO4AL7GMYSCHPJWWG4CGZW7LUTMDJKAXOS5OBIPSJCEKIH4ENKQMX | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDDTO4AL7GMYSCHPJWWG4CGZW7LUTMDJKAXOS5OBIPSJCEKIH4ENKQMX) |
-| **24** | GDPTCF4GG65JVQCGLYFXKWVB5LGZ5EBT6RMOH3LEZY4SUMWOLA4UWSBI | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDPTCF4GG65JVQCGLYFXKWVB5LGZ5EBT6RMOH3LEZY4SUMWOLA4UWSBI) |
-| **25** | GDCUYPQHYXJIRFID5UBKAPZAVEMTJ5OM3F7QTMPL52CQUMGF4OMDAOKI | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDCUYPQHYXJIRFID5UBKAPZAVEMTJ5OM3F7QTMPL52CQUMGF4OMDAOKI) |
-| **26** | GCSEBLKJAS4NXP6TISTIYVM55522BXDEPCZ775UIAAIXOZZPY5QRZA7I | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCSEBLKJAS4NXP6TISTIYVM55522BXDEPCZ775UIAAIXOZZPY5QRZA7I) |
-| **27** | GCGC7G2LL75HQZTDIEQX5M63ALYAKDCB6C4U5LGBM677WIIOI63RQ4TC | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCGC7G2LL75HQZTDIEQX5M63ALYAKDCB6C4U5LGBM677WIIOI63RQ4TC) |
-| **28** | GAJWVST6OQMPQR6OS2AWBGQDC67MUQV7LRTYHNYPET7TVSXMEPPEVLAO | [View on StellarExpert](https://stellar.expert/explorer/public/account/GAJWVST6OQMPQR6OS2AWBGQDC67MUQV7LRTYHNYPET7TVSXMEPPEVLAO) |
-| **29** | GDKE66SQBIHXE5KR3HMOUYUNRMJD6FCAG5GHNCUKRNXLDZQYGD2ZKQSS | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDKE66SQBIHXE5KR3HMOUYUNRMJD6FCAG5GHNCUKRNXLDZQYGD2ZKQSS) |
-| **30** | GCLMWMGKQVZWVRRH2RJ6LTAJTTQNXK7AODSJRUXWSKZP72JWYHHUID5J | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCLMWMGKQVZWVRRH2RJ6LTAJTTQNXK7AODSJRUXWSKZP72JWYHHUID5J) |
-| **31** | GBBMLWICKQSN45RI3UF7FXRADCEEBI6HR3OSRFMG2ADGDIHBBROXS2SL | [View on StellarExpert](https://stellar.expert/explorer/public/account/GBBMLWICKQSN45RI3UF7FXRADCEEBI6HR3OSRFMG2ADGDIHBBROXS2SL) |
-| **32** | GDJGT2NEXV2HJOAPHPOWFI35XPAJDZTBMPLGA2EFR24N32FFWXTHJY5T | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDJGT2NEXV2HJOAPHPOWFI35XPAJDZTBMPLGA2EFR24N32FFWXTHJY5T) |
-| **33** | GBADRPKD7CLPQGZYDBPZBBCBMX67VKIVY74I4SZ7ZRY7WUENCZ4RJBB6 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GBADRPKD7CLPQGZYDBPZBBCBMX67VKIVY74I4SZ7ZRY7WUENCZ4RJBB6) |
-| **34** | GBQJ43M2EUSMS7JOYT3AACOMCRJULSVKH63WA6LMLQWDMLST77C43UL3 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GBQJ43M2EUSMS7JOYT3AACOMCRJULSVKH63WA6LMLQWDMLST77C43UL3) |
-| **35** | GB7NFUTIEYRHIWL2MD3NU2ZIOYOSHEAU67WWQXKYLOKA3IP7OGIJQAPR | [View on StellarExpert](https://stellar.expert/explorer/public/account/GB7NFUTIEYRHIWL2MD3NU2ZIOYOSHEAU67WWQXKYLOKA3IP7OGIJQAPR) |
-| **36** | GDRVWYQGLVVBFDBY2S47Z3HNM5E2WGDHYDLROFL5CP4UHUV6DQPQWRKA | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDRVWYQGLVVBFDBY2S47Z3HNM5E2WGDHYDLROFL5CP4UHUV6DQPQWRKA) |
-| **37** | GD4VBSJTTCSWAKMSY54B3EA3CELZLLMLHKQIHU7G66UKNC6ZKGUWINOE | [View on StellarExpert](https://stellar.expert/explorer/public/account/GD4VBSJTTCSWAKMSY54B3EA3CELZLLMLHKQIHU7G66UKNC6ZKGUWINOE) |
-| **38** | GCKDUIJT6UGUMJ3MXCBLHBO63D22H2RG35CQCFQOX7JJE7AOTYA6RH65 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCKDUIJT6UGUMJ3MXCBLHBO63D22H2RG35CQCFQOX7JJE7AOTYA6RH65) |
-| **39** | GCGD2Y637IHSG4QTBSZKJXNZHQU2STA7UQDO27RJODI3BJBUU4GWETRO | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCGD2Y637IHSG4QTBSZKJXNZHQU2STA7UQDO27RJODI3BJBUU4GWETRO) |
-| **40** | GCF4OMDD7EXPTFNERYRWJ6MQFQACEPKITGQY6F6NNR5IFQLAHFTK423B | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCF4OMDD7EXPTFNERYRWJ6MQFQACEPKITGQY6F6NNR5IFQLAHFTK423B) |
-| **41** | GCPC7NA7K3BOUQO75KVL6BDLGT2F5OT4RJICPI5ZKQHMBX7BECJ2WWOD | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCPC7NA7K3BOUQO75KVL6BDLGT2F5OT4RJICPI5ZKQHMBX7BECJ2WWOD) |
-| **42** | GDOJXIHEEN7MZX27B4A5QGUUUDHOGP4KEJT7COELSU22I6HWOADCEF6Z | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDOJXIHEEN7MZX27B4A5QGUUUDHOGP4KEJT7COELSU22I6HWOADCEF6Z) |
-| **43** | GCGTNM237LF3W2JXVQDLXAB77OJMPCK35EQXAJ6ERN5I2UCCCXTTS3Q5 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCGTNM237LF3W2JXVQDLXAB77OJMPCK35EQXAJ6ERN5I2UCCCXTTS3Q5) |
-| **44** | GB7APREIPDCHRSGQGOTD4NKZ5BGPE7ZQFWLPRSSOBCD2HK6JBZNNFQPW | [View on StellarExpert](https://stellar.expert/explorer/public/account/GB7APREIPDCHRSGQGOTD4NKZ5BGPE7ZQFWLPRSSOBCD2HK6JBZNNFQPW) |
-| **45** | GCWZNNHDEF6FYOLOUC7ABGU3GLDVFHB2DRTQIU6P5HZYKRBH4AVPLTE3 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCWZNNHDEF6FYOLOUC7ABGU3GLDVFHB2DRTQIU6P5HZYKRBH4AVPLTE3) |
-| **46** | GBCR656HWEKDJTPBIM24OZA7UXDFA3B5HOHQYBMMATGXSPXJNW5KVHNO | [View on StellarExpert](https://stellar.expert/explorer/public/account/GBCR656HWEKDJTPBIM24OZA7UXDFA3B5HOHQYBMMATGXSPXJNW5KVHNO) |
-| **47** | GCO5TZZU2PGII2MSMGE54JWBMSTLHSAWKK7WEKHRMJDUT43B2M435OCD | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCO5TZZU2PGII2MSMGE54JWBMSTLHSAWKK7WEKHRMJDUT43B2M435OCD) |
-| **48** | GCORIA5Q63OMC4FKYUEL2IZGBDHKCTL4XUOOTKHVR3W5M3OQ5BZ6A5O7 | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCORIA5Q63OMC4FKYUEL2IZGBDHKCTL4XUOOTKHVR3W5M3OQ5BZ6A5O7) |
-| **49** | GANTWEXCR2VTTEHI3V3M5XX7YOPFVVWGXA3VXLKHAWVI4JOABV2DAZEN | [View on StellarExpert](https://stellar.expert/explorer/public/account/GANTWEXCR2VTTEHI3V3M5XX7YOPFVVWGXA3VXLKHAWVI4JOABV2DAZEN) |
-| **50** | GDHEHZND7DDCXQN7GNCZT4HQIVOPKPQRZDC5OLA5DMEZV5QLTOU3MDRX | [View on StellarExpert](https://stellar.expert/explorer/public/account/GDHEHZND7DDCXQN7GNCZT4HQIVOPKPQRZDC5OLA5DMEZV5QLTOU3MDRX) |
-| **51** | GCR5GIMI7CYQGJ27YPZGQZMPB3RPU5DIT2MDWNPLZ6JIFMGY23XFZHMT | [View on StellarExpert](https://stellar.expert/explorer/public/account/GCR5GIMI7CYQGJ27YPZGQZMPB3RPU5DIT2MDWNPLZ6JIFMGY23XFZHMT) |
+Every figure and every row below is generated from the chain by [`scripts/verify-mainnet-users.mjs`](./scripts/verify-mainnet-users.mjs) — no hand-written entries. Re-run it to reproduce this table; it needs only public RPC and Horizon access, no keys. Full audit output: [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md).
 
-* **Group Contract on Mainnet:** [CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D](https://stellar.expert/explorer/public/contract/CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D)
-* **Group Creation TX:** [55751115c5071b444708fa526602727af8ea0e5f3d50336589902e694d049be7](https://stellar.expert/explorer/public/tx/55751115c5071b444708fa526602727af8ea0e5f3d50336589902e694d049be7)
-* **Total Active On-Chain Member Interactions:** 51 Verified Mainnet Users
+### How these wallets were onboarded
+
+> **Disclosure.** This is a sponsored pilot cohort. Plexa funded each participant wallet's reserve so people could try a mainnet savings circle without first acquiring XLM — the same barrier the product exists to remove. The wallets, the join requests, and the approval votes are all genuine on-chain activity and are linked below, but they are **not** independently-sourced retail users and are not presented as such. The funding transactions are visible from the deployer account and we have made no attempt to obscure them.
+
+### Contract state at time of generation
+
+| Metric | Value | Read from |
+| :----- | ----: | :-------- |
+| Active members | 2 | `get_members()` |
+| Join requests pending approval | 44 | `get_pending_joins()` |
+| Distinct wallets with on-chain activity | **46** | Horizon |
+| Total contract invocations | **93** | Horizon |
+
+### Per-wallet verification
+
+| # | Wallet | Status | Invocations | Transaction |
+| -: | :----- | :----- | ----------: | :---------- |
+| 1 | [`GDIVNQJK…IHU2EN`](https://stellar.expert/explorer/public/account/GDIVNQJKW5SJ53GVVUWXELV34HRKBUIC3TIJW657V2OUN6GP6IIHU2EN) | Active member | 48 | [`11b3327b1f669ea4…`](https://stellar.expert/explorer/public/tx/11b3327b1f669ea428e6259fdd9d32c8c28afd2ca31d71d601dba81d49b80e9c) |
+| 2 | [`GAPK4DAD…XTVG3K`](https://stellar.expert/explorer/public/account/GAPK4DADM6CDYHPAMBPPGCDKO2S5VH7SKPQDGZIOSMXQ7TWECKXTVG3K) | Active member | 1 | [`2ed0c76a1b1eeea5…`](https://stellar.expert/explorer/public/tx/2ed0c76a1b1eeea5c4b6fe8d4d690f6164e12aff36afc506350d2bf44b6272cb) |
+| 3 | [`GCO5TZZU…435OCD`](https://stellar.expert/explorer/public/account/GCO5TZZU2PGII2MSMGE54JWBMSTLHSAWKK7WEKHRMJDUT43B2M435OCD) | Join request | 1 | [`d2f960c7ec651376…`](https://stellar.expert/explorer/public/tx/d2f960c7ec651376f0d358e57139a56de900035d29cb03d5522135e22bbddd3f) |
+| 4 | [`GCORIA5Q…Z6A5O7`](https://stellar.expert/explorer/public/account/GCORIA5Q63OMC4FKYUEL2IZGBDHKCTL4XUOOTKHVR3W5M3OQ5BZ6A5O7) | Join request | 1 | [`c12163840ae76bf5…`](https://stellar.expert/explorer/public/tx/c12163840ae76bf5b8bb13dc5503be0a05c1e9deb407d185e358257d93c1611b) |
+| 5 | [`GANTWEXC…2DAZEN`](https://stellar.expert/explorer/public/account/GANTWEXCR2VTTEHI3V3M5XX7YOPFVVWGXA3VXLKHAWVI4JOABV2DAZEN) | Join request | 1 | [`949c7148e7954556…`](https://stellar.expert/explorer/public/tx/949c7148e795455661616fd86f4f5e34dfba831dee3b3857e13f0cf4f403bd42) |
+| 6 | [`GDHEHZND…U3MDRX`](https://stellar.expert/explorer/public/account/GDHEHZND7DDCXQN7GNCZT4HQIVOPKPQRZDC5OLA5DMEZV5QLTOU3MDRX) | Join request | 1 | [`8389e43b1dfb5a68…`](https://stellar.expert/explorer/public/tx/8389e43b1dfb5a68e003f7dca5a6a84bf170c31b4f6a0f1011f596c49143254d) |
+| 7 | [`GCR5GIMI…XFZHMT`](https://stellar.expert/explorer/public/account/GCR5GIMI7CYQGJ27YPZGQZMPB3RPU5DIT2MDWNPLZ6JIFMGY23XFZHMT) | Join request | 1 | [`fca292dcc259646a…`](https://stellar.expert/explorer/public/tx/fca292dcc259646aeec85710db2d87de58c455a4d30d66c5e5e9b28fc1144620) |
+| 8 | [`GD46SN4H…5ZIVXA`](https://stellar.expert/explorer/public/account/GD46SN4HPH2JV5DAASLUNJAZT7O7NAGYBXMLVGZN6NBURKMQWO5ZIVXA) | Join request | 1 | [`26b3be8fcadf7d1b…`](https://stellar.expert/explorer/public/tx/26b3be8fcadf7d1bd2d65286d41f004ce3fe4bedb6361df076d579c4ead30456) |
+| 9 | [`GCH73CLB…GENCKK`](https://stellar.expert/explorer/public/account/GCH73CLBCFO63KN6ORQYZRN777OSS7GGW3T6IRYTATPCX33FJTGENCKK) | Join request | 1 | [`db8c6e5e33d77b4d…`](https://stellar.expert/explorer/public/tx/db8c6e5e33d77b4d94957446163e2c3a2fa7fdc044b364efb56d98122c393ef1) |
+| 10 | [`GDOOGBOA…FW44X4`](https://stellar.expert/explorer/public/account/GDOOGBOAQW45BUNNCKSGVTK37I65LWPCMJDXNWNQ5R5WWGNVYUFW44X4) | Join request | 1 | [`a959a17a750a6dbd…`](https://stellar.expert/explorer/public/tx/a959a17a750a6dbd62822095f0a7cb37656a31b6700a3d66861d107f135b35ed) |
+| 11 | [`GC4NXKCS…33JFI2`](https://stellar.expert/explorer/public/account/GC4NXKCSYQ4FVNJWSQV3BH7H66ZFESVA5OI2JOT6TEN4MP5AGH33JFI2) | Join request | 1 | [`d916abe1b8c360a5…`](https://stellar.expert/explorer/public/tx/d916abe1b8c360a587aaff9317ad1615ea331410c4673a9071b52fe923724d2b) |
+| 12 | [`GAYEMWBU…K7I3SI`](https://stellar.expert/explorer/public/account/GAYEMWBUM5VD2DCY2TPHVIGIQK36IPKWGMF5QTSXCLUVRLRRJFK7I3SI) | Join request | 1 | [`0defbe7f1a400863…`](https://stellar.expert/explorer/public/tx/0defbe7f1a40086352ef80cd2ef745e687920a7ec1f0389399d4f677b8bfbf5a) |
+| 13 | [`GC2QRLJZ…5PCFYY`](https://stellar.expert/explorer/public/account/GC2QRLJZHF5WSZVOEY4OHQHLDQMMZXD2AFWN6CY5H5IXLCBRWD5PCFYY) | Join request | 1 | [`87ee8cf11622f63a…`](https://stellar.expert/explorer/public/tx/87ee8cf11622f63a7944432dedb56030f1b76219880ef8b54c6b542df5f2dd23) |
+| 14 | [`GC4FSSFP…VARQEP`](https://stellar.expert/explorer/public/account/GC4FSSFPYBNF7LDVMMTMQY4XLA2W54WCFVB6L7E7T2WVA2DAOOVARQEP) | Join request | 1 | [`43fb4f4cb623ac04…`](https://stellar.expert/explorer/public/tx/43fb4f4cb623ac0474f1fca75299ae579adc749dc695d8db60b6a1ada7eb70af) |
+| 15 | [`GAUCIKN2…KB4ROB`](https://stellar.expert/explorer/public/account/GAUCIKN2WU7ON2FCJZBAEHPTDDCFCJN7PCSWZ37TJMGE7D4NAKKB4ROB) | Join request | 1 | [`51bafc1e012369cd…`](https://stellar.expert/explorer/public/tx/51bafc1e012369cd2bd1c24966fe9cf8f6ed8137a7881d653614fbfe1896c19b) |
+| 16 | [`GCPVCI52…WUZXCQ`](https://stellar.expert/explorer/public/account/GCPVCI52FT6D24B2S5GOPDQGR4KLXPEVHFQZIK5JKSIFAARK7UWUZXCQ) | Join request | 1 | [`68a176be1880f4d6…`](https://stellar.expert/explorer/public/tx/68a176be1880f4d6e5cc8907aa27c94b4473ed25bb8099b85536ae33a855d453) |
+| 17 | [`GBNEG25U…N4KZML`](https://stellar.expert/explorer/public/account/GBNEG25UFR7WFP5RFJNVYWXXY4XNICD5TWZLRIBMRA25GMWGR7N4KZML) | Join request | 1 | [`8efe6bbe07cb51c7…`](https://stellar.expert/explorer/public/tx/8efe6bbe07cb51c7bccc875915392d723fd848420d7b6183d5b239ca9a82cd7c) |
+| 18 | [`GBFVHY7D…GMMO4A`](https://stellar.expert/explorer/public/account/GBFVHY7D53UH5DTAMHSEECGXNXMOFWOVBZNAKNAJI6HBLCNJZFGMMO4A) | Join request | 1 | [`b55ca75221876a6a…`](https://stellar.expert/explorer/public/tx/b55ca75221876a6a27b98c4d1e717d04aa963b99c8aaab13f59f4b31c6833688) |
+| 19 | [`GCXYH7P7…SAY57M`](https://stellar.expert/explorer/public/account/GCXYH7P7BDOKQEHG4GR6TRN6CFCIX4GVNHJVJZGBI2IGSBY5FESAY57M) | Join request | 1 | [`958e1eefd675665f…`](https://stellar.expert/explorer/public/tx/958e1eefd675665f29906a93de2bdc27bb57b5ed981e2ca2e32121b16f6523ab) |
+| 20 | [`GCIRABXN…WFFBEC`](https://stellar.expert/explorer/public/account/GCIRABXNAPUPVXDVMCBPWI7LHCZZASD2YGAVYJ6PCTPJRTHFFPWFFBEC) | Join request | 1 | [`93cf4eab4ecc1333…`](https://stellar.expert/explorer/public/tx/93cf4eab4ecc133353d50263c2794b9b0c89026bb4d90e69384ccc2fa389e9ef) |
+| 21 | [`GCNZXGQH…HSTHI4`](https://stellar.expert/explorer/public/account/GCNZXGQHBLUCD5PHTH7KDCIZV52P2OGYES5ZF4J42VF52WJWNKHSTHI4) | Join request | 1 | [`976fecc96024975a…`](https://stellar.expert/explorer/public/tx/976fecc96024975a71e463ea3d87180cc70746d59fedc98c00c1cf27e5473f54) |
+| 22 | [`GDCTJZJO…O3YOGV`](https://stellar.expert/explorer/public/account/GDCTJZJO3OHJDZXET4WI5IBNH3G4JCWLP7IJVR46IX5S2DTF47O3YOGV) | Join request | 1 | [`bf6153d3bc8da0a8…`](https://stellar.expert/explorer/public/tx/bf6153d3bc8da0a86820800a272add67c24b813d89b6f582930fc56ff76159f0) |
+| 23 | [`GB7YAAVF…LB6XDI`](https://stellar.expert/explorer/public/account/GB7YAAVFFFPSRUOOELFLOV6MLL5TLDIEYYUTZCVGCQD6RZWSGQLB6XDI) | Join request | 1 | [`d588599fe255e791…`](https://stellar.expert/explorer/public/tx/d588599fe255e791fff18cf94ea1635554322fbaf6d498573c854df8f328abb0) |
+| 24 | [`GDDTO4AL…ENKQMX`](https://stellar.expert/explorer/public/account/GDDTO4AL7GMYSCHPJWWG4CGZW7LUTMDJKAXOS5OBIPSJCEKIH4ENKQMX) | Join request | 1 | [`c793d007000156b5…`](https://stellar.expert/explorer/public/tx/c793d007000156b56468a2e2943e38b331d8f8e5b8440d6c18ea8022dc712470) |
+| 25 | [`GDPTCF4G…4UWSBI`](https://stellar.expert/explorer/public/account/GDPTCF4GG65JVQCGLYFXKWVB5LGZ5EBT6RMOH3LEZY4SUMWOLA4UWSBI) | Join request | 1 | [`935c06370f6aeef6…`](https://stellar.expert/explorer/public/tx/935c06370f6aeef6fcf13aa274dfb486997994bb9fdab98beae39c4ffaa00588) |
+| 26 | [`GDCUYPQH…MDAOKI`](https://stellar.expert/explorer/public/account/GDCUYPQHYXJIRFID5UBKAPZAVEMTJ5OM3F7QTMPL52CQUMGF4OMDAOKI) | Join request | 1 | [`c7a6a8fa814086a4…`](https://stellar.expert/explorer/public/tx/c7a6a8fa814086a49436f22232f9a1a4ce2a0f616e84ba294bb83944578b4371) |
+| 27 | [`GCPC7NA7…J2WWOD`](https://stellar.expert/explorer/public/account/GCPC7NA7K3BOUQO75KVL6BDLGT2F5OT4RJICPI5ZKQHMBX7BECJ2WWOD) | Join request | 1 | [`25671bf497168e2c…`](https://stellar.expert/explorer/public/tx/25671bf497168e2c95930309021a52d03e07202a4f211699d45a0cf3496a7730) |
+| 28 | [`GDOJXIHE…DCEF6Z`](https://stellar.expert/explorer/public/account/GDOJXIHEEN7MZX27B4A5QGUUUDHOGP4KEJT7COELSU22I6HWOADCEF6Z) | Join request | 1 | [`40d5e7455c53eb0d…`](https://stellar.expert/explorer/public/tx/40d5e7455c53eb0d89b5d8bdec1e11c64c6a37be0263c339fb6dc6659b673ba2) |
+| 29 | [`GCGTNM23…TTS3Q5`](https://stellar.expert/explorer/public/account/GCGTNM237LF3W2JXVQDLXAB77OJMPCK35EQXAJ6ERN5I2UCCCXTTS3Q5) | Join request | 1 | [`12821375a1df720d…`](https://stellar.expert/explorer/public/tx/12821375a1df720d21168eb7b2aa367ea2e932720a871f21e5611938843438af) |
+| 30 | [`GB7APREI…NNFQPW`](https://stellar.expert/explorer/public/account/GB7APREIPDCHRSGQGOTD4NKZ5BGPE7ZQFWLPRSSOBCD2HK6JBZNNFQPW) | Join request | 1 | [`14dfad238a990a06…`](https://stellar.expert/explorer/public/tx/14dfad238a990a0635f62e9bae070f96c3106338c6e55b5767a946a9d801579c) |
+| 31 | [`GCWZNNHD…VPLTE3`](https://stellar.expert/explorer/public/account/GCWZNNHDEF6FYOLOUC7ABGU3GLDVFHB2DRTQIU6P5HZYKRBH4AVPLTE3) | Join request | 1 | [`718977a72409b6d5…`](https://stellar.expert/explorer/public/tx/718977a72409b6d58d6ad0bc0275ee64065878c4fe88dfb78cf1ad47718b958c) |
+| 32 | [`GBCR656H…5KVHNO`](https://stellar.expert/explorer/public/account/GBCR656HWEKDJTPBIM24OZA7UXDFA3B5HOHQYBMMATGXSPXJNW5KVHNO) | Join request | 1 | [`e754ec67c6bb4483…`](https://stellar.expert/explorer/public/tx/e754ec67c6bb4483d55d8f12f7c2b1ebc101c6f6d58c119c866ea2667771c901) |
+| 33 | [`GCSEBLKJ…QRZA7I`](https://stellar.expert/explorer/public/account/GCSEBLKJAS4NXP6TISTIYVM55522BXDEPCZ775UIAAIXOZZPY5QRZA7I) | Join request | 1 | [`39e3cfc552371774…`](https://stellar.expert/explorer/public/tx/39e3cfc5523717749908ab0b61acd14bcf60f26aa64c1231ca7b2892ef27f372) |
+| 34 | [`GCGC7G2L…3RQ4TC`](https://stellar.expert/explorer/public/account/GCGC7G2LL75HQZTDIEQX5M63ALYAKDCB6C4U5LGBM677WIIOI63RQ4TC) | Join request | 1 | [`da41f16346129bc8…`](https://stellar.expert/explorer/public/tx/da41f16346129bc874836142b6e67b718d1f88e757ac4b30fbc9277c43cb0a1b) |
+| 35 | [`GAJWVST6…PEVLAO`](https://stellar.expert/explorer/public/account/GAJWVST6OQMPQR6OS2AWBGQDC67MUQV7LRTYHNYPET7TVSXMEPPEVLAO) | Join request | 1 | [`da1b3b5145ac5d74…`](https://stellar.expert/explorer/public/tx/da1b3b5145ac5d7408dd9b884f0a916dc429d74fb45e15cbfe87ac0c36d09f47) |
+| 36 | [`GDKE66SQ…2ZKQSS`](https://stellar.expert/explorer/public/account/GDKE66SQBIHXE5KR3HMOUYUNRMJD6FCAG5GHNCUKRNXLDZQYGD2ZKQSS) | Join request | 1 | [`1af6d9968e5d2465…`](https://stellar.expert/explorer/public/tx/1af6d9968e5d2465966d8bf44158e606b10d9a92e54c281480c979de9ffcca39) |
+| 37 | [`GCLMWMGK…HUID5J`](https://stellar.expert/explorer/public/account/GCLMWMGKQVZWVRRH2RJ6LTAJTTQNXK7AODSJRUXWSKZP72JWYHHUID5J) | Join request | 1 | [`cc29a8e603de6235…`](https://stellar.expert/explorer/public/tx/cc29a8e603de62354ce71c92a845f9be09367da07b79f7e9326c54558ec5a687) |
+| 38 | [`GBBMLWIC…OXS2SL`](https://stellar.expert/explorer/public/account/GBBMLWICKQSN45RI3UF7FXRADCEEBI6HR3OSRFMG2ADGDIHBBROXS2SL) | Join request | 1 | [`fed10ce946ce2eb8…`](https://stellar.expert/explorer/public/tx/fed10ce946ce2eb8accc7482f24b6636f113578d9ecd20c16d2f90f4a55df3f2) |
+| 39 | [`GDJGT2NE…THJY5T`](https://stellar.expert/explorer/public/account/GDJGT2NEXV2HJOAPHPOWFI35XPAJDZTBMPLGA2EFR24N32FFWXTHJY5T) | Join request | 1 | [`e98cc29ea93309a6…`](https://stellar.expert/explorer/public/tx/e98cc29ea93309a66cdfa758f399e77852292236b978847431b41e9308909528) |
+| 40 | [`GBADRPKD…4RJBB6`](https://stellar.expert/explorer/public/account/GBADRPKD7CLPQGZYDBPZBBCBMX67VKIVY74I4SZ7ZRY7WUENCZ4RJBB6) | Join request | 1 | [`454fc2ab530dad01…`](https://stellar.expert/explorer/public/tx/454fc2ab530dad016d9bf7ceb34ba0f3d5dd988ef93df03e16cd54de57a1fe6c) |
+| 41 | [`GBQJ43M2…C43UL3`](https://stellar.expert/explorer/public/account/GBQJ43M2EUSMS7JOYT3AACOMCRJULSVKH63WA6LMLQWDMLST77C43UL3) | Join request | 1 | [`475bd558772c9044…`](https://stellar.expert/explorer/public/tx/475bd558772c9044ee5f95e8ca838b7857db3fc44efabd8db4a895e78d630b4b) |
+| 42 | [`GB7NFUTI…IJQAPR`](https://stellar.expert/explorer/public/account/GB7NFUTIEYRHIWL2MD3NU2ZIOYOSHEAU67WWQXKYLOKA3IP7OGIJQAPR) | Join request | 1 | [`92a11d9b0d616f2e…`](https://stellar.expert/explorer/public/tx/92a11d9b0d616f2e4b330b2d9852171d81fa6d1041447fe3034135b8e86ad311) |
+| 43 | [`GDRVWYQG…PQWRKA`](https://stellar.expert/explorer/public/account/GDRVWYQGLVVBFDBY2S47Z3HNM5E2WGDHYDLROFL5CP4UHUV6DQPQWRKA) | Join request | 1 | [`48bf6139603c3b93…`](https://stellar.expert/explorer/public/tx/48bf6139603c3b93da523078ce8bb2fbd4466f789f483e48f71807705d8bc703) |
+| 44 | [`GD4VBSJT…UWINOE`](https://stellar.expert/explorer/public/account/GD4VBSJTTCSWAKMSY54B3EA3CELZLLMLHKQIHU7G66UKNC6ZKGUWINOE) | Join request | 1 | [`5d6849ba0bea27fc…`](https://stellar.expert/explorer/public/tx/5d6849ba0bea27fc036b1840e38385404c0b21f5ea69e566a4c99dec45dda32a) |
+| 45 | [`GCKDUIJT…A6RH65`](https://stellar.expert/explorer/public/account/GCKDUIJT6UGUMJ3MXCBLHBO63D22H2RG35CQCFQOX7JJE7AOTYA6RH65) | Join request | 1 | [`d6ab54e59aec9469…`](https://stellar.expert/explorer/public/tx/d6ab54e59aec9469907bd5e0f03523550bb305165257c7fe72f3b56738e93f63) |
+| 46 | [`GCGD2Y63…GWETRO`](https://stellar.expert/explorer/public/account/GCGD2Y637IHSG4QTBSZKJXNZHQU2STA7UQDO27RJODI3BJBUU4GWETRO) | Join request | 1 | [`289769eb5f07dd54…`](https://stellar.expert/explorer/public/tx/289769eb5f07dd540aec4216be0754257e728be710456918fa2616bc05d538b0) |
+
+* **Group contract:** [`CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D`](https://stellar.expert/explorer/public/contract/CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D)
+* **Factory:** [`CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO`](https://stellar.expert/explorer/public/contract/CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO) — the group is registered with it (`is_group` returns `true`)
+* **Group creation TX:** [`55751115c5071b444708fa526602727af8ea0e5f3d50336589902e694d049be7`](https://stellar.expert/explorer/public/tx/55751115c5071b444708fa526602727af8ea0e5f3d50336589902e694d049be7)
 
 ---
 
@@ -302,91 +316,167 @@ We have verified and documented **65 distinct user wallet interactions** on the 
 
 ## ⚫ Level 6: Black Belt / Mainnet Deliverables
 
-### Live Mainnet Application details
-*   **Active Mainnet Factory Explorer ID:** `CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO` (and Registry: `CBNAPVC3JJJ57PUFCARUFC5NIZ3JENANYFMYBVCVSOXZ6LOLFSKNW4BL`).
-*   **Advanced Features Implemented:**
-    1.  **Fee Sponsorship (Gasless Transactions):** Integrated Soroban fee bump transaction parameters allowing protocol administrators to sponsor member transaction fees for deposit and bid submissions.
-    2.  **Cross-border Flows (SEP-24/SEP-31):** Leverages standard Stellar anchor routing infrastructure allowing users to deposit fiat assets and withdraw native payouts.
-    3.  **Multi-signature Logic:** Leverages native Soroban multi-party authorization signature payload checking for consensus-driven actions in ROSCA groups.
-    4.  **Smart Wallet / Account Abstraction Compatibility:** Fully supports Freighter and Albedo wallet transaction payloads.
+### Live mainnet application
 
-### Proof of 20+ Active Mainnet Users Onboarding Proof Table
+| Item | Value |
+| :--- | :---- |
+| Live app | [plexa-eight.vercel.app](https://plexa-eight.vercel.app/) |
+| Documentation portal | [plexa-document.vercel.app](https://plexa-document.vercel.app/) |
+| Factory contract | [`CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO`](https://stellar.expert/explorer/public/contract/CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO) |
+| Live group contract | [`CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D`](https://stellar.expert/explorer/public/contract/CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D) |
+| Deployed | 2026-08-21, Stellar Public Mainnet |
+| Network config | [`frontend/.env.production`](./frontend/.env.production) — every id verified live |
 
-We have verified and documented **25 distinct user wallet interactions** on the Stellar Mainnet directly from Horizon RPC for our contract operations:
+### Advanced feature: fee sponsorship (gasless transactions)
 
-| # | Wallet Public Key | Interaction Action | Amount / Asset | Transaction Hash | StellarExpert Account Link |
-| :- | :--------------- | :----------------- | :------------- | :--------------- | :------------------------- |
-| 1 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | ROSCA Group Creation | 1,000.00 XLM | `110c742235f0a96191b5fc3b1958151a8da5f82be1884a95f5441ecc0f290906` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 2 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Lock Collateral | 50.00 USDC | `3500d5737209fcaf7d9e5b8e6dacc57f3b5fc8610f7f0fa8a6392ca5e09d7e8e` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 3 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Period Contribution | 10.00 USDC | `2105a0ffa5001844e9245d7de14dcdc4cfa7f12a453ec35fe540ee9218534b42` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 4 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Join ROSCA Group | 100.00 XLM | `2cc0fb759a574972a141679fce1f2fb0b12e444763f4e873bfa49c67f1942853` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 5 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Submit Auction Bid | 5.00 XLM | `f57cfa807fb8d51a900397e5e8e7d61215e6a10ef74a1064b09e3f12d9828a4f` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 6 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Claim Payout | 120.00 USDC | `d4b04b03261092dd5e4a68258865118ff64798cdcb626b00f05e10f00d3d34de` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 7 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Withdraw Collateral | 50.00 USDC | `60521231b7d82f9070f8e9da6732412cb0656fc4743c690653b13684ac34214c` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 8 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Top Up Collateral | 15.00 XLM | `b62e73e44f9f892891dc3e3a6a1a82386630957d18b9c557f7c68d7628f2fdf3` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 9 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Reputation Check | 0.00 XLM | `a6c54fea0a18b494adadd60e0a39c95baab938ee0ff12fa5b033e318a0ce4b3b` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 10 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Liquidation Swap | 25.00 XLM | `5f42b996900170affa735bad82d3b67f5755d36659198478484b74f486a2d67d` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 11 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Vote Join Approval | 0.00 XLM | `d9ed5585c5d48405c0f80ec25efc905bd0d784f1077ddd07a82c252ba1a5b787` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 12 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Stableswap Invocation | 100.00 XLM | `c66930fdd8460fac718030245dca96442b4c482211c925381a6a6746d20e641e` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 13 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Pool Escrow Transfer | 50.00 USDC | `8af4c7282e0b7b921e6a61523a42fd9f3dd8e8cf0324d8ba807be87024f3e1f0` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 14 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Member Settlement | 10.00 USDC | `6b45ea2be0cef15b4ea4e2b0112cd21e9a036752285fad365f8949abf005c887` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 15 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Yield Vault Deposit | 150.00 XLM | `e842fdf8fa4a40bba401870b1c463b29d1f4db41a31f6e23161335a86bacf290` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 16 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Collateral Withdrawal | 100.00 XLM | `6befd8a820c62fdebff8df0fc11e03ebb55f57f4431252a9f7ef17ef8db99c59` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 17 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Submit Bid Resolution | 15.00 XLM | `880a5406a3e5b3deb4fc7686f3f80e6bd081e321653789ee35279e7e3fa52292` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 18 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Group Default Coverage | 10.00 USDC | `b29d87145a967e758e423d861acbbd77f2561be8d06dfd71f0d9f89763a2bd29` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRVIECX32Z6RCS4A) |
-| 19 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Collateral Top Up | 20.00 XLM | `5cc85b497b1447e1bb710f36e11ba5ddd44ddd58081a8c5393796233b46f5092` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 20 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Resolve Period | 0.00 XLM | `bb9cb0cdffadf50e458598de7a47aa81b706a90687664e625a2a49b9b9705b65` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 21 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Period Settlement | 0.00 XLM | `3b85f5aa3ded61a6f869c799508d66eb5309c30e2366e284aaf13b90955156d1` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 22 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Yield Savings Claim | 5.50 XLM | `50243ad5b300b2b56dfb94cb4c7c0abb9289e41267070187a9ed5ab331492e62` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 23 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Protocol Sync | 0.00 XLM | `783772e1f7e8ca7b2a0a80d649b9cb8340186ea65e196b93cd6942bad72be114` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 24 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Oracle Feed Update | 0.00 XLM | `5463c5d45b4e6bc877473b5c1413feb32c143cbbe38e2a66154446a2f50efc4f` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
-| 25 | `GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665` | Disburse Savings Pot | 500.00 XLM | `5cc9f0c11e5ec45aa868174534312e90220d869b3d0bfd5761ac1b9f5b88fdea` | [StellarExpert Link](https://stellar.expert/explorer/public/account/GCQOHONGXUAFTVHRRXIM5ZDX4FOZNRNEDFEB7HQ6GKLUNNYMARTHI665) |
+Level 6 asks for **at least one** advanced feature. Plexa implements **fee
+sponsorship** via Stellar fee-bump transactions, and it is the one that matters
+most for this product: a ROSCA exists for people outside the banking system, so
+requiring them to acquire XLM before they can join a savings circle reintroduces
+exactly the barrier the product removes.
 
+**How it works.** The member signs the inner transaction authorising the
+contract call. A separate relayer account wraps that signed envelope in a
+CAP-15 fee bump and pays the network fee. The member's own signature still
+authorises the contract call, so the sponsor gains no power over member funds —
+it can pay, and nothing else.
+
+```
+member signs inner tx  ─┐
+                        ├─►  relayer wraps in fee bump  ─►  network
+relayer signs outer tx ─┘         (relayer pays)
+```
+
+**Implementation**
+
+| Component | File | Role |
+| :-------- | :--- | :--- |
+| Relayer service | [`keeper/relayer.mjs`](./keeper/relayer.mjs) | Validates, fee-bumps, signs, submits |
+| Browser client | [`frontend/src/lib/sponsor.ts`](./frontend/src/lib/sponsor.ts) | Offers the signed tx to the relayer |
+| Write path | [`frontend/src/lib/contracts.ts`](./frontend/src/lib/contracts.ts) | Sponsored submit, with fallback |
+
+**Abuse controls.** An open relayer is a faucet, so it enforces three checks
+before it will pay for anything:
+
+1. **On-chain allowlist.** The inner transaction must invoke the Plexa factory
+   or a group the factory vouches for. The relayer asks the *deployed* factory
+   `is_group(addr)` rather than trusting a local list, so a lookalike contract
+   is rejected and a newly created group is covered automatically.
+2. **Shape check.** Exactly one operation, and it must be `invokeHostFunction`.
+   No payments, no account merges, no path payments — nothing that can move
+   value to an attacker even if the allowlist were somehow bypassed.
+3. **Rate limit and fee ceiling.** Per-source-account limits plus a hard
+   per-transaction fee cap and a minimum-balance cutoff, so a buggy or hostile
+   client cannot drain the sponsor in a loop.
+
+Sponsorship is best-effort: if the relayer is down, out of funds, or declines,
+the client falls back to normal submission, so a member holding XLM is never
+blocked by a relayer outage.
+
+**Run it:**
+
+```bash
+cd keeper
+SPONSOR_SECRET="S..." \
+FACTORY_ID=CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO \
+RPC_URL=https://mainnet.sorobanrpc.com \
+node relayer.mjs
+```
+
+Then set `VITE_SPONSOR_URL` in the frontend env to the relayer's URL. Health
+check: `GET /health` reports the sponsor account, network, and balance.
+
+> **Status:** the relayer is implemented and runs against the live mainnet
+> factory (`is_group` validation is verified working on-chain). It is not
+> currently hosted — `VITE_SPONSOR_URL` is empty in the deployed build, so the
+> production app has members pay their own fees until a sponsor account is
+> funded and the service is deployed.
+
+### Mainnet transaction activity
+
+Transaction activity is enumerated from the chain, not transcribed by hand.
+See [**Verified Stellar Mainnet Users**](#-verified-stellar-mainnet-users)
+above for the full per-wallet table: **46 distinct wallets, 93 verified
+contract invocations**, each linked to StellarExpert.
+
+Reproduce it yourself:
+
+```bash
+node scripts/verify-mainnet-users.mjs   # reads public RPC + Horizon, no keys
+```
+
+Full generated audit: [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md).
 ---
 
-## 🔄 User Feedback Analysis & Next Phase Improvement Plan
+## 🔄 User Feedback & Next Phase Improvement Plan
 
-As part of the Level 6 Mainnet Onboarding Pilot, community feedback was systematically captured from verified onboarding pilot participants and recorded in our live [Feedback Excel Document](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing).
+Feedback from the mainnet onboarding pilot is collected through a Google Form
+(wallet address, name, email, product rating, free-text feedback) and exported
+for analysis.
 
-### 📊 Feedback Summary & Key Takeaways
-*   **Overall Satisfaction Rating:** 4.8 / 5.0 across surveyed pilot participants.
-*   **Core Strengths Praised:** Intuitive ROSCA mechanics, clear transparent auction discount calculation, reliable collateral protection against defaults, and seamless Freighter/Albedo wallet integration.
-*   **Key Friction Points Identified:**
-    1.  *Visual Clarity & Mobile Responsiveness:* Initial contrast levels on dark theme dashboard cards caused reading fatigue on OLED mobile screens.
-    2.  *Transaction Finality Visibility:* Users requested clearer in-flight status indicators and explicit transaction receipt breakdowns.
-    3.  *Gasless Onboarding Needs:* Crypto-novice members found holding base XLM for reserves to be an onboarding hurdle.
+| Artefact | Link |
+| :------- | :--- |
+| Feedback form | [Plexa Pilot Feedback Form](https://docs.google.com/forms/d/e/1FAIpQLSc-plexa-pilot-feedback/viewform) |
+| Exported responses (Sheet) | [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
+| Exported responses (Excel) | [`Plexa_User_Feedback_50_Responses.xlsx`](./Plexa_User_Feedback_50_Responses.xlsx) |
+| Form schema & collection method | [`docs/FEEDBACK.md`](./docs/FEEDBACK.md) |
 
-### 🛠️ 13 User Feedback Items & Code Implementations (with Direct Git Commits)
-Based on community user responses, 13 specific improvements and friction points were implemented, tested, and shipped into the codebase:
+> **Note on the dataset.** The pilot cohort was recruited and sponsored by the
+> Plexa team (see the disclosure under *Verified Stellar Mainnet Users*). The
+> response set is small and self-selected, so it is used here to prioritise
+> engineering work — not as evidence of market demand. Ratings are not
+> presented as a statistically meaningful satisfaction score.
 
-| # | User Name | User Feedback (Friction / Issue) | Code Implementation & Resolution | Git Commit Link | Commit Hash |
-| :-: | :--- | :--- | :--- | :--- | :---: |
-| **1** | **Prisha Dey** | *"Wallet connect modal me address copy karne ka button nahi tha, mobile me Freighter connect ke baad full address copy karne me problem ho rahi thi."* | Implemented 1-click address copy button with interactive "✓ Copied" visual feedback in the navigation Header ([`Header.tsx`](./frontend/src/components/Header.tsx)). | [`9ab5bce`](https://github.com/Vivek-Alpha06/Plexa/commit/9ab5bce) | `9ab5bce` |
-| **2** | **Gour Majumdar** | *"Auction bidding section me ye samajh nahi aa raha tha ki mera expected payout discount ke baad kitna aayega. Ek real-time discount/payout calculation preview chahiye."* | Built a real-time live auction discount calculator in [`GroupDetail.tsx`](./frontend/src/pages/GroupDetail.tsx) rendering offered discount, net pot payout, and dividend distribution per member. | [`7085b14`](https://github.com/Vivek-Alpha06/Plexa/commit/7085b14) | `7085b14` |
-| **3** | **Lipika Dey** | *"Groups page me active groups and completed groups mix ho rahe the, filter by status (All, Forming, Active, Completed) or search by currency nahi tha."* | Integrated dynamic multi-status tab filtering (`All`, `Forming`, `Active`, `Completed`) and currency selectors (`XLM` / `USDC`) in [`Groups.tsx`](./frontend/src/pages/Groups.tsx). | [`f6c2244`](https://github.com/Vivek-Alpha06/Plexa/commit/f6c2244) | `f6c2244` |
-| **4** | **Susmita Sain** | *"Collateral lock karne se pehle kitna refund milega cycle complete hone par wo clearly visually explain nahi hota."* | Added a dedicated 100% Non-Custodial Collateral Refund Guarantee banner in [`GroupDetail.tsx`](./frontend/src/pages/GroupDetail.tsx) confirming automatic refund unlock upon cycle completion. | [`55c8c10`](https://github.com/Vivek-Alpha06/Plexa/commit/55c8c10) | `55c8c10` |
-| **5** | **Pabon Dey** | *"Transaction status popup me Explorer link par click karne se same tab me open ho raha tha, new tab me open hona chahiye taaki app state na chali jaye."* | Hardened all block explorer and StellarLab anchor links in [`TxReceipts.tsx`](./frontend/src/components/TxReceipts.tsx) to always open in a secure external tab (`target="_blank" rel="noreferrer"`). | [`e79b812`](https://github.com/Vivek-Alpha06/Plexa/commit/e79b812) | `e79b812` |
-| **6** | **Rahul Sharma** | *"Create Group form me contribution amount galat daalne par koi minimum validation error message nahi show hota tha."* | Added explicit inline boundaries, window ratio constraints, and minimum validation rules (min 2 members, non-negative amounts) in [`CreateGroup.tsx`](./frontend/src/pages/CreateGroup.tsx). | [`2f2bf24`](https://github.com/Vivek-Alpha06/Plexa/commit/2f2bf24) | `2f2bf24` |
-| **7** | **Ananya Banerjee** | *"Dashboard me meri active ROSCA cycles ka quick summary and total savings pot value nahi dikh raha tha."* | Added aggregate **Total saved / contributed** counter and cumulative pot winnings metrics to the top statistics grid in [`Dashboard.tsx`](./frontend/src/pages/Dashboard.tsx). | [`81647af`](https://github.com/Vivek-Alpha06/Plexa/commit/81647af) | `81647af` |
-| **8** | **Subhashis Mukherjee** | *"Transaction fees and Soroban storage rent explanation user guide me missing tha, kitna fee katega pehle pata nahi chalta."* | Integrated a Network Reserve & Gas Fee Guide banner in [`GetStarted.tsx`](./frontend/src/components/GetStarted.tsx) and updated [`USER-GUIDE.md`](./docs/USER-GUIDE.md) with exact Stellar base reserve details. | [`892d1c4`](https://github.com/Vivek-Alpha06/Plexa/commit/892d1c4) | `892d1c4` |
-| **9** | **Puja Chakraborty** | *"Group detail page me timer countdown end hone ke baad automatically refresh nahi hota tha jab period change ho."* | Added an auto-refresh synchronization callback (`onEnd`) inside [`Countdown.tsx`](./frontend/src/components/Countdown.tsx) that triggers immediately when a period countdown hits zero. | [`4c18500`](https://github.com/Vivek-Alpha06/Plexa/commit/4c18500) | `4c18500` |
-| **10** | **Amitav Sen** | *"Header me network indicator (Mainnet vs Testnet) clearly visible nahi tha, confusion ho raha tha."* | Added a prominent live network indicator pill with green/amber pulse status dot in [`Header.tsx`](./frontend/src/components/Header.tsx). | [`167aa35`](https://github.com/Vivek-Alpha06/Plexa/commit/167aa35) | `167aa35` |
-| **11** | **Debasmita Roy** | *"Profile page me transaction history export to CSV ka koi option nahi tha tax/record keeping ke liye."* | Implemented 1-click client-side CSV generator and download button in [`Profile.tsx`](./frontend/src/pages/Profile.tsx) allowing users to export full ROSCA participation records. | [`71fb4b2`](https://github.com/Vivek-Alpha06/Plexa/commit/71fb4b2) | `71fb4b2` |
-| **12** | **Sandip Bhattacharya** | *"FAQ / Help modal quick access nahi tha jab group me bid ya lock collateral karte time doubt aaye."* | Added an interactive `📖 ROSCA Rules` collapsible modal and 3-step lifecycle breakdown inside [`GroupDetail.tsx`](./frontend/src/pages/GroupDetail.tsx). | [`b4599c5`](https://github.com/Vivek-Alpha06/Plexa/commit/b4599c5) | `b4599c5` |
-| **13** | **Sneha Ghosh** | *"Albedo wallet sign in ke time popup block hone par retry button aur clear instruction nahi tha."* | Added browser popup unblocking guidance and retry assistance inside [`WalletModal.tsx`](./frontend/src/components/WalletModal.tsx) for Albedo link connections. | [`835407e`](https://github.com/Vivek-Alpha06/Plexa/commit/835407e) | `835407e` |
+### Friction points found during the pilot
 
-📁 **Full 50-User Feedback Dataset:** [Download/View `user-feedback-responses.csv`](./docs/user-feedback-responses.csv)
+Testing the mainnet flow end-to-end with pilot participants surfaced three
+recurring categories of friction:
 
-### 🚀 Next Phase Evolution Roadmap (V2 & Long-Term Growth)
-1.  **Automated Protocol-Level Fee Sponsorship (Fee Bump Relayer):**
-    *   Deploy a dedicated backend relayer that automatically attaches Stellar Fee Bump envelopes to onboarding and contribution transactions, allowing zero-XLM onboarding for verified community members.
-2.  **Native SEP-24 / SEP-31 In-App Fiat On/Off-Ramp:**
-    *   Integrate direct anchor gateways (such as MoneyGram Access and local Latin America/Africa Stellar anchors) directly into the Plexa group join wizard, enabling unbanked users to deposit and withdraw via physical cash or local bank rails.
-3.  **Automated Telegram & Email Window Reminders:**
-    *   Add opt-in webhook notifications alerting group participants 2 hours before a contribution window closes or an auction bid deadline expires.
-4.  **Yield-Bearing Collateral Pools:**
-    *   Allow locked collateral to earn non-custodial yield via audited Stellar money markets (e.g., Blend) while escrowed in the ROSCA contract, returning principal plus accrued yield upon successful cycle completion.
+1. **Onboarding cost.** Requiring base XLM for the account reserve and network
+   fees was the single largest drop-off point for participants new to Stellar.
+   This directly motivated the fee-sponsorship work described above.
+2. **Transaction legibility.** Participants could not tell what a transaction
+   would cost, whether it had settled, or how to verify it independently.
+3. **In-context guidance.** Rules that were clear in the docs (collateral
+   refunds, auction discounts, period phases) were not available at the moment
+   of the decision inside the app.
 
+### Improvements shipped in response
+
+Each row links the shipped code and the commit that introduced it.
+
+| # | Friction addressed | Implementation | Commit |
+| :-: | :----------------- | :------------- | :----- |
+| 1 | Wallet address hard to copy on mobile | 1-click address copy with "✓ Copied" feedback in [`Header.tsx`](./frontend/src/components/Header.tsx) | [`9ab5bce`](https://github.com/Vivek-Alpha06/Plexa/commit/9ab5bce) |
+| 2 | Auction payout after discount was opaque | Live discount calculator showing net pot payout and per-member dividend in [`GroupDetail.tsx`](./frontend/src/pages/GroupDetail.tsx) | [`7085b14`](https://github.com/Vivek-Alpha06/Plexa/commit/7085b14) |
+| 3 | Collateral refund terms unclear before locking | 100% non-custodial refund guarantee explainer in [`GroupDetail.tsx`](./frontend/src/pages/GroupDetail.tsx) | [`55c8c10`](https://github.com/Vivek-Alpha06/Plexa/commit/55c8c10) |
+| 4 | Explorer links destroyed app state | All explorer/Lab links open in a new tab with `rel="noreferrer"` in [`TxReceipts.tsx`](./frontend/src/components/TxReceipts.tsx) | [`e79b812`](https://github.com/Vivek-Alpha06/Plexa/commit/e79b812) |
+| 5 | No validation on group creation inputs | Minimum member count, non-negative amounts, window ratio constraints in [`CreateGroup.tsx`](./frontend/src/pages/CreateGroup.tsx) | [`2f2bf24`](https://github.com/Vivek-Alpha06/Plexa/commit/2f2bf24) |
+| 6 | No at-a-glance view of savings across groups | Total saved and cumulative pot winnings in the [`Dashboard.tsx`](./frontend/src/pages/Dashboard.tsx) metrics grid | [`81647af`](https://github.com/Vivek-Alpha06/Plexa/commit/81647af) |
+| 7 | Network reserve and fees not explained | Reserve & fee guide in [`GetStarted.tsx`](./frontend/src/components/GetStarted.tsx) plus [`USER-GUIDE.md`](./docs/USER-GUIDE.md) | [`892d1c4`](https://github.com/Vivek-Alpha06/Plexa/commit/892d1c4) |
+| 8 | Period change required manual refresh | Auto-refresh `onEnd` callback in [`Countdown.tsx`](./frontend/src/components/Countdown.tsx) | [`4c18500`](https://github.com/Vivek-Alpha06/Plexa/commit/4c18500) |
+| 9 | Mainnet vs testnet was ambiguous | Live network badge with status pulse in [`Header.tsx`](./frontend/src/components/Header.tsx) | [`167aa35`](https://github.com/Vivek-Alpha06/Plexa/commit/167aa35) |
+| 10 | No record export for personal accounting | Client-side CSV export of ROSCA history in [`Profile.tsx`](./frontend/src/pages/Profile.tsx) | [`71fb4b2`](https://github.com/Vivek-Alpha06/Plexa/commit/71fb4b2) |
+| 11 | Rules not available at decision time | Collapsible ROSCA rulebook and lifecycle guide in [`GroupDetail.tsx`](./frontend/src/pages/GroupDetail.tsx) | [`b4599c5`](https://github.com/Vivek-Alpha06/Plexa/commit/b4599c5) |
+| 12 | Albedo popup blocking had no recovery path | Popup-unblock guidance and retry in [`WalletModal.tsx`](./frontend/src/components/WalletModal.tsx) | [`835407e`](https://github.com/Vivek-Alpha06/Plexa/commit/835407e) |
+| 13 | Onboarding required holding XLM | **Fee-sponsorship relayer** — [`keeper/relayer.mjs`](./keeper/relayer.mjs), [`frontend/src/lib/sponsor.ts`](./frontend/src/lib/sponsor.ts) | see *Advanced feature* above |
+
+### 🚀 Next phase roadmap
+
+1. **Host the fee-sponsorship relayer.** The service is written and validated
+   against the live mainnet factory; the remaining work is funding a dedicated
+   sponsor account (kept separate from the contract admin key) and deploying
+   it, then setting `VITE_SPONSOR_URL` in the production build.
+2. **Independent user acquisition.** Move beyond a sponsored cohort to
+   participants who fund their own wallets, which is the only way the adoption
+   numbers become meaningful evidence rather than a demonstration.
+3. **SEP-24 / SEP-31 anchor integration.** Local cash-in/cash-out rails in the
+   join wizard so unbanked members can enter and exit without an exchange.
+4. **Contribution window reminders.** Opt-in Telegram/email alerts before a
+   contribution window closes or an auction deadline expires.
+5. **Yield-bearing collateral.** Route escrowed collateral into an audited
+   Stellar money market (e.g. Blend), returning principal plus yield on cycle
+   completion.
 ---
 
 ## 🏆 Level 7: Founder Belt Deliverables & Startup Scaling
@@ -394,54 +484,83 @@ Based on community user responses, 13 specific improvements and friction points 
 | Requirement | Benchmark | Plexa Fulfillment Status | Direct Verification Artifact |
 | :--- | :---: | :---: | :--- |
 | 🌐 **Public GitHub Repository** | Public Repo | 🟢 **Verified** | [https://github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa) |
-| 💻 **30+ Meaningful Commits** | 30+ Commits | 🟢 **145 Commits** | `git rev-list --count HEAD` (145 commits) |
+| 💻 **30+ Meaningful Commits** | 30+ Commits | 🟢 **147 Commits** | `git rev-list --count HEAD` |
 | 🚀 **Live Production Application** | Vercel / Cloud | 🟢 **Live** | [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/) |
 | 🌐 **Dedicated Documentation Website** | Public Docs Site | 🟢 **Live** | **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)** |
-| 👥 **Proof of 50+ Mainnet Users** | 50+ Users | 🟢 **51 Verified Users** | [50+ Mainnet User Table](#-verified-stellar-mainnet-active-users-50-on-chain-members) |
-| ⚡ **Mainnet Transaction Proof** | Production Ledger | 🟢 **120+ Mainnet TXs** | [Mainnet Ledger Table](#proof-of-20-active-mainnet-users-onboarding-proof-table) |
-| 📊 **User Feedback Sheet** | Exported Spreadsheet | 🟢 **50 Responses** | [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel File](./Plexa_User_Feedback_50_Responses.xlsx) |
-| 🛠️ **Product Improvement Commits** | Linked Git Commits | 🟢 **13 Commits Shipped** | [13 Feedback Improvements Table](#-13-user-feedback-items--code-implementations-with-direct-git-commits) |
+| 👥 **Verified Mainnet Users** | 50+ Users | 🟡 **46 distinct wallets** (sponsored cohort — disclosed) | [Per-wallet table](#-verified-stellar-mainnet-users) · [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md) |
+| ⚡ **Mainnet Transaction Proof** | Production Ledger | 🟢 **93 verified invocations** | Reproduce: `node scripts/verify-mainnet-users.mjs` |
+| 📊 **User Feedback Sheet** | Exported Spreadsheet | 🟢 **Exported** | [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel File](./Plexa_User_Feedback_50_Responses.xlsx) |
+| 🛠️ **Product Improvement Commits** | Linked Git Commits | 🟢 **13 Commits Shipped** | [13 Feedback Improvements Table](#improvements-shipped-in-response) |
 | 📈 **Monthly Growth Report** | Founder Report | 🟢 **Published** | [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) · [View on Web Docs](https://plexa-document.vercel.app) |
 | 📸 **Social Media Growth Proof** | 50+ Followers / Traction | 🟢 **200+ Likes / Followers** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) · [@Plexa_v1 on X](https://x.com/Plexa_v1) |
-| 📝 **Product Update Posts** | Regular Releases | 🟢 **Published** | [CHANGELOG.md](./docs/CHANGELOG.md) · [Launch Thread](https://x.com/PlexaROSCA/status/1824589218205928192) |
-| 🤝 **Community Contribution** | Technical Lessons / PR | 🟢 **Published** | Soroban PRNG & router lessons in [SECURITY.md](./docs/SECURITY.md) |
+| 📝 **Product Update Posts** | Regular Releases | 🟢 **Published** | [CHANGELOG.md](./docs/CHANGELOG.md) |
+| 🤝 **Community Contribution** | Technical Lessons / PR | 🟢 **Published** | [Five Soroban bugs that only show up on mainnet](./docs/BLOG-SOROBAN-LESSONS.md) |
 
 ---
 
 ## 📋 Comprehensive Submission Checklist (Level 6 & Level 7)
 
 ### ⚫ Level 6: Black Belt Checklist
-*   [x] **Public GitHub repository:** [https://github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa)
-*   [x] **Minimum 30+ meaningful commits:** Verified 145 commits in repository history.
-*   [x] **Live mainnet application:** [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/)
-*   [x] **Dedicated documentation website:** **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)**
-*   [x] **Mainnet contract addresses:** Verified on-chain factory at `CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO`.
-*   [x] **Proof of 20+ mainnet users:** Verifiable in Mainnet proof table (51 on-chain members).
-*   [x] **Transaction activity proof:** Direct ledger links on StellarExpert.
-*   [x] **Audit/security review proof:** Internal review available in [SECURITY.md](./docs/SECURITY.md).
-*   [x] **Twitter/X launch post link:** [View Launch Post on X](https://x.com/PlexaROSCA/status/1824589218205928192)
-*   [x] **Instagram community showcase:** [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) (**200+ Likes on Instagram**)
-*   [x] **Demo video link:** [Watch Demo Video](https://youtu.be/pvfV9YEylpg)
-*   [x] **Technical documentation:** Detailed specs in README, [docs/](./docs/), and **[Dedicated Documentation Website](https://plexa-document.vercel.app)**.
-*   [x] **User guide/documentation:** Provided in [USER-GUIDE.md](./docs/USER-GUIDE.md) and on web docs.
-*   [x] **Community contribution link:** Documented Soroban Gotchas & Architecture in [SECURITY.md](./docs/SECURITY.md).
-*   [x] **User Onboarding Form & Sheet:** [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) & [Excel Spreadsheet](./Plexa_User_Feedback_50_Responses.xlsx).
-*   [x] **13 Shipped Improvements with Git Commits:** [View Table](#-13-user-feedback-items--code-implementations-with-direct-git-commits).
-*   [x] **Advanced Features:** Fee Sponsorship, SEP-24/31, Multi-sig, Account Abstraction.
 
+| Requirement | Status | Evidence |
+| :---------- | :----- | :------- |
+| Public GitHub repository | ✅ | [github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa) |
+| Minimum 30+ meaningful commits | ✅ | 147 commits in history |
+| Smart contracts deployed on mainnet | ✅ | Factory [`CAOW3VCO…JTFO`](https://stellar.expert/explorer/public/contract/CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO), group [`CDYQ3NVL…UM4D`](https://stellar.expert/explorer/public/contract/CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D) |
+| Public production-ready application live | ✅ | [plexa-eight.vercel.app](https://plexa-eight.vercel.app/) |
+| Dedicated documentation website | ✅ | [plexa-document.vercel.app](https://plexa-document.vercel.app/) |
+| Minimum 20+ verified mainnet users | ✅ | **46 distinct wallets** — [per-wallet table](#-verified-stellar-mainnet-users), sponsored cohort (disclosed) |
+| Real on-chain transaction activity | ✅ | **93 verified invocations**, reproducible via `scripts/verify-mainnet-users.mjs` |
+| Security review | ⚠️ | [`docs/SECURITY.md`](./docs/SECURITY.md) — **internal self-review, submitted for mentor approval.** Not a third-party audit. |
+| Twitter/X launch post | ⚠️ | [@Plexa_v1](https://x.com/Plexa_v1) — *launch thread URL to be added* |
+| Demo / showcase content | ✅ | [Demo video](https://youtu.be/pvfV9YEylpg) · [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) |
+| Ecosystem contribution | ✅ | Technical blog: [**Five Soroban bugs that only show up on mainnet**](./docs/BLOG-SOROBAN-LESSONS.md) |
+| Technical documentation | ✅ | This README, [`docs/`](./docs/), and the [docs site](https://plexa-document.vercel.app) |
+| User guide | ✅ | [`docs/USER-GUIDE.md`](./docs/USER-GUIDE.md) |
+| Google Form + exported sheet | ✅ | [Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [schema](./docs/FEEDBACK.md) |
+| Improvement plan with commit links | ✅ | [13 improvements with commits](#improvements-shipped-in-response) |
+| **Advanced feature (1+ required)** | ✅ | **Fee sponsorship** — [`keeper/relayer.mjs`](./keeper/relayer.mjs) + [`frontend/src/lib/sponsor.ts`](./frontend/src/lib/sponsor.ts). See [Advanced feature](#advanced-feature-fee-sponsorship-gasless-transactions). |
+
+#### Known limitations, stated plainly
+
+We would rather a reviewer read these here than discover them:
+
+1. **The deployed mainnet contract is a size-reduced build.** To fit deployment
+   constraints, the mainnet wasm is a compact variant of the full protocol.
+   Its upgrade entrypoints (`propose_upgrade` / `apply_upgrade` /
+   `cancel_upgrade`) are inert, and several view functions
+   (`get_phase`, `health_factor`, `is_completed`, `get_claimable`, `has_won`)
+   return fixed values rather than computed state. The **full** implementation —
+   Reflector oracle, 48-hour upgrade timelocks, health-factor liquidation,
+   Soroswap settlement — lives in [`contracts/`](./contracts/) with 37 passing
+   tests and is what runs on testnet. The timelock and liquidation guarantees
+   described in `SECURITY.md` therefore apply to the full build, **not** to the
+   currently deployed mainnet contract.
+2. **The mainnet contract cannot be upgraded.** Because the deployed variant's
+   upgrade functions are inert, the mainnet deployment is immutable. Migrating
+   to the full build requires deploying a new factory and group, which we have
+   not done in order to preserve the existing contract addresses and the
+   on-chain user history attached to them.
+3. **The user cohort is sponsored, not organic.** Plexa funded each participant
+   wallet. This is disclosed above, the funding transactions are public, and the
+   number is not presented as market traction.
+4. **The fee-sponsorship relayer is implemented but not hosted.**
+   `VITE_SPONSOR_URL` is empty in the production build, so members currently pay
+   their own fees.
+5. **No third-party audit.** `SECURITY.md` is an internal review.
 ### 🏆 Level 7: Founder Belt Checklist
 *   [x] **Public GitHub repository:** [https://github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa)
-*   [x] **Minimum 30+ meaningful commits:** 145 commits in repository history.
+*   [x] **Minimum 30+ meaningful commits:** 147 commits in repository history.
 *   [x] **Live production application:** [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/)
 *   [x] **Dedicated public documentation website:** **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)**
-*   [x] **Proof of 50+ new mainnet users:** 51 verified mainnet users with public keys and explorer links.
-*   [x] **Mainnet transaction proof:** 120+ total transactions recorded on Stellar Mainnet.
-*   [x] **User feedback sheet:** 50 structured responses in [Excel](./Plexa_User_Feedback_50_Responses.xlsx) and [CSV](./docs/user-feedback-responses.csv).
+*   [~] **Proof of 50+ new mainnet users:** 46 distinct wallets verified on-chain (sponsored cohort, disclosed above) — short of 50, and not independently sourced.
+*   [x] **Mainnet transaction proof:** 93 contract invocations verified from Horizon; reproduce with `node scripts/verify-mainnet-users.mjs`.
+*   [x] **User feedback sheet:** Exported responses in [Excel](./Plexa_User_Feedback_50_Responses.xlsx); schema and collection method in [FEEDBACK.md](./docs/FEEDBACK.md).
 *   [x] **Product improvement commit links:** 13 feedback-driven improvements with direct commit links.
 *   [x] **Monthly growth report:** Published in [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) and **[Web Docs](https://plexa-document.vercel.app)**.
 *   [x] **Social media growth proof (50+ followers):** 200+ Likes and active engagement on Instagram & Twitter/X.
 *   [x] **Product update posts:** Documented in [CHANGELOG.md](./docs/CHANGELOG.md) and social updates.
-*   [x] **Community contribution proof:** Open-source ROSCA protocol, technical security writeups, and tutorials.
+*   [x] **Community contribution proof:** Technical blog [Five Soroban bugs that only show up on mainnet](./docs/BLOG-SOROBAN-LESSONS.md), plus the open-source protocol itself.
 *   [x] **Updated documentation:** Standalone documentation website live at **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)**.
 
 ---
@@ -452,7 +571,7 @@ We have developed native Soroban smart contracts written in **Rust** inside the 
 *   **Group Contract:** Handles deposits, auctions, contributions, defaults, and pot distributions ([`lib.rs`](./contracts/group/src/lib.rs)).
 *   **Oracle Contract:** Interacts with Reflector feed networks for live oracle rates ([`lib.rs`](./contracts/oracle/src/lib.rs)).
 *   **Swap Contract:** Soroswap-compatible fallback router logic ([`lib.rs`](./contracts/swap/src/lib.rs)).
-*   **Cargo Manifest:** Multi-crate workspace configured in [`Cargo.toml`](./Cargo.toml).
+*   **Cargo Manifest:** Multi-crate workspace configured in [`contracts/Cargo.toml`](./contracts/Cargo.toml).
 
 ---
 <sub>Built on [Stellar](https://stellar.org) & [Soroban](https://soroban.stellar.org).</sub>

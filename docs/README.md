@@ -15,7 +15,9 @@ Welcome to the comprehensive documentation index for Plexa — the decentralized
 | 🛡️ **[Security Review & Audit](SECURITY.md)** | Smart contract internal audit, trust model, threat matrix, invariant proofs, and 8 resolved bugs |
 | 👥 **[User Guide & Tutorials](USER-GUIDE.md)** | End-to-end participant guide: wallet connection (Freighter/Albedo), circle creation, bidding, claiming |
 | 🎯 **[Official Pitch Deck](PITCH-DECK.md)** · **[Interactive Presentation](pitch-deck.html)** | 10-slide comprehensive deck for judges, partners, and investors |
-| 📊 **[User Feedback Spreadsheet](Plexa_User_Feedback_50_Responses.xlsx)** · **[CSV Data](user-feedback-responses.csv)** | Formatted 50-user onboarding and product feedback dataset with rating analysis |
+| 📊 **[User Feedback Spreadsheet](Plexa_User_Feedback_50_Responses.xlsx)** · **[Collection method](FEEDBACK.md)** | Exported pilot onboarding and product feedback, with the form schema and the honest limits of the dataset |
+| ✍️ **[Soroban Lessons (blog)](BLOG-SOROBAN-LESSONS.md)** | Ecosystem contribution: five Soroban bugs that only show up on mainnet |
+| 🔎 **[Mainnet User Verification](MAINNET-USERS.md)** | Chain-generated proof of mainnet user activity |
 | 📋 **[Submission Checklist](SUBMISSION.md)** | Requirement-by-requirement verification matrix for Level 6 & Level 7 |
 | 🚀 **[Pilot Operations Plan](PILOT.md)** | Operational plan for running the 50-user pilot, economics, recruitment, and evidence capture |
 | 📝 **[Changelog & Release Notes](CHANGELOG.md)** | Release history, bug fixes, performance optimizations, and contract upgrades |

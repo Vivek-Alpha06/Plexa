@@ -13,6 +13,90 @@ and the frontend paths that gate fund movement.
 
 ---
 
+## 0. Scope: this review covers the source tree, not the mainnet deployment
+
+**Read this before relying on anything below.**
+
+This review analyses the **full protocol** — the build that implements the
+Reflector oracle, health-factor liquidation, Soroswap settlement, and 48-hour
+upgrade timelocks, and that runs on **testnet** (factory
+`CDOYIGNCIR4QTUTAUYEFSW7IJVS6ZMOFV6CW574VFGHQ5ZDCQCJZ4GDZ`) with 37 passing
+tests.
+
+That full implementation is preserved in git at ref
+[`ccfeb5f`](https://github.com/Vivek-Alpha06/Plexa/commit/ccfeb5f)
+(`contracts/group/src/lib.rs`, 1,688 lines). The working tree's
+[`contracts/`](../contracts/) currently holds the **size-reduced variant that
+was actually deployed to mainnet** (374 lines, 20 passing tests), so that the
+committed source corresponds to the deployed wasm. Read the full build with:
+
+```bash
+git show ccfeb5f:contracts/group/src/lib.rs
+```
+
+The difference between the two builds is material to security:
+
+| Capability | Full build (reviewed, testnet) | Mainnet deployment |
+| :--------- | :----------------------------- | :----------------- |
+| `propose_upgrade` / `apply_upgrade` / `cancel_upgrade` | 48h timelock enforced | **Inert — empty function bodies** |
+| `health_factor` | Computed from oracle + collateral | **Returns a fixed 1.5** |
+| `get_phase` | Derived from period windows | **Always `Contribution`** |
+| `is_completed` | Reflects cycle state | **Always `false`** |
+| `get_claimable` | Computed payout | **Always `0`** |
+| `has_won` | Tracked per member | **Always `false`** |
+| Oracle-driven liquidation | Active | Not exercised |
+
+Two consequences follow, and neither should be discovered by a reader rather
+than stated by us:
+
+1. **The 48-hour upgrade timelock described in §4 does not exist on mainnet.**
+   The functions are present in the ABI but do nothing.
+2. **The mainnet contract cannot be upgraded at all.** With no working upgrade
+   path, the deployed code is permanent. A fix requires deploying a new factory
+   and group at new addresses.
+
+The mainnet deployment should therefore be treated as a **demonstration
+deployment carrying nominal value**, not as a system ready to custody
+meaningful funds. Migrating mainnet to the reviewed build is tracked as the
+top security item in the roadmap.
+
+---
+
+## 0.1 Disclosed incident: deployer key exposed in git history
+
+**Status: disclosed, unresolved. Severity: high for the affected key.**
+
+The mainnet deployer secret key was hardcoded in three scripts
+(`scripts/deploy-mainnet.mjs`, `populate-mainnet-users.mjs`,
+`populate-more-users.mjs`) and committed to this public repository in commits
+`27381d7`, `ff2e890`, and `6bc2e11`.
+
+**What the key controls:** account
+`GDIVNQJKW5SJ53GVVUWXELV34HRKBUIC3TIJW657V2OUN6GP6IIHU2EN`, which is the
+`admin()` of the mainnet factory `CAOW3VCO…JTFO`, the creator of the group
+`CDYQ3NVL…UM4D`, and the funder of the pilot cohort. It is a single signer with
+a ~1 XLM balance.
+
+**Mitigating factors:** the deployed contract's upgrade entrypoints are inert
+(see §0), so admin authority on mainnet confers no ability to replace code. The
+account holds negligible value.
+
+**Remediation status:**
+
+- ✅ The hardcoded key has been removed from all scripts, which now read
+  `DEPLOYER_SECRET` from the environment and refuse to run without it.
+- ❌ **The key remains in git history and must be considered permanently
+  compromised.** Removing a secret from `HEAD` does not remove it from history
+  or from any clone or fork already made.
+- ⬜ **Required action:** the key must be rotated. Any future mainnet deployment
+  must use a freshly generated key that has never touched the repository, and
+  that key must be held only in environment variables or a secret manager.
+
+This is recorded here rather than quietly fixed because a security document
+that omits the project's own worst finding is not a security document.
+
+---
+
 ## 1. What is at risk
 
 | Asset | Held by | Exposure |
@@ -20,7 +104,7 @@ and the frontend paths that gate fund movement.
 | Member collateral | Group contract | Locked for the cycle + 24h grace |
 | Period pot | Group contract | Held from contribution until claimed |
 | Unclaimed payouts | Group contract | Until the winner claims |
-| Upgrade authority | Factory admin key | Can replace code of every group, after a 48h delay |
+| Upgrade authority | Factory admin key | Full build: can replace code of every group after a 48h delay. **Mainnet: no effect — upgrade entrypoints are inert (§0).** |
 
 The protocol is **non-custodial in operation** — no operator can move member
 funds through any ordinary entrypoint — but it is **not trustless in

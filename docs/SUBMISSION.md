@@ -11,7 +11,7 @@ Status as of **2026-08-16**. Update the links as items complete.
 | 5 | Proof of 20+ mainnet users | ✅ **40+** | [40+ Active Mainnet Users Table](../README.md#verified-stellar-mainnet-active-users) |
 | 6 | Transaction activity proof | ✅ | [StellarExpert Mainnet Activity](https://stellar.expert/explorer/public/account/GDIVNQJKW5SJ53GVVUWXELV34HRKBUIC3TIJW657V2OUN6GP6IIHU2EN) |
 | 7 | Audit / security review | ✅ | [Security Review](SECURITY.md) — Comprehensive smart contract audit |
-| 8 | Twitter/X launch post | ✅ | [View Launch Post on X](https://x.com/PlexaROSCA/status/1824589218205928192) |
+| 8 | Twitter/X launch post | ⚠️ | Handle [@Plexa_v1](https://x.com/Plexa_v1) — **launch thread URL still to be supplied** |
 | 9 | Demo video | ✅ | https://youtu.be/pvfV9YEylpg |
 | 10 | Technical documentation | ✅ | [README](../README.md) + [docs/](README.md) |
 | 11 | User guide | ✅ | [User Guide](USER-GUIDE.md) |

@@ -17,6 +17,8 @@ export interface TxRecord {
   contractId: string;
   address: string;
   ts: number;
+  /** Relayer account that paid the fee, when the write went out gasless. */
+  sponsoredBy?: string;
 }
 
 const KEY = "plexa_txlog_v1";

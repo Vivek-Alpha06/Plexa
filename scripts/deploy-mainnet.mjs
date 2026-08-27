@@ -1,4 +1,4 @@
-﻿import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import {
   Keypair,
   Networks,
@@ -17,7 +17,24 @@ import {
 const RPC_URL = 'https://mainnet.sorobanrpc.com';
 const server = new rpc.Server(RPC_URL);
 
-const kp = Keypair.fromSecret('SCL4W7RGEHTH65QJCVQVCRMBXXQI46M5YEEVJ6DG6LHYKBN3DYEN7A7S');
+function requireSecret(name) {
+  const s = process.env[name];
+  if (!s) {
+    console.error(
+      `${name} is not set.
+` +
+      `Never hardcode a Stellar secret key in a file that gets committed —
+` +
+      `this repo is public, and a committed key stays in git history forever.
+` +
+      `Pass it in for one command instead:  ${name}="S..." node ${process.argv[1]}`
+    );
+    process.exit(1);
+  }
+  return s;
+}
+
+const kp = Keypair.fromSecret(requireSecret('DEPLOYER_SECRET'));
 console.log('Deployer Public Key:', kp.publicKey());
 
 async function sendAndPoll(tx) {

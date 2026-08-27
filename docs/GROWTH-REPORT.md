@@ -16,7 +16,7 @@ Plexa has transitioned from a hackathon prototype into a production-ready, decen
 Over the past month, the protocol achieved key founder milestones:
 - **Mainnet Launch & Stability:** Deployed verified Factory (`CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO`) and Group Soroban smart contracts with automated Reflector oracle and Soroswap router integrations.
 - **50+ Verified Mainnet Users:** Onboarded **51 distinct wallet addresses** executing live on-chain join approvals, collateral deposits, contributions, and auction bidding.
-- **Data-Driven Product Iteration:** Collected 50 structured onboarding survey responses, achieving an overall **4.8 / 5.0 satisfaction score**, and implemented **13 targeted improvements** with direct Git commit traceability.
+- **Data-Driven Product Iteration:** Ran a sponsored onboarding pilot, collected structured feedback (see [FEEDBACK.md](FEEDBACK.md) for method and limits), and shipped **13 targeted improvements** with direct Git commit traceability.
 - **Community & Social Traction:** Reached **200+ Instagram community engagements** and established active Twitter/X product update channels.
 - **Dedicated Documentation Portal:** Launched a comprehensive public documentation website covering protocol architecture, API specs, developer setup, security reviews, and user guides.
 
@@ -33,7 +33,7 @@ Over the past month, the protocol achieved key founder milestones:
 | **Shipped Improvements** | Outlined | Linked Commits | **13 Shipped Commits** | 🟢 **100% Shipped** |
 | **Social Media Community** | Launch Post | 50+ Followers/Growth | **200+ Likes / Active Community** | 🟢 **Exceeded** |
 | **Documentation Portal** | User Guide | Dedicated Docs Site | **Live Web Docs Portal** | 🟢 **Live at `/docs`** |
-| **Average User Satisfaction** | N/A | N/A | **4.8 / 5.0 Rating** | 🟢 **Excellent** |
+| **Average User Satisfaction** | N/A | N/A | _not reported — sponsored cohort, n too small to be meaningful_ | ⚪ **N/A** |
 
 ---
 
@@ -127,4 +127,4 @@ gantt
 
 ## 8. Conclusion
 
-Plexa has successfully completed the requirements for both **Level 6 (Black Belt)** and **Level 7 (Founder Belt)** of the Stellar Builder Challenge. With a live Stellar Mainnet deployment, 51 verified active users, 144 meaningful git commits, a 50-user feedback survey yielding a 4.8/5.0 rating, 13 shipped code enhancements, active social media growth, and a dedicated public documentation portal, Plexa is positioned for sustainable long-term expansion as an anchor product in the Stellar decentralized finance ecosystem.
+Plexa has a live Stellar Mainnet deployment, **46 distinct wallets** with verified on-chain activity (a sponsored pilot cohort — see the disclosure in the README), **147** meaningful git commits, 13 shipped improvements traceable to pilot feedback, a fee-sponsorship relayer implementing the Level 6 advanced-feature requirement, and a dedicated public documentation portal. Level 6 requirements are met with the limitations recorded in the README's checklist; **Level 7's 50-user bar is not yet met**, and moving from a sponsored cohort to independently-sourced users is the first item on the roadmap.

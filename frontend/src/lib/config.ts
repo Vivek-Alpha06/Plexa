@@ -12,6 +12,17 @@ export const ORACLE_ID = import.meta.env.VITE_ORACLE_ID ?? "";
 export const ROUTER_ID = import.meta.env.VITE_ROUTER_ID ?? "";
 
 /**
+ * Fee-sponsorship relayer (keeper/relayer.mjs). When set, member transactions
+ * are wrapped in a fee bump and the relayer pays the network fee, so someone
+ * holding no XLM can still join and contribute. Leave empty to disable —
+ * members then pay their own fees, which is the normal Stellar behaviour.
+ */
+export const SPONSOR_URL = (import.meta.env.VITE_SPONSOR_URL ?? "").replace(
+  /\/$/,
+  ""
+);
+
+/**
  * Demo mode: run the whole app against an in-memory store (no Stellar network,
  * no browser wallet). Enable with VITE_DEMO=true in .env.
  */

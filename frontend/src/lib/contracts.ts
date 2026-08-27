@@ -23,6 +23,7 @@ import { demoFactory, demoGroup, demoOraclePrice } from "./demo";
 import { getDemoBalance } from "./demoWallet";
 import { signTx } from "./wallet";
 import { recordTx } from "./txlog";
+import { trySponsoredSubmit } from "./sponsor";
 import type {
   GroupConfig,
   GroupState,
@@ -153,8 +154,26 @@ export async function invoke(
 
   const prepared = await server.prepareTransaction(built);
   const signed = await signTx(prepared.toXDR(), walletAddress);
-  const signedTx = TransactionBuilder.fromXDR(signed, NETWORK_PASSPHRASE);
 
+  // Gasless path: hand the member-signed envelope to the relayer, which wraps
+  // it in a fee bump and pays. The member's signature already authorises the
+  // contract call, so sponsorship changes who pays the fee and nothing else.
+  // A null result means sponsorship was unavailable or declined — fall through
+  // and submit normally so a member holding XLM is never blocked by an outage.
+  const sponsored = await trySponsoredSubmit(signed);
+  if (sponsored) {
+    await pollTx(sponsored.hash);
+    recordTx({
+      hash: sponsored.hash,
+      method,
+      contractId,
+      address: walletAddress,
+      sponsoredBy: sponsored.sponsoredBy,
+    });
+    return sponsored.hash;
+  }
+
+  const signedTx = TransactionBuilder.fromXDR(signed, NETWORK_PASSPHRASE);
   const sent = await server.sendTransaction(signedTx);
   if (sent.status === "ERROR") {
     throw new Error(`submit failed: ${JSON.stringify(sent.errorResult)}`);

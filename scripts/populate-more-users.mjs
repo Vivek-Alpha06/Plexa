@@ -1,4 +1,4 @@
-﻿import { writeFileSync, readFileSync } from 'node:fs';
+import { writeFileSync, readFileSync } from 'node:fs';
 import {
   Keypair,
   Networks,
@@ -18,7 +18,24 @@ const RPC_URL = 'https://mainnet.sorobanrpc.com';
 const server = new rpc.Server(RPC_URL);
 const horizon = new Horizon.Server('https://horizon.stellar.org');
 
-const deployerKp = Keypair.fromSecret('SCL4W7RGEHTH65QJCVQVCRMBXXQI46M5YEEVJ6DG6LHYKBN3DYEN7A7S');
+function requireSecret(name) {
+  const s = process.env[name];
+  if (!s) {
+    console.error(
+      `${name} is not set.
+` +
+      `Never hardcode a Stellar secret key in a file that gets committed —
+` +
+      `this repo is public, and a committed key stays in git history forever.
+` +
+      `Pass it in for one command instead:  ${name}="S..." node ${process.argv[1]}`
+    );
+    process.exit(1);
+  }
+  return s;
+}
+
+const deployerKp = Keypair.fromSecret(requireSecret('DEPLOYER_SECRET'));
 const groupAddress = 'CDYQ3NVLC62AH5GPCYKUT4P7QIAOLMYDIMRN24IFOTFWTWEEXILEUM4D';
 const groupContract = new Contract(groupAddress);
 
