@@ -438,6 +438,63 @@ check: `GET /health` reports the sponsor account, network, and balance.
 > production app has members pay their own fees until a sponsor account is
 > funded and the service is deployed.
 
+### Advanced feature: sponsored reserves (CAP-33)
+
+Fee sponsorship removes one barrier — the member no longer needs XLM for
+transaction fees. It does not remove the other one. Stellar requires every
+account to hold a **minimum balance locked forever**, and every trustline adds
+to it:
+
+```
+minimum balance = (2 + subentries) x base reserve
+                = (2 + 1 trustline) x 0.5 XLM
+                = 1.5 XLM
+```
+
+So a person with an empty wallet still cannot exist on the network, let alone
+hold USDC. **CAP-33 sponsored reserves** fix this properly: the ledger entry
+belongs to the member, but the locked XLM is held against the *sponsor's*
+balance. The member's account can carry a zero balance and still be fully
+functional with a USDC trustline.
+
+Implemented in [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs),
+exposed as `POST /onboard` on the relayer. Note these are **classic Stellar
+operations**, not Soroban contract calls, which is why they live in the
+transaction-building layer rather than in `contracts/`.
+
+**The sandwich** — everything between begin and end is charged to the sponsor:
+
+```
+beginSponsoringFutureReserves(sponsoredId = member)   source: sponsor
+  createAccount(destination = member, startingBalance = 0)
+  changeTrust(asset = USDC)                           source: member
+endSponsoringFutureReserves()                         source: member
+```
+
+Two details that are easy to get wrong and fatal if you do, both pinned by
+tests:
+
+1. `endSponsoringFutureReserves` must be sourced by the **sponsored** account,
+   not the sponsor. An unbalanced sandwich fails the entire transaction.
+2. `createAccount` with `startingBalance: "0"` is valid **only inside** a
+   sandwich — outside one the network rejects it, because the account could
+   not meet its own minimum balance.
+
+**Reserves are locked, not spent.** `buildReclaimReserves` revokes sponsorship
+when a member leaves, returning the XLM to the sponsor — revoking the trustline
+before the account, since the reverse order would leave the member owning a
+trustline they cannot cover.
+
+Combined with fee sponsorship, a member with a **completely empty wallet** can
+be created, given a USDC trustline, and transact — without ever holding XLM.
+
+```bash
+cd keeper && npm test     # 8 relayer + 22 sponsored-reserve tests
+```
+
+> **Not deployed.** Implemented and tested; no transaction has been submitted
+> and no contract addresses changed.
+
 ### Advanced feature: multi-signature smart account (account abstraction)
 
 Beyond fee sponsorship, Plexa implements a **Soroban custom account** —

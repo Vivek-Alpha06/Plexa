@@ -40,8 +40,11 @@
 import http from "node:http";
 import {
   rpc, Contract, TransactionBuilder, Networks, Keypair, Account,
-  Address, FeeBumpTransaction, Transaction, scValToNative,
+  Address, Asset, FeeBumpTransaction, Horizon, Transaction, scValToNative,
 } from "@stellar/stellar-sdk";
+import {
+  buildSponsoredOnboarding, minimumBalanceXlm, sponsorCapacity,
+} from "./sponsored-reserves.mjs";
 
 const RPC_URL = process.env.RPC_URL || "https://mainnet.sorobanrpc.com";
 const PASSPHRASE = process.env.NETWORK_PASSPHRASE || Networks.PUBLIC;
@@ -56,6 +59,10 @@ const RATE_WINDOW_MS = Number(process.env.RATE_WINDOW_MS || 60 * 60 * 1000);
 /** Refuse to sponsor once the relayer balance drops below this (stroops). */
 const MIN_BALANCE_STROOPS = BigInt(process.env.MIN_BALANCE_STROOPS || 50_000_000); // 5 XLM
 const ALLOW_ORIGIN = process.env.ALLOW_ORIGIN || "*";
+/** Asset whose trustline is opened for a sponsored member, as CODE:ISSUER. */
+const SPONSOR_ASSET = process.env.SPONSOR_ASSET || "";
+/** Set to "0" to disable reserve sponsorship while keeping fee sponsorship. */
+const SPONSOR_RESERVES = process.env.SPONSOR_RESERVES !== "0";
 
 if (!FACTORY_ID) throw new Error("FACTORY_ID is required");
 if (!process.env.SPONSOR_SECRET) throw new Error("SPONSOR_SECRET is required");
@@ -210,6 +217,85 @@ async function sponsor(signedInnerXdr) {
   return { hash: sent.hash, sponsoredBy: sponsorKp.publicKey() };
 }
 
+// ---------------------------------------------------------------- onboarding
+
+function sponsoredAsset() {
+  if (!SPONSOR_ASSET) return null;
+  const [code, issuer] = SPONSOR_ASSET.split(":");
+  if (!code || !issuer) {
+    throw new Error(`SPONSOR_ASSET must be CODE:ISSUER, got "${SPONSOR_ASSET}"`);
+  }
+  return new Asset(code, issuer);
+}
+
+const horizonUrl = () =>
+  process.env.HORIZON_URL ||
+  (PASSPHRASE === Networks.PUBLIC
+    ? "https://horizon.stellar.org"
+    : "https://horizon-testnet.stellar.org");
+
+/**
+ * Build a CAP-33 sponsored-onboarding transaction for a brand-new member.
+ *
+ * Returns the *unsigned* transaction. The relayer does not sign here, and
+ * deliberately does not submit: the member must sign too (they are the source
+ * of `endSponsoringFutureReserves` and of their own trustline), so the client
+ * co-signs and returns it through `/sponsor` for the fee bump. That also means
+ * this endpoint cannot be used to make the sponsor lock reserves unilaterally.
+ */
+async function buildOnboarding(memberPublicKey) {
+  if (!SPONSOR_RESERVES) {
+    throw new Error("reserve sponsorship is disabled on this relayer");
+  }
+  if (!/^G[A-Z2-7]{55}$/.test(memberPublicKey || "")) {
+    throw new Error("memberPublicKey must be a valid Stellar public key");
+  }
+
+  const horizon = new Horizon.Server(horizonUrl());
+
+  // Refuse if the account already exists — createAccount would fail anyway,
+  // and this gives the caller a clear reason instead of an opaque tx error.
+  const existing = await horizon
+    .loadAccount(memberPublicKey)
+    .catch(() => null);
+  if (existing) {
+    throw new Error("account already exists on the network");
+  }
+
+  const sponsorAcct = await horizon.loadAccount(sponsorKp.publicKey());
+  const native = sponsorAcct.balances.find((b) => b.asset_type === "native");
+  const balance = Number(native?.balance ?? 0);
+
+  const asset = sponsoredAsset();
+  const needed = minimumBalanceXlm(asset ? 1 : 0);
+
+  if (sponsorCapacity(balance) < 1) {
+    throw new Error(
+      `sponsor cannot cover another ${needed} XLM of reserves (balance ${balance} XLM)`
+    );
+  }
+
+  const { tx, reservesLockedXlm } = buildSponsoredOnboarding({
+    sponsorAccount: sponsorAcct,
+    sponsorPublicKey: sponsorKp.publicKey(),
+    memberPublicKey,
+    asset,
+    networkPassphrase: PASSPHRASE,
+  });
+
+  // Sponsor signs its half now; the member co-signs client-side.
+  tx.sign(sponsorKp);
+
+  return {
+    xdr: tx.toXDR(),
+    sponsor: sponsorKp.publicKey(),
+    reservesLockedXlm,
+    asset: asset ? `${asset.code}:${asset.issuer}` : null,
+    remainingCapacity: sponsorCapacity(balance),
+    note: "Co-sign with the member key, then submit. The member needs no XLM.",
+  };
+}
+
 // --------------------------------------------------------------------- http
 
 function send(res, status, body) {
@@ -234,7 +320,30 @@ const httpServer = http.createServer(async (req, res) => {
       factory: FACTORY_ID,
       network: PASSPHRASE === Networks.PUBLIC ? "public" : "testnet",
       balanceXlm: Number(balance) / 1e7,
+      reserveSponsorship: SPONSOR_RESERVES,
+      sponsorAsset: SPONSOR_ASSET || null,
+      onboardCapacity: sponsorCapacity(Number(balance) / 1e7),
     });
+  }
+
+  if (req.method === "POST" && req.url === "/onboard") {
+    let raw = "";
+    req.on("data", (c) => {
+      raw += c;
+      if (raw.length > 10_000) req.destroy();
+    });
+    req.on("end", async () => {
+      try {
+        const { publicKey } = JSON.parse(raw);
+        const result = await buildOnboarding(publicKey);
+        console.log(`[relayer] built sponsored onboarding for ${publicKey}`);
+        send(res, 200, result);
+      } catch (err) {
+        console.warn(`[relayer] onboard refused: ${err.message}`);
+        send(res, 400, { error: err.message });
+      }
+    });
+    return;
   }
 
   if (req.method === "POST" && req.url === "/sponsor") {
