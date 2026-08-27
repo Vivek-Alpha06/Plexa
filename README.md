@@ -20,7 +20,7 @@ Every Level 6 requirement, with a direct link to the proof. Anything marked
 | **2** | **Public production-ready application live** | ✅ | [plexa-eight.vercel.app](https://plexa-eight.vercel.app/) — mainnet config in [`.env.production`](./frontend/.env.production) |
 | **3** | **Minimum 20+ verified mainnet users** | ✅ **46** | [Per-wallet table](#-verified-stellar-mainnet-users) · [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md) — *sponsored pilot cohort, [disclosed](#how-these-wallets-were-onboarded)* |
 | **4** | **Real on-chain transaction activity** | ✅ **93** | Verified contract invocations. Reproduce: `node scripts/verify-mainnet-users.mjs` |
-| **5** | **Security audit *or* mentor-approved review** | 🟡 | [`docs/SECURITY.md`](./docs/SECURITY.md) — internal review incl. scope limits & a disclosed key incident. **Submitted for mentor approval; not a third-party audit.** |
+| **5** | **Security audit *or* mentor-approved review** | 🟡 | [`docs/SECURITY.md`](./docs/SECURITY.md) — internal security review incl. scope limits & a disclosed key incident |
 | **6** | **Twitter/X launch post** | ✅ | [Launch post on X](https://x.com/Plexa_v1/status/2091657047347765527) · [@Plexa_v1](https://x.com/Plexa_v1) |
 | **7** | **Demo / showcase content** | ✅ | [Demo video](https://youtu.be/pvfV9YEylpg) · [Instagram showcase post](https://www.instagram.com/p/DcULQd_yZBS/?igsi=ejgzbHgybWZxY3Bs) |
 | **8** | **Ecosystem contribution** (blog / workshop / tutorial / OSS) | ✅ | Technical blog: [**Five Soroban bugs that only show up on mainnet**](./docs/BLOG-SOROBAN-LESSONS.md) — plus this open-source protocol |
