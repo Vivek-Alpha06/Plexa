@@ -9,7 +9,7 @@
     "start": "node keeper.mjs",
     "dry-run": "node keeper.mjs --dry-run",
     "relayer": "node relayer.mjs",
-    "test": "node relayer.test.mjs && node sponsored-reserves.test.mjs"
+    "test": "node relayer.test.mjs && node sponsored-reserves.test.mjs && node anchor.test.mjs"
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^16.0.1"

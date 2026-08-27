@@ -28,7 +28,7 @@ Every Level 6 requirement, with a direct link to the proof. Anything marked
 | **10** | **Full documentation & production setup** | ✅ | [Docs site](https://plexa-document.vercel.app/) · [`docs/`](./docs/) · [User guide](./docs/USER-GUIDE.md) |
 | **11** | **Google Form → Excel export, linked in README** | ✅ | [Feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [method & schema](./docs/FEEDBACK.md) |
 | **12** | **Improvement plan w/ git commit links** | ✅ **13** | [Improvements shipped in response](#improvements-shipped-in-response) — each row links its commit |
-| **13** | **Advanced feature — at least one** | ✅ | **Fee Sponsorship (gasless via fee bump)** — [`keeper/relayer.mjs`](./keeper/relayer.mjs) · [`sponsor.ts`](./frontend/src/lib/sponsor.ts) · [8 passing tests vs live mainnet factory](./keeper/relayer.test.mjs) |
+| **13** | **Advanced feature — at least one** | ✅ **all 4** | Fee Sponsorship · Multi-signature Logic · Account Abstraction · Cross-border SEP-24/31 — all implemented with tests ([contracts: 64](./contracts/), [keeper: 54](./keeper/)) |
 
 ### How to verify the adoption numbers yourself
 
@@ -438,6 +438,67 @@ check: `GET /health` reports the sponsor account, network, and balance.
 > production app has members pay their own fees until a sponsor account is
 > funded and the service is deployed.
 
+### Advanced feature: cross-border flows (SEP-24 / SEP-31)
+
+Fee sponsorship and sponsored reserves get a member onto Stellar holding
+nothing. They do not get *money* in. A savings circle whose members cannot
+convert local cash into the asset they save in is a demo, not a product — and
+the people ROSCAs actually serve are exactly those without a card or an
+exchange account.
+
+Anchors are Stellar's answer, and [`keeper/anchor.mjs`](./keeper/anchor.mjs)
+implements the full chain:
+
+| SEP | Role in Plexa |
+| :-- | :------------ |
+| **SEP-1** | `stellar.toml` discovery — what an anchor actually supports |
+| **SEP-10** | Web authentication — prove wallet ownership, obtain a JWT |
+| **SEP-24** | Interactive deposit / withdrawal — the fiat on and off ramp |
+| **SEP-31** | Cross-border payments — remittance between two anchors |
+
+A member deposits cash with an agent in their own city and USDC appears in
+their wallet; when their circle pays out, they withdraw the same way. SEP-31
+adds the remittance corridor: a member abroad funds a circle whose payouts land
+in the recipients' local currency, with neither side touching an exchange.
+
+**SEP-24 is deliberately interactive**, and that is a feature rather than a
+limitation — the anchor owns KYC and payment collection and returns a URL to
+open. Plexa never sees identity documents or card details, which keeps a
+savings-circle app out of a compliance scope that would otherwise sink it.
+
+#### SEP-10 is the security boundary, so it is treated as one
+
+The JWT SEP-10 issues authorizes deposits and withdrawals against a member's
+account, and the flow asks you to **sign a transaction handed to you by a
+remote server**. `validateChallenge` therefore runs every check *before* the
+key is used:
+
+1. The challenge is signed by the `SIGNING_KEY` from the anchor's own
+   `stellar.toml`, so a spoofed endpoint cannot mint challenges.
+2. **Sequence number is 0.** This is what makes a challenge unsubmittable — a
+   non-zero sequence means you are being asked to sign a *real* transaction,
+   the classic SEP-10 phishing vector.
+3. `home_domain` matches the anchor we meant to reach, so a signature obtained
+   by one anchor cannot be replayed against another.
+4. `web_auth_domain` matches the endpoint host.
+
+Signature verification is delegated to the SDK's `WebAuth` helpers rather than
+reimplemented. Every hostile case has a test that builds a real malicious
+challenge with a real attacker key and asserts we refuse it — including a
+submittable payment dressed up as a challenge, a challenge re-signed by an
+attacker, and one built for the wrong network.
+
+SEP-31 payments are validated against the anchor's declared `/info` before any
+money moves, so a missing KYC field is a local error rather than a stranded
+transfer.
+
+```bash
+cd keeper && npm test    # 8 relayer + 22 sponsored-reserve + 24 anchor tests
+```
+
+> **Not deployed.** Implemented and tested against locally constructed
+> challenges and anchor responses; no live anchor account has been provisioned.
+
 ### Advanced feature: sponsored reserves (CAP-33)
 
 Fee sponsorship removes one barrier — the member no longer needs XLM for
@@ -680,7 +741,7 @@ Each row links the shipped code and the commit that introduced it.
 | User guide | ✅ | [`docs/USER-GUIDE.md`](./docs/USER-GUIDE.md) |
 | Google Form + exported sheet | ✅ | [Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [schema](./docs/FEEDBACK.md) |
 | Improvement plan with commit links | ✅ | [13 improvements with commits](#improvements-shipped-in-response) |
-| **Advanced feature (1+ required)** | ✅ | **Fee sponsorship** — [`keeper/relayer.mjs`](./keeper/relayer.mjs) + [`frontend/src/lib/sponsor.ts`](./frontend/src/lib/sponsor.ts). See [Advanced feature](#advanced-feature-fee-sponsorship-gasless-transactions). |
+| **Advanced feature (1+ required)** | ✅ **all 4** | Fee Sponsorship · Multi-signature Logic · Account Abstraction · Cross-border SEP-24/31 — all implemented and tested; see the four sections above |
 
 #### Known limitations, stated plainly
 
