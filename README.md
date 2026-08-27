@@ -438,6 +438,64 @@ check: `GET /health` reports the sponsor account, network, and balance.
 > production app has members pay their own fees until a sponsor account is
 > funded and the service is deployed.
 
+### Advanced feature: multi-signature smart account (account abstraction)
+
+Beyond fee sponsorship, Plexa implements a **Soroban custom account** —
+[`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) — giving
+weighted M-of-N approval for group actions. This covers two more items on the
+Level 6 advanced list at once: **Multi-signature Logic** and **Account
+Abstraction**.
+
+Any contract implementing `CustomAccountInterface` can be used as an
+`Address`, and the host calls its `__check_auth` to decide whether a signature
+set is acceptable. The authorization rule becomes code we control, so
+`require_auth()` anywhere in the group contract transparently means "the
+council approved" — with no change to the calling code.
+
+**Design: Stellar's own threshold model, in a smart contract.** Rather than a
+flat M-of-N, this ports the model classic Stellar accounts already use:
+
+| Concept | Behaviour |
+| :------ | :-------- |
+| Weighted signers | Each signer carries a weight, not just a vote |
+| Three thresholds | `low` / `medium` / `high` |
+| Tier by action | The threshold depends on *what* is being authorized |
+
+That last row is what a flat multisig cannot express, and it is what makes the
+scheme usable: requiring 4-of-7 to place an auction bid would break the
+product, while requiring 1-of-7 to change the signer set would break the
+security. So `__check_auth` inspects the host's `auth_contexts` and classifies:
+
+| Tier | Actions |
+| :--- | :------ |
+| **High** | signer/threshold changes, upgrades, dissolution |
+| **Medium** | moving value — contribute, top_up, claim, withdraw |
+| **Low** | routine participation — bids, join votes |
+
+A batch authorizing several actions is held to the **highest** tier among them,
+so a privileged call cannot ride along with a trivial one to borrow its lower
+threshold.
+
+**Security properties, each with a test:**
+
+1. Signatures from keys outside the signer set are rejected.
+2. Forged signatures are rejected by `ed25519_verify`.
+3. A signer cannot be counted twice — signatures must be strictly ordered by
+   public key, making duplicates *unrepresentable* rather than merely checked.
+4. Weight below the required threshold is rejected.
+5. Unknown functions classify as **High** — new entrypoints fail closed.
+6. An empty context batch is charged the high threshold, not treated as free.
+7. The signer set can never be edited into a lockout state.
+8. `initialize` is once-only, so a live account cannot be re-pointed.
+
+Tests sign with **real ed25519 keys**, not `mock_all_auths()` — mocked
+authorization bypasses `__check_auth` entirely and would pass against an empty
+implementation.
+
+> **Not deployed.** This contract is implemented and tested but deliberately
+> not deployed: doing so would change contract addresses and cost XLM. The
+> mainnet deployment is untouched.
+
 ### Mainnet transaction activity
 
 Transaction activity is enumerated from the chain, not transcribed by hand.

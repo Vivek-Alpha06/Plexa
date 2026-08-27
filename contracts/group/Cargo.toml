@@ -13,3 +13,7 @@ soroban-sdk = { workspace = true }
 
 [dev-dependencies]
 soroban-sdk = { workspace = true, features = ["testutils"] }
+# Real ed25519 signing in tests, so the custom account's __check_auth is
+# exercised against genuine signatures rather than mocked authorization.
+ed25519-dalek = { version = "2.0.0", default-features = false, features = ["rand_core"] }
+rand = { version = "0.8.5", default-features = false, features = ["std", "std_rng"] }

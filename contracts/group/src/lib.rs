@@ -14,8 +14,13 @@
 //! - 48-Hour Timelocked Contract Upgradeability.
 
 mod types;
+/// Soroban custom account (account abstraction) providing weighted M-of-N
+/// approval for group actions. See `multisig.rs`.
+pub mod multisig;
 #[cfg(test)]
 mod test;
+#[cfg(test)]
+mod multisig_test;
 
 pub use types::*;
 
