@@ -111,7 +111,7 @@ function normPhase(v: unknown): Phase {
 }
 
 // --------------------------------------------------------------------- reads
-async function read<T>(contractId: string, method: string, args: xdr.ScVal[]): Promise<T> {
+export async function read<T>(contractId: string, method: string, args: xdr.ScVal[]): Promise<T> {
   const account = new Account(READ_SOURCE, "0");
   const contract = new Contract(contractId);
   const tx = new TransactionBuilder(account, {

@@ -326,8 +326,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 12px 14px 12px 24px;
+  gap: 14px;
+  padding: 8px 10px 8px 20px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   background: rgba(8, 8, 10, 0.42);
@@ -343,7 +343,7 @@
 
 .lnav.scrolled .pill {
   max-width: 940px;
-  padding: 8px 12px 8px 22px;
+  padding: 6px 10px 6px 18px;
   background: rgba(6, 6, 8, 0.72);
   border-color: rgba(255, 255, 255, 0.09);
   box-shadow:
@@ -395,15 +395,15 @@
 
 .lnav .links {
   display: flex;
-  gap: 4px;
+  gap: 2px;
 }
 
 .navlink {
   position: relative;
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 500;
-  padding: 8px 16px;
+  padding: 7px 11px;
   border-radius: 8px;
   transition: color 0.3s ease;
 }
@@ -431,7 +431,7 @@
 
 .lnav .actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -1623,3 +1623,59 @@
   width: auto;
 }
 
+
+/* ------------------------------------------------------------- swap section */
+.swap-band {
+  display: grid;
+  grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+  margin-top: 64px;
+}
+
+.landing .swap-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(14px);
+  border-color: rgba(255, 255, 255, 0.09);
+  width: 100%;
+}
+
+:root[data-theme="light"] .landing .swap-card {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--border);
+}
+
+.swap-points {
+  display: grid;
+  gap: 26px;
+}
+
+.swap-point {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.swap-point h4 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+
+.swap-point p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+@media (max-width: 980px) {
+  .swap-band {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    margin-top: 44px;
+  }
+  .landing .swap-card {
+    max-width: none;
+  }
+}

@@ -9,7 +9,7 @@
 //     transaction hash that produced it. This is the one a third party can
 //     verify independently; the local log is just a fast path.
 import { scValToNative, xdr } from "@stellar/stellar-sdk";
-import { NETWORK, RPC_URL } from "./config";
+import { EXPLORER_NETWORK, RPC_URL } from "./config";
 
 export interface TxRecord {
   hash: string;
@@ -26,14 +26,12 @@ const MAX = 200;
 
 /** Block-explorer link for a transaction hash. */
 export function explorerTxUrl(hash: string): string {
-  const net = NETWORK === "public" || NETWORK === "mainnet" ? "public" : "testnet";
-  return `https://stellar.expert/explorer/${net}/tx/${hash}`;
+  return `https://stellar.expert/explorer/${EXPLORER_NETWORK}/tx/${hash}`;
 }
 
 /** Block-explorer link for a contract id. */
 export function explorerContractUrl(id: string): string {
-  const net = NETWORK === "public" || NETWORK === "mainnet" ? "public" : "testnet";
-  return `https://stellar.expert/explorer/${net}/contract/${id}`;
+  return `https://stellar.expert/explorer/${EXPLORER_NETWORK}/contract/${id}`;
 }
 
 /**
@@ -44,8 +42,7 @@ export function explorerContractUrl(id: string): string {
  * chain. Lab reads live from RPC, so it resolves immediately.
  */
 export function labContractUrl(id: string): string {
-  const net = NETWORK === "public" || NETWORK === "mainnet" ? "public" : "testnet";
-  return `https://lab.stellar.org/r/${net}/contract/${id}`;
+  return `https://lab.stellar.org/r/${EXPLORER_NETWORK}/contract/${id}`;
 }
 
 export function readTxLog(filter?: { contractId?: string; address?: string }): TxRecord[] {

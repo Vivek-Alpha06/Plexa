@@ -7,7 +7,7 @@ import {
   signTransaction as freighterSign,
 } from "@stellar/freighter-api";
 import albedo from "@albedo-link/intent";
-import { NETWORK_PASSPHRASE, NETWORK, DEMO } from "./config";
+import { NETWORK_PASSPHRASE, IS_MAINNET, DEMO } from "./config";
 import { DEMO_ADDRESS } from "./demo";
 
 export type Provider = "freighter" | "albedo";
@@ -37,7 +37,7 @@ export function getActiveProvider(): Provider | null {
 }
 
 // Albedo wants "public" | "testnet"; map from our network name.
-const albedoNetwork = NETWORK === "public" ? "public" : "testnet";
+const albedoNetwork = IS_MAINNET ? "public" : "testnet";
 
 export async function connect(provider: Provider): Promise<string> {
   if (DEMO) {

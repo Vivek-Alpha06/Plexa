@@ -8,16 +8,13 @@
 // This reduces it to: connect, then press one button. Everything here is
 // idempotent and safe to re-run; each step reports what it did so the UI can
 // show real progress rather than a spinner.
-import { NETWORK, USDC_ID } from "./config";
+import { HORIZON_URL, IS_MAINNET, USDC_ID } from "./config";
 import { xlmBalance } from "./contracts";
 
 /** Minimum XLM before we consider an account able to do anything useful. */
 const MIN_XLM = 50_000_000n; // 5 XLM (7dp)
 
-const HORIZON =
-  NETWORK === "public" || NETWORK === "mainnet"
-    ? "https://horizon.stellar.org"
-    : "https://horizon-testnet.stellar.org";
+const HORIZON = HORIZON_URL;
 const FRIENDBOT = "https://friendbot.stellar.org";
 
 export type StepStatus = "pending" | "running" | "done" | "skipped" | "failed";
@@ -29,7 +26,7 @@ export interface Step {
   detail?: string;
 }
 
-export const isTestnet = !(NETWORK === "public" || NETWORK === "mainnet");
+export const isTestnet = !IS_MAINNET;
 
 /** Does this account exist on the ledger yet? */
 export async function accountExists(address: string): Promise<boolean> {

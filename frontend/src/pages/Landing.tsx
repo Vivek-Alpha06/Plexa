@@ -15,12 +15,14 @@ import {
   Cpu,
   Eye,
   FileText,
+  Gauge,
   Gavel,
   Globe2,
   Landmark,
   Layers,
   Lock,
   RefreshCw,
+  Repeat,
   ShieldCheck,
   Sparkles,
   Timer,
@@ -33,6 +35,8 @@ import { FadeIn, SplitWords, TiltCard, Magnetic, Counter, useLenis, useParallax 
 import { useWallet } from "../context/WalletContext";
 import { useGroups } from "../lib/useGroups";
 import { Atmosphere } from "../components/Atmosphere";
+import { SwapCard } from "../components/SwapCard";
+import { NetworkToggle } from "../components/NetworkToggle";
 import { IntroSplash } from "../components/IntroSplash";
 import "../landing.css";
 
@@ -121,6 +125,24 @@ const TIMELINE = [
   { icon: ShieldCheck, t: "Collateral Returned", d: "After a short settlement grace, every member withdraws their full collateral back." },
 ];
 
+const SWAP_POINTS = [
+  {
+    icon: Repeat,
+    t: "Both directions",
+    d: "Sell XLM for USDC to join a stablecoin circle, or convert a payout back to XLM. One tap on the arrow flips the pair.",
+  },
+  {
+    icon: Gauge,
+    t: "The protocol's own price",
+    d: "Quotes come from the same router a group calls when it liquidates collateral, so what you see here is what the contract would get.",
+  },
+  {
+    icon: ShieldCheck,
+    t: "Your keys throughout",
+    d: "The swap is a single contract call signed by your wallet. Plexa never holds the funds and takes no fee — you pay the network fee and the venue's spread.",
+  },
+];
+
 const SECURITY = [
   { icon: Lock, t: "100% collateral, held by code", d: "Collateral equal to the full pot sits inside the group contract itself — no organizer ever touches the money." },
   { icon: Activity, t: "Health-factor monitoring", d: "XLM collateral in USDC circles is oracle-priced at 150% and monitored live. Fall below 1.0 and you get a full cycle to top up." },
@@ -192,18 +214,19 @@ function Nav() {
     >
       <div className="pill">
         <Link to="/" className="lbrand">
-          <img src="/plexa-p-mark.png" alt="" style={{ height: 40, width: "auto" }} />
-          <img src="/plexa-wordmark.png" alt="Plexa" style={{ height: 22, width: "auto" }} />
+          <img src="/plexa-p-mark.png" alt="" style={{ height: 28, width: "auto" }} />
+          <img src="/plexa-wordmark.png" alt="Plexa" style={{ height: 17, width: "auto" }} />
         </Link>
         <div className="links">
           <a className="navlink" href="#features">Features</a>
-          <a className="navlink" href="#how">How it works</a>
+          <a className="navlink" href="#how">Flow</a>
           <a className="navlink" href="#protocol">Protocol</a>
+          <a className="navlink" href="#swap">Swap</a>
           <a className="navlink" href="#security">Security</a>
-          <Link className="navlink" to="/docs">Docs</Link>
           <a className="navlink" href="#faq">FAQ</a>
         </div>
         <div className="actions">
+          <NetworkToggle compact />
           <ConnectCTA size="sm" />
         </div>
       </div>
@@ -612,7 +635,7 @@ export function Landing() {
       {/* --------------------------------------------------- how it works */}
       <section className="lwrap section" id="how">
         <FadeIn>
-          <div className="kicker">02 — How it works</div>
+          <div className="kicker">02 — Flow</div>
           <h2>
             One cycle.
             <br />
@@ -636,10 +659,50 @@ export function Landing() {
         <Stats />
       </section>
 
+      {/* ------------------------------------------------------------- swap */}
+      <section className="lwrap section" id="swap">
+        <FadeIn>
+          <div className="kicker">04 — Swap</div>
+          <h2>
+            Wrong token?
+            <br />
+            <span className="dim">Convert it in one transaction.</span>
+          </h2>
+          <p className="sub">
+            A circle settles in the currency it was created with. Move between XLM and
+            USDC through the same router the protocol itself uses to liquidate collateral
+            — no bridge, no exchange account, no leaving your wallet.
+          </p>
+        </FadeIn>
+        <div className="swap-band">
+          <FadeIn delay={0.05} scale>
+            <SwapCard variant="landing" />
+          </FadeIn>
+          <div className="swap-points">
+            {SWAP_POINTS.map((pt, i) => {
+              const Icon = pt.icon;
+              return (
+                <FadeIn key={pt.t} delay={0.1 + i * 0.07}>
+                  <div className="swap-point">
+                    <span className="feat-icon">
+                      <Icon size={18} strokeWidth={1.8} />
+                    </span>
+                    <div>
+                      <h4>{pt.t}</h4>
+                      <p>{pt.d}</p>
+                    </div>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* --------------------------------------------------------- security */}
       <section className="lwrap section" id="security">
         <FadeIn>
-          <div className="kicker">04 — Security</div>
+          <div className="kicker">05 — Security</div>
           <h2>Trust is non-negotiable.</h2>
           <p className="sub">Collateral-grade protection built into every layer of the cycle.</p>
         </FadeIn>
@@ -722,7 +785,7 @@ export function Landing() {
           <div className="foot-col">
             <div className="head">Product</div>
             <a href="#features">Features</a>
-            <a href="#how">How it works</a>
+            <a href="#how">Flow</a>
             <Link to="/docs/security">Security Audit</Link>
             <Link to="/docs/faq">FAQ & Registry</Link>
           </div>
