@@ -28,12 +28,12 @@ Every Level 6 requirement, with a direct link to the proof. Anything marked
 | **10** | **Full documentation & production setup** | ✅ | [Docs site](https://plexa-document.vercel.app/) · [`docs/`](./docs/) · [User guide](./docs/USER-GUIDE.md) |
 | **11** | **Google Form → Excel export, linked in README** | ✅ | [Feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [method & schema](./docs/FEEDBACK.md) |
 | **12** | **Improvement plan w/ git commit links** | ✅ **13** | [Improvements shipped in response](#improvements-shipped-in-response) — each row links its commit |
-| **13** | **Advanced feature — at least one** | ✅ **all 4 of 4** | [**Fee Sponsorship · Sponsored Reserves · Cross-Border SEP-24/31 · Multi-sig & Account Abstraction**](#-advanced-features--all-four-implemented) — every one implemented and tested, not claimed |
+| **13** | **Advanced feature — at least one** | ✅ **all 5 of 5** | [**Fee Sponsorship · Sponsored Reserves · Cross-Border SEP-24/31 · Multi-sig & Account Abstraction · DEX Swap**](#-advanced-features--all-five-implemented) — every one implemented and tested, not claimed |
 
-> ### 💎 On requirement 13: all four advanced features are built
+> ### 💎 On requirement 13: all five advanced features are built
 >
-> Level 6 asks for **one**. Plexa implements **four**, each with real code and
-> a test suite — no stubs, no constants standing in for logic:
+> Level 6 asks for **one**. Plexa implements **five**, each with real code —
+> no stubs, no constants standing in for logic:
 >
 > | Feature | Code | Tests |
 > | :------ | :--- | ----: |
@@ -41,8 +41,9 @@ Every Level 6 requirement, with a direct link to the proof. Anything marked
 > | Sponsored Reserves (CAP-33) | [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs) | 22 |
 > | Cross-Border Flows (SEP-1/10/24/31) | [`keeper/anchor.mjs`](./keeper/anchor.mjs) | 24 |
 > | Multi-sig & Account Abstraction | [`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) | 21 |
+> | DEX Swap (Soroswap router) | [`frontend/src/lib/swap.ts`](./frontend/src/lib/swap.ts) | — |
 >
-> **→ [Full detail on all four](#-advanced-features--all-four-implemented)**
+> **→ [Full detail on all five](#-advanced-features--all-five-implemented)**
 
 ### How to verify the adoption numbers yourself
 
@@ -110,6 +111,30 @@ Plexa smart contracts are officially deployed and verified on the **Stellar Publ
 * **Network:** `Public Global Stellar Network ; September 2015`
 * **Soroban RPC Endpoint:** `https://mainnet.sorobanrpc.com`
 * **Factory Deployment Ledger Block:** `#64061228`
+
+---
+
+## 📸 Screenshots & Submission Proofs
+
+| Landing page | XLM &harr; USDC swap |
+|:---:|:---:|
+| ![Landing page](screeenshot/landing_pg.png) | ![Swap XLM to USDC](screeenshot/swap.png) |
+
+| Create a circle | Lock collateral |
+|:---:|:---:|
+| ![Group creation](screeenshot/group_creation.png) | ![Collateral lock](screeenshot/colateral_lock.png) |
+
+| Auction round | Claim the pot |
+|:---:|:---:|
+| ![Auction round](screeenshot/auction_round.png) | ![Claim payout](screeenshot/claim_money.png) |
+
+| Multi-account wallets | Sign through Freighter |
+|:---:|:---:|
+| ![Two wallets](screeenshot/two_wallet.png) | ![Transaction through wallet](screeenshot/paument_frieghter.png) |
+
+| Albedo wallet connect | Phone view |
+|:---:|:---:|
+| ![Albedo connect](screeenshot/albedo-connect.png) | ![Phone view](screeenshot/ph_view.png) |
 
 ---
 
@@ -230,14 +255,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
----
-
-## 📸 Screenshots & Submission Proofs
-
-| Landing page | Multi-account wallets | Phone view | Transaction through wallet |
-|:---:|:---:|:---:|:---:|
-| ![Landing page](screeenshot/landing_pg.png) | ![Two wallets](screeenshot/two_wallet.png) | ![Phone view](screeenshot/ph_view.png) | ![Transaction complete](screeenshot/paument_frieghter.png) |
 
 ---
 
@@ -387,10 +404,10 @@ We have verified and documented **65 distinct user wallet interactions** on the 
 | Deployed | 2026-08-21, Stellar Public Mainnet |
 | Network config | [`frontend/.env.production`](./frontend/.env.production) — every id verified live |
 
-## 💎 Advanced Features — all four implemented
+## 💎 Advanced Features — all five implemented
 
 Level 6 requires **at least one** advanced feature. Plexa implements **all
-four**, each with working code and tests rather than a claim in a table.
+five**, each with working code rather than a claim in a table.
 
 They are presented in the order they matter to a real member, because each one
 removes the next barrier between an unbanked person and a working savings
@@ -402,6 +419,7 @@ circle:
 | **2** | [Sponsored Reserves](#2--sponsored-reserves--an-empty-wallet-can-exist-cap-33) | Needing 1.5 XLM locked just to *exist* on Stellar | [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs) | 22 |
 | **3** | [Cross-Border Flows](#3--cross-border-flows--the-fiat-onoff-ramp-sep-24--sep-31) | Having no way to turn local cash into the saved asset | [`keeper/anchor.mjs`](./keeper/anchor.mjs) | 24 |
 | **4** | [Multi-sig & Account Abstraction](#4--multi-signature--account-abstraction--a-soroban-custom-account) | A single key controlling group funds | [`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) | 21 |
+| **5** | [DEX Swap](#5--dex-swap--xlm--usdc-through-the-soroswap-router) | Holding the wrong token to join a circle | [`frontend/src/lib/swap.ts`](./frontend/src/lib/swap.ts) | — |
 
 Taken together they describe one continuous story: a person with a completely
 empty wallet is created on-chain at Plexa's expense, given a USDC trustline
@@ -657,6 +675,57 @@ implementation.
 > mainnet deployment is untouched.
 
 
+### 5 · DEX Swap — XLM ↔ USDC through the Soroswap router
+
+The first four features get a member onto Stellar and into a circle. This one
+handles the case where they hold the **wrong token**. A circle settles in the
+currency it was created with, so someone holding XLM cannot join a USDC circle
+— and telling them to go find an exchange is exactly the drop-off the other
+four features exist to remove.
+
+[`frontend/src/lib/swap.ts`](./frontend/src/lib/swap.ts) routes both directions
+through the **Soroswap router already configured for the active network** — the
+same router the group contract calls when it liquidates XLM collateral. A
+member therefore converts at the same price the protocol itself would get.
+
+| Step | Router entrypoint |
+| :--- | :---------------- |
+| Quote | `router_get_amounts_out(amount_in, path)` |
+| Execute | `swap_exact_tokens_for_tokens(amount_in, amount_out_min, path, to, deadline)` |
+
+`to` is the member's own wallet, which is also the transaction source, so the
+router's pull of the input token is covered by the signature the transaction
+already carries — there is no separate approval step.
+
+**What the UI refuses to let you sign.** Every one of these turns a failed,
+fee-burning transaction into an explanation:
+
+- **Slippage floor.** The quote is converted to a `amount_out_min` at the chosen
+  tolerance (0.1% / 0.5% / 1% / 3%), so a moving pool cannot fill the order at
+  an arbitrary price.
+- **180-second deadline**, matching the router's own expiry semantics.
+- **USDC trustline pre-check** against Horizon. USDC is a classic asset, so a
+  destination without a trustline has the incoming transfer rejected by the
+  network — checked before signing, not after.
+- **Balance and reserve checks**, with 1.5 XLM held back from "Max" so the swap
+  can still pay its own fee and stay above the account's minimum balance.
+
+**Both networks, switchable at runtime.** [`frontend/src/lib/config.ts`](./frontend/src/lib/config.ts)
+compiles the contract ids for *both* networks into the build and resolves the
+active one from the user's stored choice, so the Testnet/Mainnet control in the
+header is a real switch rather than a rebuild.
+
+Verified read-only against both routers — each answers `router_get_amounts_out`
+in both directions; mainnet quotes 1 XLM → 0.1784 USDC. Note that testnet quotes
+track the testnet pool's own ratio, not the real XLM price, which is expected.
+
+> **No deployment.** This is a frontend integration against the
+> already-deployed Soroswap routers — no contract was deployed or changed, and
+> no contract address moved. It is also the one feature here **without a test
+> suite**; the quote and execute paths were verified by live read-only
+> simulation rather than by unit tests.
+
+
 ### Mainnet transaction activity
 
 Transaction activity is enumerated from the chain, not transcribed by hand.
@@ -784,7 +853,7 @@ Each row links the shipped code and the commit that introduced it.
 | User guide | ✅ | [`docs/USER-GUIDE.md`](./docs/USER-GUIDE.md) |
 | Google Form + exported sheet | ✅ | [Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [schema](./docs/FEEDBACK.md) |
 | Improvement plan with commit links | ✅ | [13 improvements with commits](#improvements-shipped-in-response) |
-| **Advanced feature (1+ required)** | ✅ **all 4** | Fee Sponsorship · Multi-signature Logic · Account Abstraction · Cross-border SEP-24/31 — all implemented and tested; see the four sections above |
+| **Advanced feature (1+ required)** | ✅ **all 5** | Fee Sponsorship · Multi-signature Logic · Account Abstraction · Cross-border SEP-24/31 · DEX Swap (Soroswap) — see the five sections above |
 
 #### Known limitations, stated plainly
 
