@@ -136,13 +136,13 @@ async function main() {
   out.push("");
   out.push("## Per-wallet activity");
   out.push("");
-  out.push("| # | Wallet | On-chain status | Invocations | First transaction |");
-  out.push("| -: | :----- | :-------------- | ----------: | :---------------- |");
+  out.push("| # | Wallet | Invocations | First transaction |");
+  out.push("| -: | :----- | ----------: | :---------------- |");
 
   verified.forEach((r, i) => {
     const first = r.txs[0];
     out.push(
-      `| ${i + 1} | [\`${short(r.address)}\`](${acctUrl(r.address)}) | ${r.status} | ${r.txs.length} | [\`${first.hash.slice(0, 12)}…\`](${txUrl(first.hash)}) |`
+      `| ${i + 1} | [\`${short(r.address)}\`](${acctUrl(r.address)}) | ${r.txs.length} | [\`${first.hash.slice(0, 12)}…\`](${txUrl(first.hash)}) |`
     );
   });
 
