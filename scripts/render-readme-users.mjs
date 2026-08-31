@@ -96,13 +96,13 @@ out.push(`| Total contract invocations | **${total}** | Horizon |`);
 out.push("");
 out.push("### Per-wallet verification");
 out.push("");
-out.push("| # | Wallet | Status | Invocations | Transaction |");
+out.push("| # | Wallet | Invocations | Transaction |");
 out.push("| -: | :----- | :----- | ----------: | :---------- |");
 verified.forEach((r, i) => {
   const f = r.txs[0];
   out.push(
     `| ${i + 1} | [\`${r.address.slice(0, 8)}…${r.address.slice(-6)}\`](${acct(r.address)}) ` +
-      `| ${r.status} | ${r.txs.length} | [\`${f.hash.slice(0, 16)}…\`](${tx(f.hash)}) |`
+      `| ${r.txs.length} | [\`${f.hash.slice(0, 16)}…\`](${tx(f.hash)}) |`
   );
 });
 out.push("");

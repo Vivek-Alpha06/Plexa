@@ -71,7 +71,7 @@ node scripts/verify-mainnet-users.mjs
 # → 46 distinct wallets · 93 verified contract invocations
 ```
 
-The per-wallet breakdown — address, status, invocation count, transaction link — is kept in [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md) and the [exported feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing), rather than duplicated here.
+The per-wallet breakdown — address, invocation count, transaction link — is kept in [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md) and the [exported feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing), rather than duplicated here.
 
 > **Disclosure — the cohort is sponsored.** Plexa funded each participant wallet's reserve so people could try a mainnet savings circle without first acquiring XLM — the very barrier this product exists to remove. The wallets, join requests, and approval votes are genuine on-chain activity and each is individually listed in the records linked above, but they are **not** independently-sourced retail users and are not presented as market traction. The funding transactions are public and unobscured.
 
