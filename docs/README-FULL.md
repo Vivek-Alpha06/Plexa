@@ -26,7 +26,7 @@ Every Level 6 requirement, with a direct link to the proof. Anything marked
 | **8** | **Ecosystem contribution** (blog / workshop / tutorial / OSS) | ✅ | Technical blog: [**Five Soroban bugs that only show up on mainnet**](./docs/BLOG-SOROBAN-LESSONS.md) — plus this open-source protocol |
 | **9** | **Minimum 30+ meaningful commits** | ✅ **150+** | `git rev-list --count HEAD` |
 | **10** | **Full documentation & production setup** | ✅ | [Docs site](https://plexa-document.vercel.app/) · [`docs/`](./docs/) · [User guide](./docs/USER-GUIDE.md) |
-| **11** | **Google Form → Excel export, linked in README** | ✅ | [Feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [method & schema](./docs/FEEDBACK.md) |
+| **11** | **Google Form → Sheet export, linked in README** | ✅ | [Feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [method & schema](./docs/FEEDBACK.md) |
 | **12** | **Improvement plan w/ git commit links** | ✅ **13** | [Improvements shipped in response](#improvements-shipped-in-response) — each row links its commit |
 | **13** | **Advanced feature — at least one** | ✅ **all 5 of 5** | [**Fee Sponsorship · Sponsored Reserves · Cross-Border SEP-24/31 · Multi-sig & Account Abstraction · DEX Swap**](#-advanced-features--all-five-implemented) — every one implemented and tested, not claimed |
 
@@ -84,7 +84,7 @@ node scripts/verify-mainnet-users.mjs
 | 🐤 **Twitter/X Launch Post** | [View Launch Post on X](https://x.com/Plexa_v1/status/2091657047347765527) | Official launch post & feature walkthrough |
 | 📸 **Instagram Showcase Post** | [View Showcase Post](https://www.instagram.com/p/DcULQd_yZBS/?igsi=ejgzbHgybWZxY3Bs) | Product demo & showcase content |
 | 📺 **YouTube Walkthrough Demo** | [Watch Demo Video](https://youtu.be/pvfV9YEylpg) | Full video walkthrough of Plexa protocol features |
-| 📊 **Feedback Excel Document** | [View Feedback Excel Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) | Exported onboarding feedback record sheet |
+| 📊 **Feedback Google Sheet** | [View Feedback Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) | Onboarding feedback record sheet |
 | 🛡️ **Security Review** | [SECURITY.md](./docs/SECURITY.md) | Internal security self-review (**not** a third-party audit) — submitted for mentor approval |
 | ✍️ **Ecosystem Contribution** | [Five Soroban bugs that only show up on mainnet](./docs/BLOG-SOROBAN-LESSONS.md) | Technical blog for the Stellar developer community |
 | 🔎 **Mainnet User Verification** | [MAINNET-USERS.md](./docs/MAINNET-USERS.md) | Chain-generated proof of user activity — reproduce with `node scripts/verify-mainnet-users.mjs` |
@@ -751,8 +751,7 @@ for analysis.
 | Artefact | Link |
 | :------- | :--- |
 | Feedback form | Google Form — responses exported to the sheet below ([schema](./docs/FEEDBACK.md)) |
-| Exported responses (Sheet) | [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
-| Exported responses (Excel) | [`Plexa_User_Feedback_50_Responses.xlsx`](./Plexa_User_Feedback_50_Responses.xlsx) |
+| Exported responses (Google Sheet) | [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
 | Form schema & collection method | [`docs/FEEDBACK.md`](./docs/FEEDBACK.md) |
 
 > **Note on the dataset.** The pilot cohort was recruited and sponsored by the
@@ -823,7 +822,7 @@ Each row links the shipped code and the commit that introduced it.
 | 🌐 **Dedicated Documentation Website** | Public Docs Site | 🟢 **Live** | **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)** |
 | 👥 **Verified Mainnet Users** | 50+ Users | 🟡 **46 distinct wallets** (sponsored cohort — disclosed) | [Per-wallet table](#-verified-stellar-mainnet-users) · [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md) |
 | ⚡ **Mainnet Transaction Proof** | Production Ledger | 🟢 **93 verified invocations** | Reproduce: `node scripts/verify-mainnet-users.mjs` |
-| 📊 **User Feedback Sheet** | Exported Spreadsheet | 🟢 **Exported** | [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel File](./Plexa_User_Feedback_50_Responses.xlsx) |
+| 📊 **User Feedback Sheet** | Exported Spreadsheet | 🟢 **Exported** | [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
 | 🛠️ **Product Improvement Commits** | Linked Git Commits | 🟢 **13 Commits Shipped** | [13 Feedback Improvements Table](#improvements-shipped-in-response) |
 | 📈 **Monthly Growth Report** | Founder Report | 🟢 **Published** | [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) · [View on Web Docs](https://plexa-document.vercel.app) |
 | 📸 **Social Media Growth Proof** | 50+ Followers / Traction | 🟢 **200+ Likes / Followers** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) · [@Plexa_v1 on X](https://x.com/Plexa_v1) |
@@ -851,7 +850,7 @@ Each row links the shipped code and the commit that introduced it.
 | Ecosystem contribution | ✅ | Technical blog: [**Five Soroban bugs that only show up on mainnet**](./docs/BLOG-SOROBAN-LESSONS.md) |
 | Technical documentation | ✅ | This README, [`docs/`](./docs/), and the [docs site](https://plexa-document.vercel.app) |
 | User guide | ✅ | [`docs/USER-GUIDE.md`](./docs/USER-GUIDE.md) |
-| Google Form + exported sheet | ✅ | [Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [Excel](./Plexa_User_Feedback_50_Responses.xlsx) · [schema](./docs/FEEDBACK.md) |
+| Google Form + exported sheet | ✅ | [Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) · [schema](./docs/FEEDBACK.md) |
 | Improvement plan with commit links | ✅ | [13 improvements with commits](#improvements-shipped-in-response) |
 | **Advanced feature (1+ required)** | ✅ **all 5** | Fee Sponsorship · Multi-signature Logic · Account Abstraction · Cross-border SEP-24/31 · DEX Swap (Soroswap) — see the five sections above |
 
@@ -891,7 +890,7 @@ We would rather a reviewer read these here than discover them:
 *   [x] **Dedicated public documentation website:** **[https://plexa-document.vercel.app](https://plexa-document.vercel.app/)**
 *   [~] **Proof of 50+ new mainnet users:** 46 distinct wallets verified on-chain (sponsored cohort, disclosed above) — short of 50, and not independently sourced.
 *   [x] **Mainnet transaction proof:** 93 contract invocations verified from Horizon; reproduce with `node scripts/verify-mainnet-users.mjs`.
-*   [x] **User feedback sheet:** Exported responses in [Excel](./Plexa_User_Feedback_50_Responses.xlsx); schema and collection method in [FEEDBACK.md](./docs/FEEDBACK.md).
+*   [x] **User feedback sheet:** Exported responses in [Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing); schema and collection method in [FEEDBACK.md](./docs/FEEDBACK.md).
 *   [x] **Product improvement commit links:** 13 feedback-driven improvements with direct commit links.
 *   [x] **Monthly growth report:** Published in [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) and **[Web Docs](https://plexa-document.vercel.app)**.
 *   [x] **Social media growth proof (50+ followers):** 200+ Likes and active engagement on Instagram & Twitter/X.

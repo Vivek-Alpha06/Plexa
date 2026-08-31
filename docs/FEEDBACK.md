@@ -22,10 +22,8 @@ regular expression, *Matches*, pattern `^G[A-Z2-7]{55}$`.
 ## Export procedure
 
 1. Google Form → **Responses** → green Sheets icon → *Create new spreadsheet*.
-2. In the sheet: **File → Download → Microsoft Excel (.xlsx)**.
-3. Commit the export to the repo root as
-   `Plexa_User_Feedback_50_Responses.xlsx`.
-4. Link it from the README's feedback section.
+2. Share the spreadsheet with view access: [Google Sheet Feedback](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing).
+3. Link it from the README's feedback section.
 
 ## Analysis method
 

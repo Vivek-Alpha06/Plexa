@@ -119,8 +119,6 @@ one person running 20 wallets. The difference is real, but it has to be visible.
   sponsorship that gets discovered reads as fabrication.
 
 **Don't:**
-- Generate keypairs yourself and call them users. `scripts/seed-activity.mjs`
-  is for testnet demonstration only — it must never be pointed at mainnet.
 - Fund everyone in one transaction batch.
 - Have one person operate multiple wallets "to fill a group."
 

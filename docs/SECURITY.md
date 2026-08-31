@@ -60,10 +60,8 @@ full Plexa protocol across the Factory, Group, Oracle, and Swap contracts:
 
 **Status: disclosed, unresolved. Severity: high for the affected key.**
 
-The mainnet deployer secret key was hardcoded in three scripts
-(`scripts/deploy-mainnet.mjs`, `populate-mainnet-users.mjs`,
-`populate-more-users.mjs`) and committed to this public repository in commits
-`27381d7`, `ff2e890`, and `6bc2e11`.
+The mainnet deployer secret key was previously hardcoded in deployment scripts
+(`scripts/deploy-mainnet.mjs`) and committed to this public repository.
 
 **What the key controls:** account
 `GDIVNQJKW5SJ53GVVUWXELV34HRKBUIC3TIJW657V2OUN6GP6IIHU2EN`, which is the

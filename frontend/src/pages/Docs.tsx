@@ -1324,7 +1324,7 @@ node e2e.mjs`}
                     </tr>
                     <tr>
                       <td><strong>User Feedback Sheet</strong></td>
-                      <td>Excel/CSV Feedback Dataset</td>
+                      <td>Google Sheet Feedback Dataset</td>
                       <td><span className="docs-item-tag accent">✅ 50 Responses</span></td>
                       <td><a href="https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing" target="_blank" rel="noreferrer" style={{ color: "var(--accent)" }}>Google Sheet Feedback</a></td>
                     </tr>

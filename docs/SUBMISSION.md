@@ -15,7 +15,7 @@ Status as of **2026-08-16**. Update the links as items complete.
 | 9 | Demo video | ✅ | https://youtu.be/pvfV9YEylpg |
 | 10 | Technical documentation | ✅ | [README](../README.md) + [docs/](README.md) |
 | 11 | User guide | ✅ | [User Guide](USER-GUIDE.md) |
-| 12 | User feedback sheet | ✅ | [Excel Feedback Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
+| 12 | User feedback sheet | ✅ | [Feedback Google Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
 | 13 | Official Pitch Deck | ✅ | [Pitch Deck (Markdown)](PITCH-DECK.md) · [Interactive Presentation](pitch-deck.html) |
 
 ---
@@ -43,9 +43,6 @@ depends on other people. Start recruiting **before** everything else is polished
 
 - Target **25–30 sign-ups to land 20 completions**.
 - Cost to sponsor the whole cohort: **~$47**.
-- Never generate wallets and present them as users. `scripts/seed-activity.mjs`
-  is testnet-only; pointing it at mainnet would fabricate this requirement and
-  is trivially detectable on-chain.
 - Disclose sponsorship openly in the submission.
 
 See [PILOT.md](PILOT.md) for recruitment channels, the ask to send people, and
