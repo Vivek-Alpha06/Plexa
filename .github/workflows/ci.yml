@@ -27,11 +27,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Strip ignored workspace members
-        run: |
-          sed -i 's|,[[:space:]]*"lite"||g' Cargo.toml
-          sed -i 's|[[:space:]]*lite/Cargo.toml||g' ../scripts/test.sh
-
       # Native `cargo test` on Linux builds the cdylib fine — the PE
       # "export ordinal too large" link error is specific to the Windows-GNU
       # toolchain, so no crate-type swap is needed here.
@@ -39,7 +34,11 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-          targets: wasm32-unknown-unknown
+          # wasm32v1-none is the target the network actually accepts. The
+          # wasm32-unknown-unknown output is rejected on submit (reference
+          # types), so building only that would make a green CI meaningless:
+          # it would prove the code compiles for a target we can never deploy.
+          targets: wasm32v1-none
 
       - name: Cache cargo build
         uses: Swatinem/rust-cache@v2
@@ -56,20 +55,54 @@ jobs:
         continue-on-error: true
         run: cargo clippy --workspace --all-targets
 
+      # --locked: the deployed bytecode is content-addressed, so a silently
+      # updated dependency changes the hash a reviewer reproduces from source.
       - name: Run unit tests
-        run: cargo test --workspace
+        run: cargo test --workspace --locked
 
-      - name: Build Wasm artifacts
-        run: cargo build --workspace --target wasm32-unknown-unknown --release
+      - name: Build deploy artifacts (wasm32v1-none)
+        run: cargo build --workspace --target wasm32v1-none --release --locked
+
+      # The install hash of a contract is the sha256 of its bytecode. Recording
+      # it per run makes every build auditable after the fact and lets anyone
+      # compare a CI artifact against what is live on the ledger.
+      - name: Record wasm hashes
+        run: sha256sum target/wasm32v1-none/release/*.wasm | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Upload Wasm artifacts
         uses: actions/upload-artifact@v4
         with:
           name: contract-wasm
-          path: |
-            contracts/target/wasm32-unknown-unknown/release/plexa_group.wasm
-            contracts/target/wasm32-unknown-unknown/release/plexa_factory.wasm
-          if-no-files-found: warn
+          path: contracts/target/wasm32v1-none/release/*.wasm
+          if-no-files-found: error
+
+  # --------------------------------------------------------------------- Keeper
+  # The keeper carries the Level 6 advanced features — fee sponsorship (CAP-15),
+  # sponsored reserves (CAP-33) and the SEP-1/10/24/31 anchor client. Its 54
+  # tests were running only on developer machines until this job existed.
+  keeper:
+    name: Keeper (fee sponsorship · reserves · anchor)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: keeper
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: keeper/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # relayer (8) + sponsored reserves (22) + anchor (24) = 54 tests.
+      - name: Run keeper test suites
+        run: npm test
 
   # ------------------------------------------------------------------- Frontend
   frontend:
@@ -95,7 +128,9 @@ jobs:
       - name: Typecheck (lint)
         run: npm run lint
 
-      - name: Build
+      # Build in production mode so .env.production — the mainnet contract ids
+      # the live site actually ships with — is the config under test.
+      - name: Build (production config)
         run: npm run build
 
       - name: Upload build output
@@ -103,4 +138,36 @@ jobs:
         with:
           name: frontend-dist
           path: frontend/dist
-          if-no-files-found: warn
+          if-no-files-found: error
+
+  # ------------------------------------------------------------- Mainnet claims
+  # Guards the failure mode that sinks a submission quietly: a contract id in
+  # the README that no longer matches the ledger. A wrong id does not throw at
+  # runtime — the app just reads a different contract — so nothing but an
+  # explicit check catches it.
+  #
+  # Read-only and keyless. Non-blocking, because a public RPC outage is not a
+  # defect in this repository; the run summary still shows the result.
+  mainnet-claims:
+    name: Mainnet claims (README vs ledger)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: scripts
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: scripts/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify advertised contract ids against the public ledger
+        run: node verify-mainnet-contracts.mjs | tee -a "$GITHUB_STEP_SUMMARY"
