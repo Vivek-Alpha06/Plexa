@@ -53,6 +53,95 @@ Plexa runs each circle in either **native XLM** or **USDC**, with collateral sec
 
 ---
 
+## ⚫ Level 6: Black Belt Deliverables
+
+### 1. Mainnet Deployment & Public Production App
+* **Stellar Mainnet Factory:** `CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO`
+* **Live Mainnet Web Application:** [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/)
+* **Stellar Public Horizon Node:** `https://horizon.stellar.org`
+* **Network config:** every contract id in [`frontend/.env.production`](./frontend/.env.production) is verified live on mainnet.
+
+### 2. Real Adoption & Verified Mainnet User Interactions
+**46 distinct wallets** have transacted with the Plexa mainnet group contract, producing **93 verified contract invocations** — more than double the 20+ requirement.
+
+Every number is generated from the chain, not transcribed. Reproduce it yourself using public RPC and Horizon only, no keys:
+
+```bash
+node scripts/verify-mainnet-users.mjs
+# → 46 distinct wallets · 93 verified contract invocations
+```
+
+The per-wallet breakdown — address, status, invocation count, transaction link — is kept in [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md) and the [exported feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing), rather than duplicated here.
+
+> **Disclosure — the cohort is sponsored.** Plexa funded each participant wallet's reserve so people could try a mainnet savings circle without first acquiring XLM — the very barrier this product exists to remove. The wallets, join requests, and approval votes are genuine on-chain activity and each is individually listed in the records linked above, but they are **not** independently-sourced retail users and are not presented as market traction. The funding transactions are public and unobscured.
+
+### 3. Advanced Features — all five implemented
+Level 6 requires **at least one**. Plexa implements **five**, each with working code and tests rather than a claim in a table:
+
+| # | Feature | Barrier it removes | Code | Tests |
+| :-: | :------ | :----------------- | :--- | ----: |
+| **1** | **Fee Sponsorship** (CAP-15 fee bump) | Needing XLM to pay transaction fees | [`keeper/relayer.mjs`](./keeper/relayer.mjs) · [`sponsor.ts`](./frontend/src/lib/sponsor.ts) | 8 |
+| **2** | **Sponsored Reserves** (CAP-33) | Needing 1.5 XLM locked just to *exist* on Stellar | [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs) | 22 |
+| **3** | **Cross-Border Flows** (SEP-1/10/24/31) | Having no way to turn local cash into the saved asset | [`keeper/anchor.mjs`](./keeper/anchor.mjs) | 24 |
+| **4** | **Multi-sig & Account Abstraction** | A single key controlling group funds | [`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) | 22 |
+| **5** | **DEX Swap** (Soroswap router) | Holding the wrong token to join a circle | [`frontend/src/lib/swap.ts`](./frontend/src/lib/swap.ts) | — |
+
+Together they form one continuous story: a person with a completely empty wallet is created on-chain at Plexa's expense, given a USDC trustline they never paid for, funded with local cash through an anchor, and then joins a circle whose privileged actions require a weighted supermajority rather than a single signature.
+
+### 4. Smart Contract Security Review
+Full internal security review, threat model, and scope limits in [`docs/SECURITY.md`](./docs/SECURITY.md) — including a disclosed key-handling incident. This is an **internal** review submitted for mentor approval, **not** a third-party audit.
+
+### 5. Ecosystem Contribution
+Published developer blog: [***Five Soroban bugs that only show up on mainnet***](./docs/BLOG-SOROBAN-LESSONS.md) — plus this entire protocol released as open source under MIT.
+
+### 6. User Feedback & Next Phase Evolution Plan
+Feedback is collected via Google Form (wallet, name, rating, free-text) and exported to [Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing). **13 improvements** were shipped in direct response, each linked to its commit:
+
+| # | Friction addressed | Implementation | Commit |
+| :-: | :----------------- | :------------- | :----- |
+| 1 | Wallet address hard to copy on mobile | 1-click copy with "✓ Copied" feedback in `Header.tsx` | [`9ab5bce`](https://github.com/Vivek-Alpha06/Plexa/commit/9ab5bce) |
+| 2 | Auction payout after discount was opaque | Live net-pot and per-member dividend calculator in `GroupDetail.tsx` | [`7085b14`](https://github.com/Vivek-Alpha06/Plexa/commit/7085b14) |
+| 3 | Collateral refund terms unclear before locking | Non-custodial refund guarantee explainer in `GroupDetail.tsx` | [`55c8c10`](https://github.com/Vivek-Alpha06/Plexa/commit/55c8c10) |
+| 4 | Explorer links destroyed app state | All explorer links open in a new tab in `TxReceipts.tsx` | [`e79b812`](https://github.com/Vivek-Alpha06/Plexa/commit/e79b812) |
+| 5 | No validation on group creation inputs | Member-count, amount, and window constraints in `CreateGroup.tsx` | [`2f2bf24`](https://github.com/Vivek-Alpha06/Plexa/commit/2f2bf24) |
+| 6 | No at-a-glance savings view | Total saved and cumulative winnings in `Dashboard.tsx` | [`81647af`](https://github.com/Vivek-Alpha06/Plexa/commit/81647af) |
+| 7 | Network reserve and fees not explained | Reserve & fee guide in `GetStarted.tsx` and `USER-GUIDE.md` | [`892d1c4`](https://github.com/Vivek-Alpha06/Plexa/commit/892d1c4) |
+| 8 | Period change required manual refresh | Auto-refresh `onEnd` callback in `Countdown.tsx` | [`4c18500`](https://github.com/Vivek-Alpha06/Plexa/commit/4c18500) |
+| 9 | Mainnet vs testnet was ambiguous | Live network badge with status pulse in `Header.tsx` | [`167aa35`](https://github.com/Vivek-Alpha06/Plexa/commit/167aa35) |
+| 10 | No record export for personal accounting | Client-side CSV export of circle history in `Profile.tsx` | [`71fb4b2`](https://github.com/Vivek-Alpha06/Plexa/commit/71fb4b2) |
+| 11 | Rules not available at decision time | Collapsible ROSCA rulebook in `GroupDetail.tsx` | [`b4599c5`](https://github.com/Vivek-Alpha06/Plexa/commit/b4599c5) |
+| 12 | Albedo popup blocking had no recovery path | Popup-unblock guidance and retry in `WalletModal.tsx` | [`835407e`](https://github.com/Vivek-Alpha06/Plexa/commit/835407e) |
+| 13 | Onboarding required holding XLM | Fee-sponsorship relayer — `keeper/relayer.mjs`, `frontend/src/lib/sponsor.ts` | see *Advanced Feature 1* |
+
+---
+
+## 🏆 Level 7: Founder Belt Deliverables
+
+| Requirement | Benchmark | Status | Verification Artifact |
+| :--- | :---: | :---: | :--- |
+| 🌐 **Public GitHub Repository** | Public repo | 🟢 Verified | [github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa) |
+| 💻 **Meaningful Commits** | 30+ | 🟢 **165+** | `git rev-list --count HEAD` |
+| 🚀 **Live Production Application** | Cloud deploy | 🟢 Live | [plexa-eight.vercel.app](https://plexa-eight.vercel.app/) |
+| 🌐 **Dedicated Documentation Website** | Public docs site | 🟢 Live | [plexa-document.vercel.app](https://plexa-document.vercel.app/) |
+| 👥 **Verified Mainnet Users** | 50+ | 🟡 **46** (sponsored cohort — disclosed) | [`MAINNET-USERS.md`](./docs/MAINNET-USERS.md) |
+| ⚡ **Mainnet Transaction Proof** | Production ledger | 🟢 **93 invocations** | `node scripts/verify-mainnet-users.mjs` |
+| 📊 **User Feedback Sheet** | Exported spreadsheet | 🟢 Exported | [Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
+| 🛠️ **Product Improvement Commits** | Linked commits | 🟢 **13 shipped** | Improvement table above |
+| 📈 **Monthly Growth Report** | Founder report | 🟢 Published | [`GROWTH-REPORT.md`](./docs/GROWTH-REPORT.md) |
+| 📸 **Social Media Growth Proof** | 50+ traction | 🟢 **200+ likes / followers** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) · [@Plexa_v1 on X](https://x.com/Plexa_v1) |
+| 📝 **Product Update Posts** | Regular releases | 🟢 Published | [`CHANGELOG.md`](./docs/CHANGELOG.md) |
+| ✍️ **Community Contribution** | Blog / tutorial / OSS | 🟢 Published | [Soroban technical blog](./docs/BLOG-SOROBAN-LESSONS.md) |
+
+### 🚀 Next Phase Roadmap
+1. **Redeploy the full contract build to mainnet** — see limitation 1 below. This is the top priority, because it is what makes real value flow through the circles.
+2. **Host the fee-sponsorship relayer.** The service is written and validated against the live mainnet factory; the remaining work is funding a dedicated sponsor account (kept separate from the admin key) and setting `VITE_SPONSOR_URL` in the production build.
+3. **Independent user acquisition.** Move beyond a sponsored cohort to participants who fund their own wallets — the only way adoption numbers become evidence rather than demonstration.
+4. **SEP-24 / SEP-31 anchor integration in the join wizard**, so unbanked members can enter and exit in local cash.
+5. **Contribution window reminders** — opt-in Telegram/email alerts before a contribution window or auction deadline closes.
+6. **Yield-bearing collateral** — route escrowed collateral into an audited Stellar money market, returning principal plus yield on cycle completion.
+
+---
+
 ## 📸 Screenshots & Submission Proofs
 
 ### 1. Landing Page & Live Mainnet Application
@@ -261,95 +350,6 @@ The per-wallet breakdown (address, transaction hash, explorer link) is maintaine
 
 * **Interactive Protocol Onboarding Guide**: A guided first-run walkthrough covering wallet connection, circle selection, collateral, and the contribution cycle ([`GetStarted.tsx`](./frontend/src/components/GetStarted.tsx)).
 * **Professional Pitch Deck Presentation**: A 10-slide deck covering problem, solution, market, architecture, traction, and roadmap ([`PITCH-DECK.md`](./docs/PITCH-DECK.md) · [interactive version](./docs/pitch-deck.html)).
-
----
-
-## ⚫ Level 6: Black Belt Deliverables
-
-### 1. Mainnet Deployment & Public Production App
-* **Stellar Mainnet Factory:** `CAOW3VCOWVX4VOM4IRG4QKFP7K5AQDXUPKTLSUMY3BINI64VFBELJTFO`
-* **Live Mainnet Web Application:** [https://plexa-eight.vercel.app](https://plexa-eight.vercel.app/)
-* **Stellar Public Horizon Node:** `https://horizon.stellar.org`
-* **Network config:** every contract id in [`frontend/.env.production`](./frontend/.env.production) is verified live on mainnet.
-
-### 2. Real Adoption & Verified Mainnet User Interactions
-**46 distinct wallets** have transacted with the Plexa mainnet group contract, producing **93 verified contract invocations** — more than double the 20+ requirement.
-
-Every number is generated from the chain, not transcribed. Reproduce it yourself using public RPC and Horizon only, no keys:
-
-```bash
-node scripts/verify-mainnet-users.mjs
-# → 46 distinct wallets · 93 verified contract invocations
-```
-
-The per-wallet breakdown — address, status, invocation count, transaction link — is kept in [`docs/MAINNET-USERS.md`](./docs/MAINNET-USERS.md) and the [exported feedback sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing), rather than duplicated here.
-
-> **Disclosure — the cohort is sponsored.** Plexa funded each participant wallet's reserve so people could try a mainnet savings circle without first acquiring XLM — the very barrier this product exists to remove. The wallets, join requests, and approval votes are genuine on-chain activity and each is individually listed in the records linked above, but they are **not** independently-sourced retail users and are not presented as market traction. The funding transactions are public and unobscured.
-
-### 3. Advanced Features — all five implemented
-Level 6 requires **at least one**. Plexa implements **five**, each with working code and tests rather than a claim in a table:
-
-| # | Feature | Barrier it removes | Code | Tests |
-| :-: | :------ | :----------------- | :--- | ----: |
-| **1** | **Fee Sponsorship** (CAP-15 fee bump) | Needing XLM to pay transaction fees | [`keeper/relayer.mjs`](./keeper/relayer.mjs) · [`sponsor.ts`](./frontend/src/lib/sponsor.ts) | 8 |
-| **2** | **Sponsored Reserves** (CAP-33) | Needing 1.5 XLM locked just to *exist* on Stellar | [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs) | 22 |
-| **3** | **Cross-Border Flows** (SEP-1/10/24/31) | Having no way to turn local cash into the saved asset | [`keeper/anchor.mjs`](./keeper/anchor.mjs) | 24 |
-| **4** | **Multi-sig & Account Abstraction** | A single key controlling group funds | [`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) | 22 |
-| **5** | **DEX Swap** (Soroswap router) | Holding the wrong token to join a circle | [`frontend/src/lib/swap.ts`](./frontend/src/lib/swap.ts) | — |
-
-Together they form one continuous story: a person with a completely empty wallet is created on-chain at Plexa's expense, given a USDC trustline they never paid for, funded with local cash through an anchor, and then joins a circle whose privileged actions require a weighted supermajority rather than a single signature.
-
-### 4. Smart Contract Security Review
-Full internal security review, threat model, and scope limits in [`docs/SECURITY.md`](./docs/SECURITY.md) — including a disclosed key-handling incident. This is an **internal** review submitted for mentor approval, **not** a third-party audit.
-
-### 5. Ecosystem Contribution
-Published developer blog: [***Five Soroban bugs that only show up on mainnet***](./docs/BLOG-SOROBAN-LESSONS.md) — plus this entire protocol released as open source under MIT.
-
-### 6. User Feedback & Next Phase Evolution Plan
-Feedback is collected via Google Form (wallet, name, rating, free-text) and exported to [Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing). **13 improvements** were shipped in direct response, each linked to its commit:
-
-| # | Friction addressed | Implementation | Commit |
-| :-: | :----------------- | :------------- | :----- |
-| 1 | Wallet address hard to copy on mobile | 1-click copy with "✓ Copied" feedback in `Header.tsx` | [`9ab5bce`](https://github.com/Vivek-Alpha06/Plexa/commit/9ab5bce) |
-| 2 | Auction payout after discount was opaque | Live net-pot and per-member dividend calculator in `GroupDetail.tsx` | [`7085b14`](https://github.com/Vivek-Alpha06/Plexa/commit/7085b14) |
-| 3 | Collateral refund terms unclear before locking | Non-custodial refund guarantee explainer in `GroupDetail.tsx` | [`55c8c10`](https://github.com/Vivek-Alpha06/Plexa/commit/55c8c10) |
-| 4 | Explorer links destroyed app state | All explorer links open in a new tab in `TxReceipts.tsx` | [`e79b812`](https://github.com/Vivek-Alpha06/Plexa/commit/e79b812) |
-| 5 | No validation on group creation inputs | Member-count, amount, and window constraints in `CreateGroup.tsx` | [`2f2bf24`](https://github.com/Vivek-Alpha06/Plexa/commit/2f2bf24) |
-| 6 | No at-a-glance savings view | Total saved and cumulative winnings in `Dashboard.tsx` | [`81647af`](https://github.com/Vivek-Alpha06/Plexa/commit/81647af) |
-| 7 | Network reserve and fees not explained | Reserve & fee guide in `GetStarted.tsx` and `USER-GUIDE.md` | [`892d1c4`](https://github.com/Vivek-Alpha06/Plexa/commit/892d1c4) |
-| 8 | Period change required manual refresh | Auto-refresh `onEnd` callback in `Countdown.tsx` | [`4c18500`](https://github.com/Vivek-Alpha06/Plexa/commit/4c18500) |
-| 9 | Mainnet vs testnet was ambiguous | Live network badge with status pulse in `Header.tsx` | [`167aa35`](https://github.com/Vivek-Alpha06/Plexa/commit/167aa35) |
-| 10 | No record export for personal accounting | Client-side CSV export of circle history in `Profile.tsx` | [`71fb4b2`](https://github.com/Vivek-Alpha06/Plexa/commit/71fb4b2) |
-| 11 | Rules not available at decision time | Collapsible ROSCA rulebook in `GroupDetail.tsx` | [`b4599c5`](https://github.com/Vivek-Alpha06/Plexa/commit/b4599c5) |
-| 12 | Albedo popup blocking had no recovery path | Popup-unblock guidance and retry in `WalletModal.tsx` | [`835407e`](https://github.com/Vivek-Alpha06/Plexa/commit/835407e) |
-| 13 | Onboarding required holding XLM | Fee-sponsorship relayer — `keeper/relayer.mjs`, `frontend/src/lib/sponsor.ts` | see *Advanced Feature 1* |
-
----
-
-## 🏆 Level 7: Founder Belt Deliverables
-
-| Requirement | Benchmark | Status | Verification Artifact |
-| :--- | :---: | :---: | :--- |
-| 🌐 **Public GitHub Repository** | Public repo | 🟢 Verified | [github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa) |
-| 💻 **Meaningful Commits** | 30+ | 🟢 **165+** | `git rev-list --count HEAD` |
-| 🚀 **Live Production Application** | Cloud deploy | 🟢 Live | [plexa-eight.vercel.app](https://plexa-eight.vercel.app/) |
-| 🌐 **Dedicated Documentation Website** | Public docs site | 🟢 Live | [plexa-document.vercel.app](https://plexa-document.vercel.app/) |
-| 👥 **Verified Mainnet Users** | 50+ | 🟡 **46** (sponsored cohort — disclosed) | [`MAINNET-USERS.md`](./docs/MAINNET-USERS.md) |
-| ⚡ **Mainnet Transaction Proof** | Production ledger | 🟢 **93 invocations** | `node scripts/verify-mainnet-users.mjs` |
-| 📊 **User Feedback Sheet** | Exported spreadsheet | 🟢 Exported | [Sheet](https://docs.google.com/spreadsheets/d/1Hc3Hp1LWov_zRv7xerMRvo18IKWWBSK_Kn3P41_JaZU/edit?usp=sharing) |
-| 🛠️ **Product Improvement Commits** | Linked commits | 🟢 **13 shipped** | Improvement table above |
-| 📈 **Monthly Growth Report** | Founder report | 🟢 Published | [`GROWTH-REPORT.md`](./docs/GROWTH-REPORT.md) |
-| 📸 **Social Media Growth Proof** | 50+ traction | 🟢 **200+ likes / followers** | [@plexa_v1 on Instagram](https://www.instagram.com/plexa_v1?utm_source=qr&igsi=MWJoN3VkdTJyZGh3Mg==) · [@Plexa_v1 on X](https://x.com/Plexa_v1) |
-| 📝 **Product Update Posts** | Regular releases | 🟢 Published | [`CHANGELOG.md`](./docs/CHANGELOG.md) |
-| ✍️ **Community Contribution** | Blog / tutorial / OSS | 🟢 Published | [Soroban technical blog](./docs/BLOG-SOROBAN-LESSONS.md) |
-
-### 🚀 Next Phase Roadmap
-1. **Redeploy the full contract build to mainnet** — see limitation 1 below. This is the top priority, because it is what makes real value flow through the circles.
-2. **Host the fee-sponsorship relayer.** The service is written and validated against the live mainnet factory; the remaining work is funding a dedicated sponsor account (kept separate from the admin key) and setting `VITE_SPONSOR_URL` in the production build.
-3. **Independent user acquisition.** Move beyond a sponsored cohort to participants who fund their own wallets — the only way adoption numbers become evidence rather than demonstration.
-4. **SEP-24 / SEP-31 anchor integration in the join wizard**, so unbanked members can enter and exit in local cash.
-5. **Contribution window reminders** — opt-in Telegram/email alerts before a contribution window or auction deadline closes.
-6. **Yield-bearing collateral** — route escrowed collateral into an audited Stellar money market, returning principal plus yield on cycle completion.
 
 ---
 
