@@ -1,0 +1,14 @@
+{
+  "name": "plexa-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only chain-verification scripts for the Plexa mainnet deployment. No keys required.",
+  "scripts": {
+    "verify:contracts": "node verify-mainnet-contracts.mjs",
+    "verify:users": "node verify-mainnet-users.mjs"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^16.0.1"
+  }
+}
