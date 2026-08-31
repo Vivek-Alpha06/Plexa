@@ -14,7 +14,7 @@
 
 use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, symbol_short, Address, Env,
-    String, Vec, Map, panic_with_error, Symbol,
+    IntoVal, String, Vec, panic_with_error, Symbol,
 };
 
 #[contracterror]
@@ -196,7 +196,7 @@ impl MonolithicContract {
         let config = GroupConfig {
             id: group_id,
             owner: p.owner.clone(),
-            name: p.name,
+            name: p.name.clone(),
             description: p.description,
             target_members: p.target_members,
             visibility: p.visibility,
@@ -259,7 +259,7 @@ impl MonolithicContract {
     pub fn request_join(env: Env, group_id: u32, applicant: Address) {
         applicant.require_auth();
         let ps = env.storage().persistent();
-        let config: GroupConfig = ps.get(&DataKey::Config(group_id)).unwrap_or_else(|| {
+        let _config: GroupConfig = ps.get(&DataKey::Config(group_id)).unwrap_or_else(|| {
             panic_with_error!(&env, Error::UnknownGroup);
         });
 
@@ -348,7 +348,7 @@ impl MonolithicContract {
 
             // Cleanup request
             ps.remove(&req_key);
-            let mut pending: Vec<Address> = ps.get(&DataKey::PendingRequests(group_id)).unwrap();
+            let pending: Vec<Address> = ps.get(&DataKey::PendingRequests(group_id)).unwrap();
             let mut new_pending = Vec::new(&env);
             for p in pending.iter() {
                 if p != applicant {
@@ -406,7 +406,7 @@ impl MonolithicContract {
 
         // Update member record
         let mut m = members.get(member_idx).unwrap();
-        m.collateral_asset = CollateralAsset::from_u32(asset);
+        m.collateral_asset = if asset == 1 { CollateralAsset::Xlm } else { CollateralAsset::Usdc };
         m.collateral_amount += amount;
         members.set(member_idx, m);
         ps.set(&DataKey::Members(group_id), &members);
@@ -642,7 +642,7 @@ impl MonolithicContract {
         };
 
         let client = soroban_sdk::token::Client::new(&env, &token_addr);
-        client.transfer(&env.current_contract_address(), &claimant, payout_amount);
+        client.transfer(&env.current_contract_address(), &claimant, &payout_amount);
 
         // Advance period
         state.members_won += 1;
@@ -765,7 +765,7 @@ impl MonolithicContract {
     pub fn withdraw_collateral(env: Env, group_id: u32, member: Address) {
         member.require_auth();
         let ps = env.storage().persistent();
-        let config: GroupConfig = ps.get(&DataKey::Config(group_id)).unwrap_or_else(|| {
+        let _config: GroupConfig = ps.get(&DataKey::Config(group_id)).unwrap_or_else(|| {
             panic_with_error!(&env, Error::UnknownGroup);
         });
 
@@ -806,7 +806,7 @@ impl MonolithicContract {
         };
 
         let client = soroban_sdk::token::Client::new(&env, &token_addr);
-        client.transfer(&env.current_contract_address(), &member, amount);
+        client.transfer(&env.current_contract_address(), &member, &amount);
 
         env.events().publish(
             (symbol_short!("withdraw"), group_id),
