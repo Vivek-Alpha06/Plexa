@@ -105,8 +105,9 @@ npm run dev
 
 ### Optional: build and test the Soroban contracts
 ```bash
-cd contracts && bash ../scripts/test.sh   # contract suite, clean wasm32v1-none build
-cd keeper    && npm test                  # 54 keeper tests
+bash scripts/test.sh          # 64 contract tests (group · multisig · oracle · factory)
+cd keeper  && npm test        # 54 keeper tests (sponsorship · reserves · anchor)
+cd scripts && npm ci && node verify-mainnet-contracts.mjs   # README's ids vs the live ledger
 ```
 
 ---
@@ -132,15 +133,56 @@ Plexa's contracts are deployed and independently verifiable on the **Stellar Pub
 * **Factory Deployment Ledger:** `#64061228`
 * **Deployment Date:** 21 August 2026
 
+### ✅ Verify Every Address Above Yourself
+
+A contract id in a README proves nothing on its own, and a stale one fails
+silently — the app simply reads a different contract instead of erroring. So
+every address in this table is checked against the live ledger by script, and
+that check runs as a CI job on every push:
+
+```bash
+cd scripts && npm ci
+node verify-mainnet-contracts.mjs
+```
+
+It reads only public RPC data, needs no keys, and exits non-zero if any claim
+here has drifted from the chain. Current output:
+
+```
+1. Advertised contract ids resolve on the public network
+   ok    Plexa Factory      CAOW3VCO…LJTFO  (wasm abcf5e21c52eba2e…)
+   ok    Live Group         CDYQ3NVL…UM4D   (wasm 4602c2c29cc61b2a…)
+   ok    Reflector Oracle   CAFJZQWS…4DLN   (wasm 8ecd1857496df2c1…)
+   ok    Soroswap Router    CAG5LRYQ…JDDH   (wasm 4c3db3ebd2d6a2ab…)
+   ok    USDC SAC           CCW67TSZ…MI75   (Stellar Asset Contract)
+   ok    Native XLM SAC     CAS3J7GY…OWMA   (Stellar Asset Contract)
+
+2. Group contract runs the published WASM hash
+   ok    4602c2c29cc61b2a239c45fbf43e12b3d430d765ca33fa298ddab73e99cd3148
+
+3. Deployed bytecode matches the disclosed limitation
+   ok    deployed size: 20316 bytes
+   ok    'transfer' absent, exactly as disclosed
+   ok    protocol entrypoints present: join, contribute, bid, settle,
+         resolve_period, claim, get_members
+
+All mainnet claims in the README verified against the public ledger.
+```
+
+Step 3 is deliberate: it re-derives **Known Limitation 1** below from the
+deployed bytecode, so the disclosure is machine-checked rather than taken on
+trust — and CI fails if the limitation ever stops being true.
+
 ---
 
 ## 🦀 Custom Rust Soroban Smart Contracts
-Plexa ships four native Soroban contracts written in **Rust**, in a multi-crate Cargo workspace:
+Plexa ships five native Soroban contracts written in **Rust**, in a multi-crate Cargo workspace. Every one of them is compiled and unit-tested in CI, and built for `wasm32v1-none` — the only target the network accepts:
 
 * **Factory Contract** — deploys and registers ROSCA group instances dynamically via `deploy_v2` ([`contracts/factory/src/lib.rs`](./contracts/factory/src/lib.rs)).
 * **Group Contract** — the protocol core: joining, collateral, contributions, discount auctions, defaults, payouts, and dissolution ([`contracts/group/src/lib.rs`](./contracts/group/src/lib.rs)).
 * **Oracle Contract** — Reflector price-feed adapter for XLM/USDC collateral valuation ([`contracts/oracle/src/lib.rs`](./contracts/oracle/src/lib.rs)).
 * **Swap Contract** — Soroswap-compatible router fallback logic ([`contracts/swap/src/lib.rs`](./contracts/swap/src/lib.rs)).
+* **Monolithic Contract** — a single-contract variant that holds every circle as a keyed state record instead of deploying one contract per group, cutting deployment cost for budget-constrained launches ([`contracts/monolithic/src/lib.rs`](./contracts/monolithic/src/lib.rs)).
 * **Workspace Manifest** — [`contracts/Cargo.toml`](./contracts/Cargo.toml).
 
 ---
@@ -191,8 +233,8 @@ Plexa ships four native Soroban contracts written in **Rust**, in a multi-crate 
 1. **Smart Contract Deployment Address**: Custom factory deployed at `CDOYIGNCIR4QTUTAUYEFSW7IJVS6ZMOFV6CW574VFGHQ5ZDCQCJZ4GDZ` on Stellar Testnet.
 2. **Transaction Hash of Contract Deployment**: `b1a2072ffc40c8f5b8a5c2d3b2a26c3f6febfb3c8e72c027aab17c388fdf895` — uploads the WASM and instantiates the factory on the ledger.
 3. **Advanced Smart Contract Development — Inter-Contract Communication**: The Factory deploys Group instances dynamically (`deploy_v2`); each Group calls **out** to the Reflector oracle adapter for collateral pricing and to the **Soroswap router** to liquidate cross-asset collateral during settlement.
-4. **CI/CD Pipeline Setup**: GitHub Actions in `.github/workflows/ci.yml` compiles the Rust workspace to `wasm32v1-none`, runs the contract test suite, and checks formatting on every push and pull request.
-5. **Test Output with Passing Tests**: Contract suite via `bash scripts/test.sh`, plus **54 keeper tests** via `cd keeper && npm test`.
+4. **CI/CD Pipeline Setup**: GitHub Actions ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) runs four jobs on every push and pull request — **contracts** (64 tests, clippy/rustfmt, a `wasm32v1-none` build whose sha256 hashes are recorded in the run summary), **keeper** (54 tests covering fee sponsorship, sponsored reserves and the anchor client), **frontend** (typecheck + production build against the real mainnet config), and **mainnet-claims**, which re-verifies every contract id in this README against the live ledger. Deployment is a separate manual-approval workflow ([`deploy-contracts.yml`](./.github/workflows/deploy-contracts.yml)), and [`keeper.yml`](./.github/workflows/keeper.yml) advances live groups on a 5-minute schedule.
+5. **Test Output with Passing Tests**: **64 contract tests** via `bash scripts/test.sh` (42 group incl. 22 multi-sig · 16 oracle · 6 factory), plus **54 keeper tests** via `cd keeper && npm test` (8 fee-sponsorship · 22 sponsored-reserves · 24 anchor). All 118 run on every push.
 6. **Mobile Responsive UI**: Landing page, creation wizard, dashboards, and auction views are fully responsive — proof screenshot above.
 
 ---
@@ -252,7 +294,7 @@ Level 6 requires **at least one**. Plexa implements **five**, each with working 
 | **1** | **Fee Sponsorship** (CAP-15 fee bump) | Needing XLM to pay transaction fees | [`keeper/relayer.mjs`](./keeper/relayer.mjs) · [`sponsor.ts`](./frontend/src/lib/sponsor.ts) | 8 |
 | **2** | **Sponsored Reserves** (CAP-33) | Needing 1.5 XLM locked just to *exist* on Stellar | [`keeper/sponsored-reserves.mjs`](./keeper/sponsored-reserves.mjs) | 22 |
 | **3** | **Cross-Border Flows** (SEP-1/10/24/31) | Having no way to turn local cash into the saved asset | [`keeper/anchor.mjs`](./keeper/anchor.mjs) | 24 |
-| **4** | **Multi-sig & Account Abstraction** | A single key controlling group funds | [`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) | 21 |
+| **4** | **Multi-sig & Account Abstraction** | A single key controlling group funds | [`contracts/group/src/multisig.rs`](./contracts/group/src/multisig.rs) | 22 |
 | **5** | **DEX Swap** (Soroswap router) | Holding the wrong token to join a circle | [`frontend/src/lib/swap.ts`](./frontend/src/lib/swap.ts) | — |
 
 Together they form one continuous story: a person with a completely empty wallet is created on-chain at Plexa's expense, given a USDC trustline they never paid for, funded with local cash through an anchor, and then joins a circle whose privileged actions require a weighted supermajority rather than a single signature.
@@ -289,7 +331,7 @@ Feedback is collected via Google Form (wallet, name, rating, free-text) and expo
 | Requirement | Benchmark | Status | Verification Artifact |
 | :--- | :---: | :---: | :--- |
 | 🌐 **Public GitHub Repository** | Public repo | 🟢 Verified | [github.com/Vivek-Alpha06/Plexa](https://github.com/Vivek-Alpha06/Plexa) |
-| 💻 **Meaningful Commits** | 30+ | 🟢 **164** | `git rev-list --count HEAD` |
+| 💻 **Meaningful Commits** | 30+ | 🟢 **165+** | `git rev-list --count HEAD` |
 | 🚀 **Live Production Application** | Cloud deploy | 🟢 Live | [plexa-eight.vercel.app](https://plexa-eight.vercel.app/) |
 | 🌐 **Dedicated Documentation Website** | Public docs site | 🟢 Live | [plexa-document.vercel.app](https://plexa-document.vercel.app/) |
 | 👥 **Verified Mainnet Users** | 50+ | 🟡 **46** (sponsored cohort — disclosed) | [`MAINNET-USERS.md`](./docs/MAINNET-USERS.md) |
@@ -315,7 +357,7 @@ Feedback is collected via Google Form (wallet, name, rating, free-text) and expo
 
 We would rather a reviewer read these here than discover them:
 
-1. **The deployed mainnet contract is a size-reduced build that does not move tokens.** To fit deployment constraints, the mainnet WASM (20,316 bytes) is a compact variant of the full protocol. It contains **no `transfer` symbol at all**, so it records collateral and contribution amounts in contract storage without performing the underlying token transfers. Consequently the mainnet group contract's real USDC and XLM balances are **0** while `get_members()` reports recorded collateral. Its upgrade entrypoints are also inert, and several view functions (`get_phase`, `health_factor`, `is_completed`, `get_claimable`, `has_won`) return fixed values. The **full** implementation in [`contracts/`](./contracts/) does perform every transfer and builds clean to `wasm32v1-none` — but it is **not** the bytecode currently on mainnet. Verify by downloading the deployed WASM via `getLedgerEntries` and searching its symbol table.
+1. **The deployed mainnet contract is a size-reduced build that does not move tokens.** To fit deployment constraints, the mainnet WASM (20,316 bytes) is a compact variant of the full protocol. It contains **no `transfer` symbol at all**, so it records collateral and contribution amounts in contract storage without performing the underlying token transfers. Consequently the mainnet group contract's real USDC and XLM balances are **0** while `get_members()` reports recorded collateral. Its upgrade entrypoints are also inert, and several view functions (`get_phase`, `health_factor`, `is_completed`, `get_claimable`, `has_won`) return fixed values. The **full** implementation in [`contracts/`](./contracts/) does perform every transfer and builds clean to `wasm32v1-none` — but it is **not** the bytecode currently on mainnet. Verify with `node scripts/verify-mainnet-contracts.mjs`, which downloads the deployed WASM via `getLedgerEntries` and searches its symbol table (check 3 above).
 2. **The mainnet contract cannot be upgraded in place.** Because the deployed variant's `propose_upgrade` / `apply_upgrade` entrypoints are inert, migrating to the full build requires deploying a new factory and group at new addresses.
 3. **The user cohort is sponsored, not organic.** Plexa funded each participant wallet. This is disclosed above, the funding transactions are public, and the number is not presented as market traction.
 4. **The fee-sponsorship relayer is implemented but not hosted.** `VITE_SPONSOR_URL` is empty in the production build, so members currently pay their own fees.
