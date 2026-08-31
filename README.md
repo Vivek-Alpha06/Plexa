@@ -2,6 +2,12 @@
   <img src="./plexa_logo.png" alt="Plexa Logo" width="180" style="border-radius: 16px;" />
   <h1>Plexa - Decentralized ROSCA Protocol on Stellar</h1>
   <p><b>Community Savings, Decentralized &mdash; Trustless Savings Circles on Soroban</b></p>
+  <p>
+    <a href="https://github.com/Vivek-Alpha06/Plexa/actions/workflows/ci.yml"><img src="https://github.com/Vivek-Alpha06/Plexa/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI build status" /></a>
+    <a href="https://github.com/Vivek-Alpha06/Plexa/actions/workflows/keeper.yml"><img src="https://github.com/Vivek-Alpha06/Plexa/actions/workflows/keeper.yml/badge.svg?branch=main" alt="Keeper status" /></a>
+    <a href="https://github.com/Vivek-Alpha06/Plexa/actions"><img src="https://img.shields.io/badge/contract%20%2B%20keeper%20tests-118%20passing-brightgreen" alt="118 tests passing" /></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT licence" /></a>
+  </p>
 </div>
 
 ## 📝 Project Description
@@ -38,6 +44,7 @@ Plexa runs each circle in either **native XLM** or **USDC**, with collateral sec
 | 🎯 **Official Pitch Deck** | [PITCH-DECK.md](./docs/PITCH-DECK.md) · [Interactive Deck](./docs/pitch-deck.html) | 10-slide investor & judge presentation |
 | 📈 **Monthly Growth Report** | [GROWTH-REPORT.md](./docs/GROWTH-REPORT.md) | Level 7 Founder Track growth, retention & unit economics report |
 | 📖 **User & Developer Guide** | [USER-GUIDE.md](./docs/USER-GUIDE.md) | Protocol user guide, contribution guide, developer setup |
+| ⚙️ **CI/CD Pipeline** | [View live workflow runs](https://github.com/Vivek-Alpha06/Plexa/actions/workflows/ci.yml) | Four-job GitHub Actions pipeline on every push — contracts (64 tests + `wasm32v1-none` build), keeper (54 tests), frontend build, and a job that re-verifies every mainnet contract id in this README against the live ledger |
 | 📄 **Full Technical README** | [README-FULL.md](./docs/README-FULL.md) | Long-form version with every deep dive and the 65-row testnet proof table |
 
 ## 🚀 Key Features
